@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="本地搭建准备工作我们需要提前安装以下工具：  Node.js Git  安装 Node.js 二进制安装 源码安装  如果使用源码安装，还需要安装 gcc/clang/make 等开发工具，比较麻烦 这里我们使用二进制方式安装 centos 环境安装 Node.js v8 LTS，这是官方推荐的版本(截止2018-05) 1$ curl --silent --location https://rp">
+<meta name="description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PHILIP x BLOG">
+<meta property="og:title" content="hexo 博客搭建">
 <meta property="og:url" content="http://yoursite.com/2018/05/21/hexo 博客搭建/index.html">
 <meta property="og:site_name" content="PHILIP x BLOG">
-<meta property="og:description" content="本地搭建准备工作我们需要提前安装以下工具：  Node.js Git  安装 Node.js 二进制安装 源码安装  如果使用源码安装，还需要安装 gcc/clang/make 等开发工具，比较麻烦 这里我们使用二进制方式安装 centos 环境安装 Node.js v8 LTS，这是官方推荐的版本(截止2018-05) 1$ curl --silent --location https://rp">
+<meta property="og:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/var/folders/k0/b190mxqj3j3_wg3fg3crxp4w0000gn/T/abnerworks.Typora/image-20180521185858460.png">
-<meta property="og:updated_time" content="2018-05-21T12:15:38.737Z">
+<meta property="og:image" content="http://yoursite.com/var/folders/k0/b190mxqj3j3_wg3fg3crxp4w0000gn/T/abnerworks.Typora/image-20180521204955984.png">
+<meta property="og:updated_time" content="2018-05-23T14:08:28.435Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PHILIP x BLOG">
-<meta name="twitter:description" content="本地搭建准备工作我们需要提前安装以下工具：  Node.js Git  安装 Node.js 二进制安装 源码安装  如果使用源码安装，还需要安装 gcc/clang/make 等开发工具，比较麻烦 这里我们使用二进制方式安装 centos 环境安装 Node.js v8 LTS，这是官方推荐的版本(截止2018-05) 1$ curl --silent --location https://rp">
-<meta name="twitter:image" content="http://yoursite.com/var/folders/k0/b190mxqj3j3_wg3fg3crxp4w0000gn/T/abnerworks.Typora/image-20180521185858460.png">
+<meta name="twitter:title" content="hexo 博客搭建">
+<meta name="twitter:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
+<meta name="twitter:image" content="http://yoursite.com/var/folders/k0/b190mxqj3j3_wg3fg3crxp4w0000gn/T/abnerworks.Typora/image-20180521204955984.png">
 
 
 
@@ -127,7 +127,7 @@
 
 
 
-  <title> | PHILIP x BLOG</title>
+  <title>hexo 博客搭建 | PHILIP x BLOG</title>
   
 
 
@@ -251,7 +251,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"></h1>
+          <h1 class="post-title" itemprop="name headline">hexo 博客搭建</h1>
         
 
         <div class="post-meta">
@@ -301,41 +301,115 @@
       
 
       
-        <h2 id="本地搭建"><a href="#本地搭建" class="headerlink" title="本地搭建"></a>本地搭建</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们需要提前安装以下工具：</p>
+        <p><a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：</p>
+<blockquote>
+<p>可以使用 Markdown 格式编写博客源文件，支持 <a href="https://github.github.com/gfm/" target="_blank" rel="noopener">GitHub Flavored Markdown</a> 扩展格式<br>从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲染在秒级<br>一键部署，运行一条命令就可以将博客部署到 Github Pages 或者云主机站点</p>
+</blockquote>
+<p>本文将讲述如何基于 Hexo 搭建一套个人博客，有以下内容：</p>
+<ul>
+<li>本地搭建</li>
+<li>远程部署</li>
+</ul>
+<p>废话不多说，下面开始具体步骤。</p>
+<h2 id="本地搭建"><a href="#本地搭建" class="headerlink" title="本地搭建"></a>本地搭建</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们需要提前安装以下工具：</p>
 <ul>
 <li>Node.js</li>
 <li>Git</li>
 </ul>
-<h5 id="安装-Node-js"><a href="#安装-Node-js" class="headerlink" title="安装 Node.js"></a>安装 Node.js</h5><ul>
-<li>二进制安装</li>
+<h5 id="安装-Node-js"><a href="#安装-Node-js" class="headerlink" title="安装 Node.js"></a>安装 Node.js</h5><p>目前(截止2018-05)官方推荐安装 Node.js v8 LTS。 有两种安装方法</p>
+<ol>
+<li>包管理器二进制安装</li>
 <li>源码安装</li>
-</ul>
-<p>如果使用源码安装，还需要安装 gcc/clang/make 等开发工具，比较麻烦</p>
-<p>这里我们使用二进制方式安装</p>
-<p>centos 环境安装 Node.js v8 LTS，这是官方推荐的版本(截止2018-05)</p>
+</ol>
+<p>如果使用源码安装，还需要安装 gcc/clang/make 等开发工具，手动编译代码，比较麻烦，因此我们选择二进制方式安装。</p>
+<p>对于 <strong>Linux</strong> 环境（以Centos为例）官方提供了setup 脚本，我们先下载下来执行：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -</span><br></pre></td></tr></table></figure>
+<p>然后安装 </p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum -y install nodejs</span><br></pre></td></tr></table></figure>
-<p>更详细的安装步骤可以参考这里 <a href="https://nodejs.org/en/download/package-manager/#enterprise-linux-and-fedora" target="_blank" rel="noopener">linux安装 nodejs</a></p>
+<p>对于 <strong>MacOS</strong> 环境，直接使用 Homebrew 包管理器安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install node</span><br></pre></td></tr></table></figure>
+<p>通过下面的命令可以查看已经成功安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ node -v</span><br></pre></td></tr></table></figure>
+<p>更多安装信息可以查看这里 <a href="https://nodejs.org/en/download/package-manager/" target="_blank" rel="noopener">安装 Node.js</a></p>
 <h5 id="安装-git-客户端"><a href="#安装-git-客户端" class="headerlink" title="安装 git 客户端"></a>安装 git 客户端</h5><ul>
-<li><p>Mac: Install it with <a href="http://mxcl.github.com/homebrew/" target="_blank" rel="noopener">Homebrew</a>, <a href="http://www.macports.org/" target="_blank" rel="noopener">MacPorts</a> or <a href="http://sourceforge.net/projects/git-osx-installer/" target="_blank" rel="noopener">installer</a>.</p>
+<li><p>Mac: 使用 Homebrew 安装git：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install git</span><br></pre></td></tr></table></figure>
+<p>如果没有安装 Homebrew，好吧，使用以下ruby命令(mac自带 ruby)安装 Homebrew：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ruby -e <span class="string">"<span class="variable">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)</span>"</span> brew doctor</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>Linux (Ubuntu, Debian): <code>sudo apt-get install git-core</code></p>
-</li>
-<li><p>Linux (Fedora, Red Hat, CentOS): <code>sudo yum install git-core</code></p>
+<li><p>Linux (Fedora, Red Hat, CentOS): </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install git-core</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<p><img src="/var/folders/k0/b190mxqj3j3_wg3fg3crxp4w0000gn/T/abnerworks.Typora/image-20180521185858460.png" alt="image-20180521185858460"></p>
-<h3 id="安装-Hexo"><a href="#安装-Hexo" class="headerlink" title="安装 Hexo"></a>安装 Hexo</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
-<h3 id="示例博客"><a href="#示例博客" class="headerlink" title="示例博客"></a>示例博客</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init demo</span><br><span class="line">$ cd demo</span><br><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
-<p>生成的文件有：</p>
+<p>安装完成</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git version</span><br></pre></td></tr></table></figure>
+<h3 id="安装-Hexo"><a href="#安装-Hexo" class="headerlink" title="安装 Hexo"></a>安装 Hexo</h3><p>有了前面安装的Node.js，我们就可以用它配套的包管理工具 npm 来安装 hexo 了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br><span class="line">$ hexo version</span><br></pre></td></tr></table></figure>
+<h3 id="生成示例博客"><a href="#生成示例博客" class="headerlink" title="生成示例博客"></a>生成示例博客</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init demo</span><br><span class="line">$ cd demo</span><br><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
+<p>npm会依次安装依赖的模块，最终生成的文件大致有以下这些：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── _config.yml</span><br><span class="line">├── node_modules</span><br><span class="line">├── package-lock.json</span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds</span><br><span class="line">├── source</span><br><span class="line">└── themes</span><br></pre></td></tr></table></figure>
-<p>添加自己的博客文章：</p>
+<p>_config.yml是 yaml 格式的配置文件，source 目录用来存放博客源文件，themes 用来放置博客主题（默认的主题为landscape）；渲染的时候还会生成 public 目录，用来存放渲染后的网页文件如 html, js, css, image 等。</p>
+<p>现在我们来添加自己的第一篇博客文章：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"hello Hexo"</span></span><br></pre></td></tr></table></figure>
-<p>在<code>source/_posts/hello-Hexo.md</code></p>
-<p>本地 server</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-server --save</span><br><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>浏览器 <code>http://localhost:5000/</code></p>
-<h3 id="自动部署"><a href="#自动部署" class="headerlink" title="自动部署"></a>自动部署</h3><p>Hexo提供了一种非常方便的部署方式，支持一键部署</p>
+<p>生成的 Markdown 格式源文件为<code>source/_posts/hello-Hexo.md</code>，此时包括自带的 <code>hello-world.md</code> 我们已经有两篇博客：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls <span class="built_in">source</span>/_posts/</span><br><span class="line">hello-Hexo.md  hello-world.md</span><br></pre></td></tr></table></figure>
+<p>我们启动本地 server 来进行预览：<br>首先安装 hexo-server</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> demo</span><br><span class="line">$ npm install hexo-server --save</span><br></pre></td></tr></table></figure>
+<p>启动 server</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>浏览器打开 <code>http://localhost:5000/</code> 就可以看到博客内容了。更多关于 hexo 的使用可以参考 <a href="https://hexo.io/docs/index.html" target="_blank" rel="noopener">这里</a></p>
+<h3 id="渲染"><a href="#渲染" class="headerlink" title="渲染"></a>渲染</h3><p>hexo 提供了命令可以将 Markdown 源文件选染成博客网页文件，供后面的远程部署使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate --deploy</span><br></pre></td></tr></table></figure>
+<p>在 public 目录就会生成静态网页文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls public</span><br><span class="line">2018  archives	css  fancybox  index.html  js</span><br></pre></td></tr></table></figure>
+<h2 id="远程搭建"><a href="#远程搭建" class="headerlink" title="远程搭建"></a>远程搭建</h2><p>前面提过，我们可以将渲染出的静态博客网页文件放到 Github Pages 或者自有的云主机 vps 上，提供外网浏览服务。 <a href="https://pages.github.com/" target="_blank" rel="noopener">Github Pages</a> 是Github 提供的免费网页托管服务，只需要在你的 Github 账户下新建一个 <code>&lt;username&gt;.github.io</code> 库即可托管博客站点，非常方便；如果你购买有自己的云主机，安装常用的 web 服务如 nginx 也可以很简单的搭建一个博客站点。下面我们以阿里云 vps 为例来讲述：</p>
+<h3 id="新建操作账户"><a href="#新建操作账户" class="headerlink" title="新建操作账户"></a>新建操作账户</h3><p>首先在 vps 上新建一个操作账户，如 user00，并赋予其 sudo 权限。注意用 root 用户做如下操作</p>
+<p>新建账户并设置密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ adduser user00</span><br><span class="line">$ passwd user00</span><br></pre></td></tr></table></figure>
+<p>修改 /etc/sudoers 文件，为 user00 添加 sudo 权限，默认该文件是只读的，我们打开编辑权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 740 /etc/sudoers</span><br><span class="line">$ vim /etc/sudoers</span><br></pre></td></tr></table></figure>
+<p>在文件最后添加下面的内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user00 ALL=(ALL) ALL</span><br></pre></td></tr></table></figure>
+<p>保存退出后改回权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
+<p>后面的操作我们就可以避免不安装的 root 账户，使用 user00 账户来操作了。</p>
+<h3 id="安装-nginx"><a href="#安装-nginx" class="headerlink" title="安装 nginx"></a>安装 nginx</h3><p>以vps 安装了 Centos 为例，直接执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install -y nginx</span><br></pre></td></tr></table></figure>
+<p>安装完成后，启动 nginx 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /etc/init.d/nginx start</span><br></pre></td></tr></table></figure>
+<p>浏览器打开<code>http://your-wan-ip/</code> 可以看到 nginx 已经可以使用了</p>
+<p><img src="/var/folders/k0/b190mxqj3j3_wg3fg3crxp4w0000gn/T/abnerworks.Typora/image-20180521204955984.png" alt="image-20180521204955984"></p>
+<h3 id="部署博客文件"><a href="#部署博客文件" class="headerlink" title="部署博客文件"></a>部署博客文件</h3><p>在上文<strong>本地搭建</strong>中我们已经可以渲染出可用的博客网页文件了，下面就需要将这些博客文件部署到我们的远程环境，即阿里云 vps 上。</p>
+<p>Hexo提供了非常方便的部署方式，支持一键部署，本地运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>即可部署到远程，当然它还依赖一些部署工具。hexo支持多种部署工具，如 Git、Rsync、SFTP 等，方便起见我们这选择 Git。有其他需求的可以查看 <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">deploy</a></p>
+<p>使用 Git 方式就需要我们在远程 vps 上搭建 Git server 来存放博客文件，后续就可以用 git 工具来上传了。</p>
+<p>远程 vps 上用刚才的 user00 账户安装 git</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y git</span><br></pre></td></tr></table></figure>
+<p>新建 git 账户用来管理博客文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ adduser git</span><br><span class="line">$ passwd git</span><br><span class="line">$ chmod 740 /etc/sudoers</span><br><span class="line">$ vim /etc/sudoers</span><br><span class="line">$ chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
+<p>使用 git 账户建立 git 裸库 blog.git 存放博客文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo su - git</span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">mkdir -p blog.git</span><br><span class="line"><span class="built_in">cd</span> blog.git</span><br><span class="line">git init --bare</span><br></pre></td></tr></table></figure>
+<p>至此，远程存放博客的环境已经基本搭建完成。</p>
+<p>下面我们做一些工作，以便可以通过 git 方式来一键上传博客文件到远程 vps</p>
+<p>安装插件 <a href="https://github.com/hexojs/hexo-deployer-git" target="_blank" rel="noopener">hexo-deployer-git</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd demo</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>修改 _config.yaml 配置文件，添加 deploy 相关的字段，格式如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: &lt;repository url&gt;</span><br><span class="line">  branch: [branch]</span><br></pre></td></tr></table></figure>
+<p><code>type</code>设置为 git，<code>&lt;repository url&gt;</code> 就是我们刚刚搭建好的远程 git 仓库地址，格式为 <code>user@server-ip:/path/to/git-repo</code></p>
+<p>示例配置如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git@120.120.120.120:/home/git/blog.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+<p>保存退出，执行一键部署</p>
+<p>修改配置文件，使用我们自己的域名和自定义的博客目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vim /etc/nginx/conf.d/default.conf</span><br></pre></td></tr></table></figure>
+<p>内容如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">#</span><br><span class="line"># The default server</span><br><span class="line">#</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    #listen       [::]:80 default_server;</span><br><span class="line">    server_name  www.example.com example.com;</span><br><span class="line">    index index.html index.htm index.php default.html default.htm default.php;</span><br><span class="line">    root         /var/www/blog;</span><br><span class="line"></span><br><span class="line">    location ~ .*\.(ico|gif|jpg|jpeg|png|bmp|swf)$</span><br><span class="line">    &#123;</span><br><span class="line">        access_log   off;</span><br><span class="line">        expires      1d;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location ~ .*\.(js|css|txt|xml)?$</span><br><span class="line">    &#123;</span><br><span class="line">        access_log   off;</span><br><span class="line">        expires      12h;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        try_files $uri $uri/ =404;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修改完成后启动 nginx 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /etc/init.d/nginx restart</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>将 <code>www.example.com example.com</code> 替换为你自己的域名<br>如果监听在默认端口80，域名需要备案<br><code>#listen       [::]:80 default_server;</code>  该行务必注释掉，否则会提示 ipv6监听相关的错误<br><code>root</code> 填写博客文件的目录，可以设置为 <code>/var/www/blog</code></p>
+</blockquote>
+<h3 id="自动部署"><a href="#自动部署" class="headerlink" title="自动部署"></a>自动部署</h3><p>Hexo提供了非常方便的部署方式，支持一键部署，运行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 <p>或</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate --deploy</span><br></pre></td></tr></table></figure>
@@ -348,6 +422,8 @@
 <p>我的配置如下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git@120.120.120.120:/home/git/blog.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean</span><br><span class="line">$ hexo generate --deploy</span><br></pre></td></tr></table></figure>
+<p>执行结果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">20:19:33 philip@~/work/study/hexo/example$ hexo generate --deploy</span><br><span class="line">INFO  Start processing</span><br><span class="line">INFO  Files loaded in 478 ms</span><br><span class="line">INFO  Generated: archives/index.html</span><br><span class="line">INFO  Generated: 2018/05/21/hello-world/index.html</span><br><span class="line">INFO  Generated: archives/2018/index.html</span><br><span class="line">INFO  Generated: index.html</span><br><span class="line">INFO  Generated: archives/2018/05/index.html</span><br><span class="line">INFO  Generated: 2018/05/21/hexo 博客搭建/index.html</span><br><span class="line">INFO  8 files generated in 478 ms</span><br><span class="line">INFO  Deploying: git</span><br><span class="line">INFO  Clearing .deploy_git folder...</span><br><span class="line">INFO  Copying files from public folder...</span><br><span class="line">INFO  Copying files from extend dirs...</span><br><span class="line">[master 55ee6e6] Site updated: 2018-05-21 20:19:46</span><br><span class="line"> 8 files changed, 1014 insertions(+), 10 deletions(-)</span><br><span class="line"> create mode 100644 2018/05/21/hexo 博客搭建/index.html</span><br><span class="line">To 120.120.120.120:/home/git/blog.git</span><br><span class="line">   790f9a5..55ee6e6  HEAD -&gt; master</span><br><span class="line">Branch &apos;master&apos; set up to track remote branch &apos;master&apos; from &apos;git@120.120.120.120:/home/git/blog.git&apos;.</span><br><span class="line">INFO  Deploy done: git</span><br></pre></td></tr></table></figure>
 <h3 id="自动更新"><a href="#自动更新" class="headerlink" title="自动更新"></a>自动更新</h3><p>使用 git-hooks 自动同步git 仓库更新到博客 web 服务器</p>
 <p>使用 <code>post-receive</code> 这个钩子</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim /home/git/blog.git/hooks/post-receive</span><br></pre></td></tr></table></figure>
@@ -395,6 +471,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/21/Github SSH 传输研究/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -471,7 +551,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -508,7 +588,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#本地搭建"><span class="nav-number">1.</span> <span class="nav-text">本地搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#准备工作"><span class="nav-number">1.1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#安装-Node-js"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">安装 Node.js</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#安装-git-客户端"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">安装 git 客户端</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-Hexo"><span class="nav-number">1.2.</span> <span class="nav-text">安装 Hexo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例博客"><span class="nav-number">1.3.</span> <span class="nav-text">示例博客</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动部署"><span class="nav-number">1.4.</span> <span class="nav-text">自动部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动更新"><span class="nav-number">1.5.</span> <span class="nav-text">自动更新</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#本地搭建"><span class="nav-number">1.</span> <span class="nav-text">本地搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#准备工作"><span class="nav-number">1.1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#安装-Node-js"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">安装 Node.js</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#安装-git-客户端"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">安装 git 客户端</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-Hexo"><span class="nav-number">1.2.</span> <span class="nav-text">安装 Hexo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成示例博客"><span class="nav-number">1.3.</span> <span class="nav-text">生成示例博客</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#渲染"><span class="nav-number">1.4.</span> <span class="nav-text">渲染</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#远程搭建"><span class="nav-number">2.</span> <span class="nav-text">远程搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#新建操作账户"><span class="nav-number">2.1.</span> <span class="nav-text">新建操作账户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-nginx"><span class="nav-number">2.2.</span> <span class="nav-text">安装 nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#部署博客文件"><span class="nav-number">2.3.</span> <span class="nav-text">部署博客文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动部署"><span class="nav-number">2.4.</span> <span class="nav-text">自动部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动更新"><span class="nav-number">2.5.</span> <span class="nav-text">自动更新</span></a></li></ol></li></ol></div>
             
 
           </div>
