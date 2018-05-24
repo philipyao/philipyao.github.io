@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="PHILIP x BLOG">
 <meta property="og:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-05-24T03:39:31.023Z">
+<meta property="og:updated_time" content="2018-05-24T03:51:40.540Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hexo 博客搭建">
 <meta name="twitter:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
@@ -364,6 +364,7 @@
 <h2 id="远程搭建"><a href="#远程搭建" class="headerlink" title="远程搭建"></a>远程搭建</h2><p>前面提过，我们可以将渲染出的静态博客网页文件放到 Github Pages 或者自有的云主机 vps 上，提供外网浏览服务。</p>
 <p> <a href="https://pages.github.com/" target="_blank" rel="noopener">Github Pages</a> 是Github 提供的免费网页托管服务，只需要在你的 Github 账户下新建一个 <code>&lt;username&gt;.github.io</code> 库即可托管博客站点，非常方便；</p>
 <p>如果你购买有自己的云主机（国内有阿里云、腾讯云、金山云等），安装常用的 web 服务如 nginx 也可以很简单的搭建一个博客站点。</p>
+<p>这里我们以 vps 搭建博客站点为例</p>
 <h3 id="新建操作账户"><a href="#新建操作账户" class="headerlink" title="新建操作账户"></a>新建操作账户</h3><p>首先在 vps 上新建一个操作账户，如 user00，并赋予其 sudo 权限。注意用 root 用户做如下操作</p>
 <p>新建账户并设置密码</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ adduser user00</span><br><span class="line">$ passwd user00</span><br></pre></td></tr></table></figure>
