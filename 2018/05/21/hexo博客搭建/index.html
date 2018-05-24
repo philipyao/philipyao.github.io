@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="PHILIP x BLOG">
 <meta property="og:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-05-24T04:09:56.036Z">
+<meta property="og:updated_time" content="2018-05-24T04:21:23.248Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hexo 博客搭建">
 <meta name="twitter:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
@@ -357,7 +357,7 @@
 <p>启动 server</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 <p>浏览器打开 <code>http://localhost:5000/</code> 就可以看到博客内容了。更多关于 hexo 的使用可以参考 <a href="https://hexo.io/docs/index.html" target="_blank" rel="noopener">这里</a></p>
-<h3 id="渲染"><a href="#渲染" class="headerlink" title="渲染"></a>渲染</h3><p>hexo 提供了命令可以将 Markdown 源文件选染成博客网页文件，供后面的远程部署使用</p>
+<h3 id="渲染"><a href="#渲染" class="headerlink" title="渲染"></a>渲染</h3><p>hexo 提供了命令可以将 Markdown 源文件渲染成博客网页文件，供后面的远程部署使用</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 <p>在 public 目录就会生成静态网页文件</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls public</span><br><span class="line">2018  archives	css  fancybox  index.html  js</span><br></pre></td></tr></table></figure>
@@ -376,14 +376,14 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
 <p>后面的操作我们就可以避免不安全的 root 账户，使用 user00 账户来操作了。</p>
 <h3 id="安装-nginx"><a href="#安装-nginx" class="headerlink" title="安装 nginx"></a>安装 nginx</h3><p>以vps 安装了 Centos 为例，直接执行命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install -y nginx</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ su - user00</span><br><span class="line">$ sudo yum install -y nginx</span><br></pre></td></tr></table></figure>
 <p>安装完成后，启动 nginx 服务</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /etc/init.d/nginx start</span><br></pre></td></tr></table></figure>
 <p>浏览器打开<code>http://your-wan-ip/</code> 可以看到 nginx 已经可以使用了</p>
 <blockquote>
 <p>your-wan-ip 填写你的 vps 外网 ip</p>
 </blockquote>
-<h3 id="自动上传"><a href="#自动上传" class="headerlink" title="自动上传"></a>自动上传</h3><p>在上文<strong>本地搭建</strong>中我们已经可以渲染出可用的博客网页文件了（通过 hexo generate 命令），下面就需要将这些博客文件上传到我们的远程环境，即阿里云 vps 上。</p>
+<h3 id="自动上传"><a href="#自动上传" class="headerlink" title="自动上传"></a>自动上传</h3><p>在上文<strong>本地搭建</strong>中我们已经可以渲染出可用的博客网页文件了（通过 hexo generate 命令），下面就需要将这些博客文件上传到我们的远程环境，即云 vps 上。</p>
 <p>Hexo提供了非常方便的上传方式，支持一键自动部署，在本地运行命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 <p>即可部署到远程，当然它还依赖一些部署工具。hexo支持多种部署工具，如 Git、Rsync、SFTP 等，方便起见我们这选择 Git。有其他需求的可以查看 <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">deploy</a></p>
@@ -401,7 +401,12 @@
 <p>因为我们需要通过 git 账户来将本地的博客文件上传至远程 vps 上的 repository 里，所以需要在远程 vps 上创建 git 账户</p>
 <h5 id="创建-git-账户"><a href="#创建-git-账户" class="headerlink" title="创建 git 账户"></a>创建 git 账户</h5><p>在远程 vps 上运行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo adduser git</span><br><span class="line">$ sudo passwd git</span><br></pre></td></tr></table></figure>
-<p>git 通过 ssh 方式上传文件时，如果每次都需要用户输入密码会非常麻烦，因此我们换一种方式，使用公钥方式免密码登录，详细的 ssh 公钥登录原理可以在这里查看 <a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">ssh 公钥登录</a></p>
+<p>git 通过 ssh 方式上传文件时，有两种方式访问远端服务器</p>
+<ul>
+<li>密码登录</li>
+<li>公钥免密码登录</li>
+</ul>
+<p>如果使用密码登录方式，每次都需要用户输入密码会非常麻烦，因此我们选择另外一种方式，即公钥方式登录。公钥登录需要本地生成密钥对，然后保存到远端服务器。详细的 ssh 公钥登录原理可以在这里查看 <a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">ssh 公钥登录</a></p>
 <h5 id="本地生成密钥对"><a href="#本地生成密钥对" class="headerlink" title="本地生成密钥对"></a>本地生成密钥对</h5><p>切换到本地环境，运行密钥生成命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C <span class="string">"your-email@example.com"</span></span><br></pre></td></tr></table></figure>
 <p><a href="mailto:your-email@example.com" target="_blank" rel="noopener">your-email@example.com</a> 填写你的邮箱地址即可，然后一路回车，运行结束以后，在$HOME/.ssh/目录下，会新生成两个文件：id_rsa.pub 和 id_rsa。前者是你的公钥，后者是你的私钥。</p>
