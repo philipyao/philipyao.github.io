@@ -712,6 +712,8 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /etc/init.d/nginx restart</span><br></pre></td></tr></table></figure>
 <p>浏览器打开 <code>http://www.example.com/</code> 可以看到博客内容</p>
 <p>至此，远程存放博客的环境已经搭建完成。</p>
+<p>以后更新博客，只需要在本地环境编辑好 Markdown 文件，就可以一键自动部署了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean &amp;&amp; hexo generate --deploy</span><br></pre></td></tr></table></figure>
 <p>参考资料：</p>
 <p><a href="https://segmentfault.com/a/1190000005723321" target="_blank" rel="noopener">阿里云VPS搭建自己的的Hexo博客</a></p>
 <p><a href="https://hexo.io/docs/index.html" target="_blank" rel="noopener">Hexo官方文档</a></p>

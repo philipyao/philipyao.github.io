@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="PHILIP x BLOG">
 <meta property="og:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-05-24T04:21:23.248Z">
+<meta property="og:updated_time" content="2018-05-24T04:25:16.381Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hexo 博客搭建">
 <meta name="twitter:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
@@ -473,6 +473,8 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /etc/init.d/nginx restart</span><br></pre></td></tr></table></figure>
 <p>浏览器打开 <code>http://www.example.com/</code> 可以看到博客内容</p>
 <p>至此，远程存放博客的环境已经搭建完成。</p>
+<p>以后更新博客，只需要在本地环境编辑好 Markdown 文件，就可以一键自动部署了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean &amp;&amp; hexo generate --deploy</span><br></pre></td></tr></table></figure>
 <p>参考资料：</p>
 <p><a href="https://segmentfault.com/a/1190000005723321" target="_blank" rel="noopener">阿里云VPS搭建自己的的Hexo博客</a></p>
 <p><a href="https://hexo.io/docs/index.html" target="_blank" rel="noopener">Hexo官方文档</a></p>
