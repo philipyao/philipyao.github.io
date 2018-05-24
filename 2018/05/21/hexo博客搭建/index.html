@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="PHILIP x BLOG">
 <meta property="og:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-05-24T03:51:40.540Z">
+<meta property="og:updated_time" content="2018-05-24T04:08:26.221Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hexo 博客搭建">
 <meta name="twitter:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
@@ -372,7 +372,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 740 /etc/sudoers</span><br><span class="line">$ vim /etc/sudoers</span><br></pre></td></tr></table></figure>
 <p>在文件最后添加下面的内容</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user00 ALL=(ALL) ALL</span><br></pre></td></tr></table></figure>
-<p>保存退出后改回权限</p>
+<p>保存退出后改回只读状态</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
 <p>后面的操作我们就可以避免不安全的 root 账户，使用 user00 账户来操作了。</p>
 <h3 id="安装-nginx"><a href="#安装-nginx" class="headerlink" title="安装 nginx"></a>安装 nginx</h3><p>以vps 安装了 Centos 为例，直接执行命令</p>
@@ -404,8 +404,8 @@
 <p>git 通过 ssh 方式上传文件时，如果每次都需要用户输入密码会非常麻烦，因此我们换一种方式，使用公钥方式免密码登录，详细的 ssh 公钥登录原理可以在这里查看 <a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">ssh 公钥登录</a></p>
 <h5 id="本地生成密钥对"><a href="#本地生成密钥对" class="headerlink" title="本地生成密钥对"></a>本地生成密钥对</h5><p>切换到本地环境，运行密钥生成命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C <span class="string">"your-email@example.com"</span></span><br></pre></td></tr></table></figure>
-<p><a href="mailto:`your-email@example.com" target="_blank" rel="noopener">`your-email@example.com</a>` 填写你的邮箱地址即可，然后一路回车，运行结束以后，在$HOME/.ssh/目录下，会新生成两个文件：id_rsa.pub 和 id_rsa。前者是你的公钥，后者是你的私钥。</p>
-<h5 id="存储公钥"><a href="#存储公钥" class="headerlink" title="存储公钥"></a>存储公钥</h5><p>有了公钥，我们就将其上传到远程 vps 上，存储起来。在远程 vps 上，/home/git/.ssh/authorized_keys 文件保存公钥。</p>
+<p><a href="mailto:your-email@example.com" target="_blank" rel="noopener">your-email@example.com</a> 填写你的邮箱地址即可，然后一路回车，运行结束以后，在$HOME/.ssh/目录下，会新生成两个文件：id_rsa.pub 和 id_rsa。前者是你的公钥，后者是你的私钥。</p>
+<h5 id="存储公钥"><a href="#存储公钥" class="headerlink" title="存储公钥"></a>存储公钥</h5><p>有了公钥，我们就将其上传到远程 vps 上，存储起来，以后 ssh 访问就不需要密码了。在远程 vps 上，/home/git/.ssh/authorized_keys 文件用来保存公钥。</p>
 <p>首先，本地环境复制公钥内容</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat <span class="variable">$HOME</span>/.ssh/id_rsa.pub | pbcopy</span><br></pre></td></tr></table></figure>
 <p>远程 vps 上，切换为 git 账户</p>
@@ -419,12 +419,12 @@
 <p>本地环境运行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -v git@server-ip</span><br></pre></td></tr></table></figure>
 <p>这里的 server-ip 填写你 vps 的外网 ip(wanip)，运行后显示连接成功</p>
-<p>接下来，我们需要新建一个 repository目录 (例如 blog.git)来存放博客文件</p>
-<h5 id="新建-repository"><a href="#新建-repository" class="headerlink" title="新建 repository"></a>新建 repository</h5><p>在远程 vps 上，运行命令创建git 裸库</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span></span><br><span class="line">mkdir -p blog.git</span><br><span class="line"><span class="built_in">cd</span> blog.git</span><br><span class="line">git init --bare</span><br></pre></td></tr></table></figure>
+<p>接下来，我们需要新建一个 repository 目录 (例如 blog.git)来存放博客文件</p>
+<h5 id="新建-repository"><a href="#新建-repository" class="headerlink" title="新建 repository"></a>新建 repository</h5><p>在远程 vps 上，运行命令创建 git 裸库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span></span><br><span class="line">$ mkdir -p blog.git</span><br><span class="line">$ <span class="built_in">cd</span> blog.git</span><br><span class="line">$ git init --bare</span><br></pre></td></tr></table></figure>
 <p>为了使 <code>hexo deploy</code> 命令可以运行，我们还需要做一些工作，让 hexo 通过 git 上传文件</p>
 <h5 id="配置-hexo-上传"><a href="#配置-hexo-上传" class="headerlink" title="配置 hexo 上传"></a>配置 hexo 上传</h5><p>本地环境，安装插件 <a href="https://github.com/hexojs/hexo-deployer-git" target="_blank" rel="noopener">hexo-deployer-git</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd demo</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd demo</span><br><span class="line">$ npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
 <p>修改 _config.yaml 配置文件，添加 deploy 相关的字段，格式如下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: &lt;repository url&gt;</span><br><span class="line">  branch: [branch]</span><br></pre></td></tr></table></figure>
 <p><code>type</code>设置为 git，<code>&lt;repository url&gt;</code> 就是我们刚刚搭建好的远程 git 仓库地址，格式为 <code>user@server-ip:/path/to/git-repo</code></p>
@@ -442,7 +442,9 @@
 <p>输入以下 bash 脚本内容</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">git --work-tree=/var/www/blog --git-dir=/home/git/blog.git checkout -f</span><br></pre></td></tr></table></figure>
 <p>该脚本会在 git repository (/home/git/blog.git) 有上传时自动 checkout 内容到 nginx 网页目录 /var/www/blog</p>
-<p>更多Git Hooks 的使用请参考 <a href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks" target="_blank" rel="noopener">Git Hooks</a></p>
+<p>修改完成后，赋予 post-receive 脚本可执行权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ chmod +x hooks/post-receive</span><br></pre></td></tr></table></figure>
+<p>现在，只要 repository 有更新，我们的 hook 脚本就会自动执行了。更多Git Hooks 的使用可以参考 <a href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks" target="_blank" rel="noopener">Git Hooks</a></p>
 <p>下面测试一下自动更新是否起效</p>
 <h5 id="测试自动更新"><a href="#测试自动更新" class="headerlink" title="测试自动更新"></a>测试自动更新</h5><p>本地环境修改一下博客 source/_posts/hello-Hexo.md</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> demo</span><br><span class="line">$ vim <span class="built_in">source</span>/_posts/hello-Hexo.md</span><br></pre></td></tr></table></figure>
@@ -465,7 +467,7 @@
 <p>修改完成后重启 nginx 服务</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /etc/init.d/nginx restart</span><br></pre></td></tr></table></figure>
 <p>浏览器打开 <code>http://www.example.com/</code> 可以看到博客内容</p>
-<p>至此，远程存放博客的环境已经基本搭建完成。</p>
+<p>至此，远程存放博客的环境已经搭建完成。</p>
 <p>参考资料：</p>
 <p><a href="https://segmentfault.com/a/1190000005723321" target="_blank" rel="noopener">阿里云VPS搭建自己的的Hexo博客</a></p>
 <p><a href="https://hexo.io/docs/index.html" target="_blank" rel="noopener">Hexo官方文档</a></p>
