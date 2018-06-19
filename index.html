@@ -229,6 +229,169 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/19/服务器断电后自启动/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/19/服务器断电后自启动/" itemprop="url">服务器断电后自启动</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-19T10:15:57+08:00">
+                2018-06-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/06/19/服务器断电后自启动/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/06/19/服务器断电后自启动/" class="cy_cmt_count" data-xid="2018/06/19/服务器断电后自启动/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>创业公司的生产资料主要集中在自己搭建的服务器上，由于一些客观因素（没钱，环境差）导致服务器经常断电，一般周末经常性的『技术性』断电重启，导致坑爹的一早来就要手动开机、手动启动虚拟机、手动启动后台进程，不知不觉中一上午就没有了，一次两次可以，次数多了之后难免烦躁，打算一劳永逸解决这件事情。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>解决这个问题其实就是分别解决下面几个问题：</p>
+<ul>
+<li>自动开机</li>
+<li>自动开启虚拟机</li>
+<li>自动开启进程</li>
+</ul>
+<h3 id="通电自动开机"><a href="#通电自动开机" class="headerlink" title="通电自动开机"></a>通电自动开机</h3><p>关于自动开机的原理及方式有很多，比如来电自动、鼠标键盘启动、局域网自动唤醒等等，我们这里打算用来电自动的方式。</p>
+<p>通电自动开机依赖于服务器的<strong>主板支持该功能</strong>；对于支持该功能的主板，其BIOS设置里这个功能是一般默认关闭，我们需要在 BIOS 设置里开启该功能。至于具体的设置，由于不同主板设置选项各不相同，本文暂时不做论述，大家可以自行 google 或者在各厂家的产品页面寻求帮助。</p>
+<h3 id="虚拟机自启动"><a href="#虚拟机自启动" class="headerlink" title="虚拟机自启动"></a>虚拟机自启动</h3><p>为了方便服务器的管理，一般需要在物理机上安装特定的虚拟机管理软件，比较知名的如 citrix 公司的 <a href="https://xenserver.org/" target="_blank" rel="noopener">XenServer</a>、vmware的 <a href="https://www.vmware.com/products/vsphere.html" target="_blank" rel="noopener">vSphere</a> 等。自动开启虚拟机依赖具体的虚拟机管理软件。我们使用开源的XenServer，6.0之后的版本已经支持虚拟机随server启动而启动。XenServer 以 ISO 的形式提供，包含服务端、GUI客户端 XenCenter及命令行工具 xe-cli 等。详细的下载和安装可以参考 <a href="https://xenserver.org/open-source-virtualization-download.html" target="_blank" rel="noopener">官网</a> </p>
+<p>通过命令行 xe-cli 可以设置虚拟机在物理机启动后自启动，xe-cli 在 ISO 镜像文件里，以 rpm 的形式提供。以 Centos6 环境为例，安装 xe-cli：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rpm -ivh xe-cli-7.1.0-137263c.x86_64.rpm</span><br></pre></td></tr></table></figure>
+<p>注意，这里的 xe-cli 可以安装在和服务器连接的内网机器上，可以是任意一台虚拟机系统里，其本质和 GUI 形式的客户端管理工具 XenCenter 类似，只不过是命令行形式而已。</p>
+<p>我们设置需要连接的服务器物理机 ip (例如10.1.164.37)以及登录用户密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat ~/.xe </span><br><span class="line">server=10.1.164.37</span><br><span class="line">username=root</span><br><span class="line">password=123456</span><br></pre></td></tr></table></figure>
+<p>然后设置资源池 (vm-pool) 允许自动重启，先列出所有 pool 的 uuid，然后设置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ xe pool-list</span><br><span class="line">uuid ( RO) : 8f05704a-09be-d56a-0b08-f6f2e8a10d46</span><br><span class="line">name-label ( RW): </span><br><span class="line">name-description ( RW): </span><br><span class="line">master ( RO): b33b36ba-6f9d-43e3-90c9-bb62e27193bf</span><br><span class="line">default-SR ( RW): &lt;not <span class="keyword">in</span> database&gt;</span><br><span class="line"></span><br><span class="line">$ xe pool-param-set uuid=8f05704a-09be-d56a-0b08-f6f2e8a10d46 other-config:auto_poweron=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>最后选择需要自动重启的虚拟机，然后设置为自动重启(同样使用 uuid 来设置)：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ xe vm-list</span><br><span class="line">uuid ( RO) : 2548c2b1-103d-8d6a-433d-77cbc8cabfb8</span><br><span class="line">name-label ( RW): Base</span><br><span class="line">power-state ( RO): halted</span><br><span class="line">uuid ( RO) : 756d3025-d365-8de3-6f54-755464534e84</span><br><span class="line">name-label ( RW): svr.test.164.43</span><br><span class="line">power-state ( RO): halted</span><br><span class="line">uuid ( RO) : 68d76d60-9b5b-40fe-b88f-edf0cd8906da</span><br><span class="line">name-label ( RW): Control domain on host: xenserver-fbilcznb</span><br><span class="line">power-state ( RO): running</span><br><span class="line"></span><br><span class="line">$ xe vm-param-set uuid=756d3025-d365-8de3-6f54-755464534e84 other-config:auto_poweron:<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">$ xe vm-param-set uuid=68d76d60-9b5b-40fe-b88f-edf0cd8906da other-config:auto_poweron:<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>详细可以参看 <a href="https://support.citrix.com/article/CTX133910" target="_blank" rel="noopener">这里</a></p>
+<h3 id="自动启动进程"><a href="#自动启动进程" class="headerlink" title="自动启动进程"></a>自动启动进程</h3><p>自动启动进程就比较简单了，通过 chkconfig 命令或者修改 /etc/rc.local 文件就可以在系统启动时候做任何你想做的事情了，我们在这里添加一些启动数据库和服务器进程的操作。</p>
+<h4 id="使用-chkconfig"><a href="#使用-chkconfig" class="headerlink" title="使用 chkconfig"></a>使用 chkconfig</h4><p>chkconfig 使用说明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">用法：    chkconfig [--list] [--type &lt;type&gt;] [name]</span><br><span class="line">         chkconfig --add &lt;name&gt;</span><br><span class="line">         chkconfig --del &lt;name&gt;</span><br><span class="line">         chkconfig --override &lt;name&gt;</span><br><span class="line">         chkconfig [--level &lt;levels&gt;] [--type &lt;type&gt;] &lt;name&gt; &lt;on|off|reset|resetpriorities&gt;</span><br></pre></td></tr></table></figure>
+<p>以设置 mysqld 进程自动启动为例</p>
+<p><img src="/images/chkconfig2.png" alt="mysqld 自启动"></p>
+<p>或者 </p>
+<h4 id="使用-rc-local"><a href="#使用-rc-local" class="headerlink" title="使用 rc.local"></a>使用 rc.local</h4><p>修改 <code>/etc/rc.local</code></p>
+<p>添加 </p>
+<p><code>/etc/init.d/mysqld start</code></p>
+<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>至此，我们终于一劳永逸解决这些烦人的问题了，是时候泡杯咖啡好好享受生活了。。。。</p>
+<p>参考资料</p>
+<p><a href="https://www.cnblogs.com/voiphudong/p/3934596.html" target="_blank" rel="noopener">如何设置BIOS使服务器断电后再来电能自动开机</a></p>
+<p><a href="https://support.citrix.com/article/CTX133910" target="_blank" rel="noopener">How to Setup XenServer 6.x to Auto-Start Virtual Machines</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/24/Maven scope 备忘/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1288,7 +1451,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
