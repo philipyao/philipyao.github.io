@@ -323,7 +323,7 @@
 </ul>
 <p>简单起见，我们选择第一种方式（如果你没有管理员权限，则只能选第二种方式）</p>
 <ol>
-<li><p>下载 .dmg 格式的安装包，一般我们使用社区版本，文件格式一般是  <code>mysql-5.7.22-macos10.13-x86_64.dmg</code>，下载地址为 <a href="https://dev.mysql.com/downloads/mysql/5.7.html#downloads" target="_blank" rel="noopener">mysql5.7下载</a></p>
+<li><p>下载 .dmg 格式的安装包，一般我们使用社区版本，例如  <code>mysql-5.7.22-macos10.13-x86_64.dmg</code>，下载地址为 <a href="https://dev.mysql.com/downloads/mysql/5.7.html#downloads" target="_blank" rel="noopener">mysql5.7下载</a></p>
 </li>
 <li><p>下载完成后双击执行安装，如下</p>
 <p><img src="/images/image-20180627110750323.png" alt="image-20180627110750323"></p>
@@ -335,7 +335,7 @@
 </ol>
 <h2 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h2><p>修改密码之前，先手动启动 mysql 服务</p>
 <p>mysql 被安装在/usr/local/mysql 目录，我们将 bin 目录添加到 PATH 环境变量以方便执行 mysql 命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo <span class="built_in">echo</span> <span class="string">'export PATH=/usr/local/mysql/bin:$PATH'</span> &gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH=/usr/local/mysql/bin:$PATH'</span> &gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
 <p>然后就可以使用mysqld_safe 命令手动启动 mysql 进程了</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mysqld_safe --user=mysql &amp;</span><br></pre></td></tr></table></figure>
 <p>使用生成的随机密码登录到 mysql</p>
@@ -346,10 +346,10 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p</span><br></pre></td></tr></table></figure>
 <p>这样我们就能执行 mysql 的操作了</p>
 <p>另外，我们还要将刚才手动启动的 mysql 关闭，然后使用正式方式启动mysql 服务</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqladmin -u root -p shutdown</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mysqladmin -u root -p shutdown</span><br></pre></td></tr></table></figure>
 <p>我们使用 macOS 下的服务面板来启动 mysql，依次点击系统左上角的 <strong>苹果</strong> 图标 -&gt;系统偏好设置-&gt;MySQL-&gt;Start MySQL Server</p>
-<p><img src="../../../../../../../../var/folders/k0/b190mxqj3j3_wg3fg3crxp4w0000gn/T/abnerworks.Typora/image-20180627141058962.png" alt="image-20180627141058962"></p>
-<h2 id="新建-user"><a href="#新建-user" class="headerlink" title="新建 user"></a>新建 user</h2><p>先使用修改 后的 root 密码登录</p>
+<p><img src="/images/image-20180627141058962.png" alt="image-20180627141058962"></p>
+<h2 id="新建-user"><a href="#新建-user" class="headerlink" title="新建 user"></a>新建 user</h2><p>先使用修改后的 root 密码登录</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p</span><br></pre></td></tr></table></figure>
 <p>为 root 赋予所有权限</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT all ON *.* to root@localhost IDENTIFIED BY <span class="string">'root_passwd'</span>;</span><br></pre></td></tr></table></figure>
