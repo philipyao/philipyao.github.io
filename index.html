@@ -320,6 +320,7 @@
 <ul>
 <li>原生包安装器 (DMG) 来进行安装。这种方式需要拥有 mac 系统的管理员权限。</li>
 <li>使用二进制压缩包来进行安装，安装包格式一般是  <code>mysql-*VERSION*-*OS*.tar.gz</code> 。可以使用 tar 或者 gzip 命令将 mysql 安装在任意目录。注意这种方式可以没有管理员权限。</li>
+<li>源码编译安装，需要预先安装 cmake，make，boost c++库等，比较繁琐。</li>
 </ul>
 <p>简单起见，我们选择第一种方式（如果你没有管理员权限，则只能选第二种方式）</p>
 <ol>
@@ -357,8 +358,34 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT LOCK TABLES,select,insert,update,delete,create,drop,index,alter ON `db\_%`.* to philip@<span class="string">"10.%.%.%"</span> IDENTIFIED BY <span class="string">'tmpP001'</span>;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
 <p>新建 query 用户并赋予以 db_oss_开头命名的库的只读权限</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT select ON `db\_oss\_%`.* to query@<span class="string">"localhost"</span> IDENTIFIED BY <span class="string">'123'</span>;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<h2 id="编码配置"><a href="#编码配置" class="headerlink" title="编码配置"></a>编码配置</h2><h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>在 windows 平台，如果使用安装程序安装，则安装程序会在 mysql 安装目录自动创建一个名为 my.ini 的文件作为mysql 服务的配置文件；如果是使用 zip 压缩包安装，则需要拷贝my-default.ini为 my.ini 作为配置文件（注意，MySQL 5.7.18版本之后的 mysql 压缩包不包括 my-default.ini）</p>
+<p>在非 windows 平台，没有默认的配置文件，mysql 启动时会使用缺省的参数。因此我们需要手动创建 my.cnf 。</p>
+<p>以下命令可以查看 mysql 的参数列表以及server 启动时会读取哪些配置文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqld --verbose --<span class="built_in">help</span> | less</span><br></pre></td></tr></table></figure></p>
+<p>搜索 my.cnf 可以看到，配置文件读取顺序为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Default options are read from the following files in the given order:</span><br><span class="line">/etc/my.cnf /etc/mysql/my.cnf /usr/local/mysql/etc/my.cnf ~/.my.cnf</span><br></pre></td></tr></table></figure>
+<p>我们选择其中一个目录新建 my.cnf 即可。</p>
+<h3 id="存储编码"><a href="#存储编码" class="headerlink" title="存储编码"></a>存储编码</h3><p>字符集不仅影响 mysql 的数据存储，也影响 client 程序和 mysql server 的连接交互，因此在考虑设置编码的时候，这两方面都需要考虑。</p>
+<p>mysql 5.7 版本默认的存储字符集和字符比较规则为 <code>latin1</code>, <code>latin1_swedish_ci</code>，这与通用的 <code>utf8</code> 标准不兼容，因此我们需要修改 mysql 的默认 character set 和 collation。字符集设置按照层级分为四个：server, database, table, and column。</p>
+<p>首先查看现有的设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show VARIABLES like &apos;%character%&apos;;</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">| Variable_name            | Value                                                     |</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">| character_set_client     | utf8                                                      |</span><br><span class="line">| character_set_connection | utf8                                                      |</span><br><span class="line">| character_set_database   | latin1                                                    |</span><br><span class="line">| character_set_filesystem | binary                                                    |</span><br><span class="line">| character_set_results    | utf8                                                      |</span><br><span class="line">| character_set_server     | latin1                                                    |</span><br><span class="line">| character_set_system     | utf8                                                      |</span><br><span class="line">| character_sets_dir       | /usr/local/mysql-5.7.22-macos10.13-x86_64/share/charsets/ |</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">8 rows in set (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; show VARIABLES like &apos;%collation%&apos;;</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">| Variable_name        | Value             |</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">| collation_connection | utf8_general_ci   |</span><br><span class="line">| collation_database   | latin1_swedish_ci |</span><br><span class="line">| collation_server     | latin1_swedish_ci |</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">3 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>可以看到 character_set_database、character_set_server、collation_database、 collation_server 几个选项的值都为 latin1，需要修改为 utf8。</p>
+<p>在 HOME 目录创建 my.cnf 文件作为配置文件，添加以下内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">character-set-server=utf8</span><br><span class="line">collation-server=utf8_general_ci</span><br></pre></td></tr></table></figure>
+<p>完成后使用 mac 偏好设置里 的 mysql launch daemon panel来重新启动 mysql 即可。 </p>
+<p><img src="/images/image-20180704104726142.png" alt="image-20180704104726142"></p>
+<p><strong>注意</strong> 这里在配置 my.cnf 的时候需要特别注意两点</p>
+<ul>
+<li><p>假如新建 /etc/my.cnf 作为配置文件，需要将文件 mode 设置为644，否则启动会不成功或者配置被忽略</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo chmod 644 /etc/my.cnf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>只需要设置 character-set-server 和 collation-server 两个选项，并不存在 character_set_database 和 collation_database 选项。原因是 server 级别的选项已经涵盖了 database 级别的设置。如果你需要单独设置某个 database 的编码，在输入 create table SQL语句时单独指定即可，详见 <a href="https://dev.mysql.com/doc/refman/5.7/en/charset-applications.html" target="_blank" rel="noopener">这里</a></p>
+</li>
+</ul>
+<h3 id="连接编码"><a href="#连接编码" class="headerlink" title="连接编码"></a>连接编码</h3><p>除了存储编码，我们每次通过 client 连接到 MySQL server（如 mysql client 或者PHP 脚本等）时，还需要设置该连接的交互字符集为 utf8，执行以下语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET NAMES &apos;utf8&apos;;</span><br></pre></td></tr></table></figure>
 <p>参考文档</p>
 <p><a href="https://dev.mysql.com/doc/refman/8.0/en/" target="_blank" rel="noopener">MySQL 官网</a></p>
+<p><a href="https://dev.mysql.com/doc/refman/5.7/en/charset-applications.html" target="_blank" rel="noopener">Configuring Application Character Set and Collation</a></p>
 
           
         
