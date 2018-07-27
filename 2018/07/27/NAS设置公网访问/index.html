@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="NAS 公网 DDNS," />
 
 
 
@@ -79,14 +79,24 @@
 
 
 
+<meta name="description" content="引子入手了群晖 NAS 之后，一直使用厂家提供的 quickconnect 来从外网访问家里的 NAS。quickconnect 的原理其实是要通过群晖的服务器进行中转，然后再连接 NAS，由于服务器不在国内，其传输速度可想而知，通常就是几十上百 K的水平。如果只是通过 web 连接 NAS 来管理或者操作FileStation 来下载还是勉强可用的，但是如果要从外网上传文件到 NAS 或者从 N">
+<meta name="keywords" content="NAS 公网 DDNS">
 <meta property="og:type" content="article">
-<meta property="og:title" content="first">
-<meta property="og:url" content="http://yoursite.com/2018/05/21/first/index.html">
+<meta property="og:title" content="NAS设置公网访问">
+<meta property="og:url" content="http://yoursite.com/2018/07/27/NAS设置公网访问/index.html">
 <meta property="og:site_name" content="PHILIP x BLOG">
+<meta property="og:description" content="引子入手了群晖 NAS 之后，一直使用厂家提供的 quickconnect 来从外网访问家里的 NAS。quickconnect 的原理其实是要通过群晖的服务器进行中转，然后再连接 NAS，由于服务器不在国内，其传输速度可想而知，通常就是几十上百 K的水平。如果只是通过 web 连接 NAS 来管理或者操作FileStation 来下载还是勉强可用的，但是如果要从外网上传文件到 NAS 或者从 N">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-05-21T03:55:13.204Z">
+<meta property="og:image" content="http://yoursite.com/images/route.png">
+<meta property="og:image" content="http://yoursite.com/images/dsm.png">
+<meta property="og:image" content="http://yoursite.com/images/forward.png">
+<meta property="og:image" content="http://yoursite.com/images/telnet.png">
+<meta property="og:image" content="http://yoursite.com/images/ddns.png">
+<meta property="og:updated_time" content="2018-07-27T06:18:33.391Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="first">
+<meta name="twitter:title" content="NAS设置公网访问">
+<meta name="twitter:description" content="引子入手了群晖 NAS 之后，一直使用厂家提供的 quickconnect 来从外网访问家里的 NAS。quickconnect 的原理其实是要通过群晖的服务器进行中转，然后再连接 NAS，由于服务器不在国内，其传输速度可想而知，通常就是几十上百 K的水平。如果只是通过 web 连接 NAS 来管理或者操作FileStation 来下载还是勉强可用的，但是如果要从外网上传文件到 NAS 或者从 N">
+<meta name="twitter:image" content="http://yoursite.com/images/route.png">
 
 
 
@@ -116,13 +126,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/05/21/first/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/27/NAS设置公网访问/"/>
 
 
 
 
 
-  <title>first | PHILIP x BLOG</title>
+  <title>NAS设置公网访问 | PHILIP x BLOG</title>
   
 
 
@@ -229,7 +239,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/first/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/27/NAS设置公网访问/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="philipyao">
@@ -246,7 +256,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">first</h1>
+          <h1 class="post-title" itemprop="name headline">NAS设置公网访问</h1>
         
 
         <div class="post-meta">
@@ -258,8 +268,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T11:55:13+08:00">
-                2018-05-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-27T12:39:00+08:00">
+                2018-07-27
               </time>
             
 
@@ -278,8 +288,8 @@
                 <i class="fa fa-comment-o"></i>
               </span>
               
-                <a href="/2018/05/21/first/#SOHUCS" itemprop="discussionUrl">
-                  <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2018/05/21/first/" itemprop="commentsCount"></span>
+                <a href="/2018/07/27/NAS设置公网访问/#SOHUCS" itemprop="discussionUrl">
+                  <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2018/07/27/NAS设置公网访问/" itemprop="commentsCount"></span>
                 </a>
               
             
@@ -307,7 +317,47 @@
       
 
       
-        
+        <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>入手了群晖 NAS 之后，一直使用厂家提供的 quickconnect 来从外网访问家里的 NAS。quickconnect 的原理其实是要通过群晖的服务器进行中转，然后再连接 NAS，由于服务器不在国内，其传输速度可想而知，通常就是几十上百 K的水平。如果只是通过 web 连接 NAS 来管理或者操作FileStation 来下载还是勉强可用的，但是如果要从外网上传文件到 NAS 或者从 NAS 下载，这种速度是不可忍受的。</p>
+<h2 id="直连"><a href="#直连" class="headerlink" title="直连"></a>直连</h2><p>要提高速度的办法，只能是外网直连 NAS 了。但是一般 NAS 都会部署在家里或者公司的内网环境，要能从外网访问，一般需要使用路由器带的端口转发或者 DMZ 功能。具体流程就是</p>
+<ol>
+<li><p>外网通过公网 IP 连接到路由器</p>
+</li>
+<li><p>路由器通过端口转发，将特定端口的包转发给内网同一网段的 NAS，从而实现通信</p>
+</li>
+</ol>
+<p>不过，在开始前，我们还有几个问题需要预先解决</p>
+<ul>
+<li><p>首先，国内大部分网络环境是光猫拨号进行上网，运营商默认会设置光猫为路由(Route)模式，猫自动进行 PPPoE拨号，同时也带有简单的路由功能，于是我们可以直接连接猫的 Lan 口进行上网。但是一般猫的路由功能很鸡肋， 往往没有无线 Wifi 功能，带的 Lan 口也有限，所以一般会在猫后面接一个专用路由器来管理家里的诸多设备及无线上网。所以 NAS 是连接到路由器，再通过光猫连接到公网环境的。这带来一个问题：如果我们能连接到光猫，也没法直接访问内网的 NAS。所幸光猫还提供了一种成为桥接(Bridage)的模式，意思是将外网和光猫后面的设备(也就是我们的路由器)进行直连，由我们的路由器来进行拨号，而光猫本事是透明的，只是用来透传数据。</p>
+<p><img src="/images/route.png" alt="image-20180727133456750"></p>
+</li>
+</ul>
+<ul>
+<li>运营商一般会给用户默认分配内网 IP，这导致我们没法连接到家里的路由器。因此需要联系运营商，让他们分配公网 IP 给我们。</li>
+</ul>
+<p>这些完成之后，我们就可以检查公网是否能访问自己的网络了，使用 ping 来检查是否畅通(如果有路由上设置了禁止 ping，需要关闭该设置)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ping  xxx.xxx.xxx.xxx</span><br></pre></td></tr></table></figure>
+<p> 这里<code>xxx.xxx.xxx.xxx</code>是运营商分配给你的公网 IP，你可以替换为自己的来进行测试。</p>
+<blockquote>
+<p>有时候猫或者路由上设置了防火墙，禁止 ping，所以需要关闭该设置再进行测试。</p>
+</blockquote>
+<p>一般 NAS 服务的访问端口是5000(http)和5001(https)，这个可以在 NAS 里进行设置：</p>
+<p><img src="/images/dsm.png" alt="image-20180727132746453"></p>
+<p>假如 NAS 的内网 ip 是10.0.0.11，那在内网可以通过10.0.0.11:5000来访问。现在如果想在外网访问 NAS，比如说是通过  <a href="http://xxx.xxx.xxx.xxx:5000" target="_blank" rel="noopener">http://xxx.xxx.xxx.xxx:5000</a> ，那么我们就需要在路由器上配置端口转发，将路由器上所有对5000端口的访问都转发到内网 NAS 地址(即10.0.0.11)的5000端口。各个路由器可能不一样，我们这里以 R7000的梅林系统为例：</p>
+<p><img src="/images/forward.png" alt="image-20180727133636531"></p>
+<p>设置完成后，我们测试一下端口是否可以正常访问</p>
+<p><img src="/images/telnet.png" alt="image-20180727134414268"></p>
+<p>至此，通过公网 IP 我们已经顺利访问了 NAS，就如同内网访问一样。</p>
+<h2 id="域名访问"><a href="#域名访问" class="headerlink" title="域名访问"></a>域名访问</h2><p>到目前为止，似乎一切都很美好。但是需要提出的是，运营商分配分配给我们的公网 IP 往往是动态变化的，并不固定，所以如果 IP 不停发生着变化，在访问 NAS 之前我们就必须查询一次自己的 IP。好在有种称为 DDNS 的技术，可以解决这个问题。</p>
+<p>DDNS(Dynamic Domain Name Server) 翻译过来是动态域名服务，也就是不管我们的 IP 怎么动态变化，域名都能准确指向它，因此通过这个动态域名，我们就无需关心实际的 ip 是什么，每次都能访问到 NAS 上。</p>
+<p>很多路由器都带有 DDNS 功能，其工作原理大致是每次 ip 发生变化时，路由器都会将当前的 ip 上报更新到 DDNS 服务提供商，因此域名解析出来的 ip 也会随之得到更新。</p>
+<p>假设我们在路由器上开启 DDNS 时设置的域名是 myddns.asuscomm.com</p>
+<p><img src="/images/ddns.png" alt="image-20180727140519194"></p>
+<p>那么之后我们就可以通过 myddns.asuscomm.comm:5000来访问了。如果你有自己的域名，则可以设置一个 cname 类型的域名来指向  myddns.asuscomm.comm 域名。</p>
+<blockquote>
+<p>如果路由不带 DDNS 功能，可以考虑使用 NAS 的 DDNS 功能(有很多提供商可以选择)，具体请 google 设置方法。国内花生壳也提供了 DDNS 功能。</p>
+</blockquote>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://www.dozer.cc/2016/03/synology-nas-network-setting.html" target="_blank" rel="noopener">将群晖 NAS 安全地暴露到公网中</a></p>
+
       
     </div>
     
@@ -322,6 +372,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/NAS-公网-DDNS/" rel="tag"># NAS 公网 DDNS</a>
+          
+        </div>
+      
 
       
       
@@ -331,8 +387,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/05/21/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2018/06/27/macOS安装mysql/" rel="next" title="macOS安装mysql">
+                <i class="fa fa-chevron-left"></i> macOS安装mysql
               </a>
             
           </div>
@@ -340,10 +396,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/05/21/博客搭建手记/" rel="prev" title="博客搭建手记">
-                博客搭建手记 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -400,8 +452,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -468,6 +529,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引子"><span class="nav-number">1.</span> <span class="nav-text">引子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#直连"><span class="nav-number">2.</span> <span class="nav-text">直连</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#域名访问"><span class="nav-number">3.</span> <span class="nav-text">域名访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">3.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
