@@ -79,23 +79,23 @@
 
 
 
-<meta name="description" content="游戏中加密算法的选择前面我们已经介绍了对称解密算法和非对称加密算法，那在游戏协议通信中应该如何选择加密方式呢？ 那我们看看下列几个方案  单独使用对称加密算法。典型的对称加密算法如 AES 安全性已经不错，而且加密效率高，似乎可以直接拿来使用。但问题是客户端和服务器交互时如何交换密钥？如果直接明文传输，肯定会有被嗅探的风险。所以单独使用对称加密算法存在密钥的管理问题，是不可行的。 单独使用非对称加">
+<meta name="description" content="游戏中加密算法的选择前面一篇文章 我们已经介绍了对称解密算法和非对称加密算法，那在游戏协议通信中应该如何选择加密方式呢？ 那我们看看下列几个方案  单独使用对称加密算法。典型的对称加密算法如 AES 安全性已经不错，而且加密效率高，似乎可以直接拿来使用。但问题是客户端和服务器交互时如何交换密钥？如果直接明文传输，肯定会有被嗅探的风险。所以单独使用对称加密算法存在密钥的管理问题，是不可行的。 单独使">
 <meta name="keywords" content="游戏 加密">
 <meta property="og:type" content="article">
 <meta property="og:title" content="游戏中的加密应用">
 <meta property="og:url" content="http://yoursite.com/2018/08/03/游戏中的加密应用/index.html">
 <meta property="og:site_name" content="PHILIP x BLOG">
-<meta property="og:description" content="游戏中加密算法的选择前面我们已经介绍了对称解密算法和非对称加密算法，那在游戏协议通信中应该如何选择加密方式呢？ 那我们看看下列几个方案  单独使用对称加密算法。典型的对称加密算法如 AES 安全性已经不错，而且加密效率高，似乎可以直接拿来使用。但问题是客户端和服务器交互时如何交换密钥？如果直接明文传输，肯定会有被嗅探的风险。所以单独使用对称加密算法存在密钥的管理问题，是不可行的。 单独使用非对称加">
+<meta property="og:description" content="游戏中加密算法的选择前面一篇文章 我们已经介绍了对称解密算法和非对称加密算法，那在游戏协议通信中应该如何选择加密方式呢？ 那我们看看下列几个方案  单独使用对称加密算法。典型的对称加密算法如 AES 安全性已经不错，而且加密效率高，似乎可以直接拿来使用。但问题是客户端和服务器交互时如何交换密钥？如果直接明文传输，肯定会有被嗅探的风险。所以单独使用对称加密算法存在密钥的管理问题，是不可行的。 单独使">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/image-20180801200114787.png">
 <meta property="og:image" content="http://yoursite.com/images/image-20180801194410265.png">
 <meta property="og:image" content="http://yoursite.com/images/image-20180801194540530.png">
 <meta property="og:image" content="http://yoursite.com/images/image-20180801201756669.png">
 <meta property="og:image" content="http://yoursite.com/images/image-20180805200133630.png">
-<meta property="og:updated_time" content="2018-08-06T02:46:06.637Z">
+<meta property="og:updated_time" content="2018-08-06T02:49:42.308Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="游戏中的加密应用">
-<meta name="twitter:description" content="游戏中加密算法的选择前面我们已经介绍了对称解密算法和非对称加密算法，那在游戏协议通信中应该如何选择加密方式呢？ 那我们看看下列几个方案  单独使用对称加密算法。典型的对称加密算法如 AES 安全性已经不错，而且加密效率高，似乎可以直接拿来使用。但问题是客户端和服务器交互时如何交换密钥？如果直接明文传输，肯定会有被嗅探的风险。所以单独使用对称加密算法存在密钥的管理问题，是不可行的。 单独使用非对称加">
+<meta name="twitter:description" content="游戏中加密算法的选择前面一篇文章 我们已经介绍了对称解密算法和非对称加密算法，那在游戏协议通信中应该如何选择加密方式呢？ 那我们看看下列几个方案  单独使用对称加密算法。典型的对称加密算法如 AES 安全性已经不错，而且加密效率高，似乎可以直接拿来使用。但问题是客户端和服务器交互时如何交换密钥？如果直接明文传输，肯定会有被嗅探的风险。所以单独使用对称加密算法存在密钥的管理问题，是不可行的。 单独使">
 <meta name="twitter:image" content="http://yoursite.com/images/image-20180801200114787.png">
 
 
@@ -317,7 +317,7 @@
       
 
       
-        <h2 id="游戏中加密算法的选择"><a href="#游戏中加密算法的选择" class="headerlink" title="游戏中加密算法的选择"></a>游戏中加密算法的选择</h2><p>前面我们已经介绍了对称解密算法和非对称加密算法，那在游戏协议通信中应该如何选择加密方式呢？</p>
+        <h2 id="游戏中加密算法的选择"><a href="#游戏中加密算法的选择" class="headerlink" title="游戏中加密算法的选择"></a>游戏中加密算法的选择</h2><p><a href="http://www.keepmovingbuddy.com/2018/07/28/%E5%AF%86%E7%A0%81%E5%AD%A6%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/" target="_blank" rel="noopener">前面一篇文章</a> 我们已经介绍了对称解密算法和非对称加密算法，那在游戏协议通信中应该如何选择加密方式呢？</p>
 <p>那我们看看下列几个方案</p>
 <ol>
 <li>单独使用对称加密算法。典型的对称加密算法如 AES 安全性已经不错，而且加密效率高，似乎可以直接拿来使用。但问题是客户端和服务器交互时如何交换密钥？如果直接明文传输，肯定会有被嗅探的风险。所以单独使用对称加密算法存在密钥的管理问题，是不可行的。</li>
@@ -507,7 +507,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
