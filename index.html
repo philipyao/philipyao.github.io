@@ -229,6 +229,822 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/20/GCC分支预测/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/20/GCC分支预测/" itemprop="url">分支预测</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-20T18:01:28+08:00">
+                2018-08-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/20/GCC分支预测/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/20/GCC分支预测/" class="cy_cmt_count" data-xid="2018/08/20/GCC分支预测/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="GCC-扩展-builtin-expect"><a href="#GCC-扩展-builtin-expect" class="headerlink" title="GCC 扩展 __builtin_expect"></a>GCC 扩展 __builtin_expect</h2><p>C 语言的标准从最开始的 K&amp;R C演变到目前的 ANSI C，在各操作系统平台已经有很多编译器支持了，如 MSVC、GCC、CLANG 等。而 linux 平台的 GCC 除了支持ANSI C 标准之外，还有自己的编译器扩展特性。</p>
+<p>其中一个特性就是GCC 支持的编译器分支预测 __builtin_expect 宏，作为编译分支时候的暗示。这个特性在 linux 的内核代码中很常用，用来提升代码执行速度。</p>
+<p>具体的，是有 likely 和 unlikely 这两个宏定义</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> likely(x) __builtin_expect(!!(x), 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlikely(x) __builtin_expect(!!(x), 0)</span></span><br></pre></td></tr></table></figure>
+<p>实际使用时，我们可以在很大可能执行的分支前面加上 likely。例如下例中</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> likely(x) __builtin_expect(!!(x), 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlikely(x) __builtin_expect(!!(x), 0)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;a);</span><br><span class="line">    <span class="keyword">if</span> (likely(a))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"Hula!\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"Woo~\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样，如果 likely 所在的分支如果有非常大可能执行，则程序运行效率要比普通的分支判断高。具体原因是什么呢？这就涉及到 CPU 流水线作业的相关知识。</p>
+<h2 id="CPU-流水线"><a href="#CPU-流水线" class="headerlink" title="CPU 流水线"></a>CPU 流水线</h2><p>这里我们以 Intel 发明的 X86结构的 CPU 为例来大致讲述下 CPU 流水线技术的演进。</p>
+<p>CPU 在执行程序的时候依赖于很多寄存器，例如通用寄存器、段寄存器、索引寄存器等。此外还有一个很重要的寄存器：指令指针(IP)。指令指针寄存器是一个拥有特殊功能的指针。指令指针的功能是指向将要运行的下一条指令。</p>
+<p>所有的X86处理器都按照相同的模式运行。首先，根据指令指针指向的地址取得下一条即将运行的指令并解析该指令（译码）。在译码完成后，会有一个指令的执行阶段。有些指令用来从内存读取数据或者向内存写数据，有些指令用来执行计算或者比较等工作。当指令执行完成后，这条指令会通过退出(retire)阶段并将指令指针修改为下一条指令。</p>
+<p>译码，执行和退出的分阶段模式组成了X86处理器指令执行的基本模式。从最初的8086处理器到新的酷睿i7处理器都基本遵循了这样的过程。</p>
+<p>1989年 i486引入了五级流水线模式，分别是：取指(Fetch)，译码(D1, main decode)，转址(D2, translate)，执行(EX, execute)，写回(WB)。之前的三级模式，并不是流水线，每一条指令必须等待前一条指令执行完退出之后才能继续执行。而这种新引入的五级流水线模式，可以同时运行多条指令，每一级流水线在同一时刻都运行着不同的指令。这个设计使得i486比同频率的386处理器性能提升了不止一倍。五级流水线中的取指阶段(F)将指令从指令缓存中取出；第二级为译码阶段(D1)，将取出的指令翻译为具体的功能操作；第三级为转址阶段(D2)，用来将内存地址和偏移进行转换；第四级为执行阶段(EX)，指令在该阶段真正执行运算；第五级为退出阶段(WB)，运算的结果被写回寄存器或者内存。由于处理器同时运行了多条指令，大大提升了程序运行的性能。 </p>
+<p><img src="/images/image-20180820190943347.png" alt="image-20180820190943347"></p>
+<p>流水线化通过同时执行一系列操作增加了吞吐量(throughput)，但是她并没有减少延迟，即并没有减少一条指令从执行开始到执行结束的时间，仍要等到这一系列指令完成。实际上,流水线化由于将一条指令拆分成了几个步骤从而可能会增加延迟。</p>
+<h2 id="CPU-分支猜测"><a href="#CPU-分支猜测" class="headerlink" title="CPU 分支猜测"></a>CPU 分支猜测</h2><p>流水线技术的主要目的就是通过重叠连续指令的步骤来提高吞吐量从而获得性能，要做到这一点，就必须能够实现确定要执行指令的序列和先后顺序，这样才能使流水线中充满了待执行的指令。当处理器遇到分支条件跳转时，通常不能确定执行那个分支，因此处理器采用分支预测器来猜测每条跳转指令是否会执行。如果猜测比较可靠，那么流水线中就会充满指令。但是，如果对跳转的指令猜测错误，那么就要要求处理器丢掉它这个跳转指令后的所有已做的操作，然后再开始用从正确位置处起始的指令去填充流水线，可以看到这种预测错误会导致很严重的性能惩罚，会导致大约20-40个时钟周期的浪费，从而导致性能的严重下降。</p>
+<p>一个很直观的说明 CPU 的分支预测器的例子是 stackoverflow 上的提问： <a href="http://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-an-unsorted-array" target="_blank" rel="noopener">Why is processing a sorted array faster than an unsorted array?</a> </p>
+<p>一段排序和未排序过的代码执行速度差别很大，具体代码如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// generate data</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">unsigned</span> arraySize = <span class="number">32768</span>;</span><br><span class="line">    <span class="keyword">int</span> data[arraySize];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> c = <span class="number">0</span>; c &lt; arraySize; ++c)</span><br><span class="line">        data[c] = <span class="built_in">std</span>::rand() % <span class="number">256</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//排序这行不注释掉下面的for循环会快得多</span></span><br><span class="line">    <span class="built_in">std</span>::sort(data, data + arraySize); </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// test</span></span><br><span class="line">    <span class="keyword">clock_t</span> start = clock();</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; ++i) &#123;</span><br><span class="line">        <span class="comment">// primary loop</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">unsigned</span> c = <span class="number">0</span>; c &lt; arraySize; ++c) &#123;</span><br><span class="line">            <span class="keyword">if</span> (data[c] &gt;= <span class="number">128</span>)</span><br><span class="line">                sum += data[c];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">double</span> elapsedTime = <span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt;(clock() - start) / CLOCKS_PER_SEC;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; elapsedTime &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"sum = "</span> &lt;&lt; sum &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我在我的 Mac 上运行的结果分别是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 未排序</span><br><span class="line">21.3109</span><br><span class="line">sum = 312426300000</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 排序后</span><br><span class="line">6.30532</span><br><span class="line">sum = 312426300000</span><br></pre></td></tr></table></figure>
+<p>这里影响代码执行的主要片段是</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (data[c] &gt;= <span class="number">128</span>)</span><br><span class="line">    sum += data[c];</span><br></pre></td></tr></table></figure>
+<p>对于这段分支代码的执行，CPU 会启用分支预测(branch prediction)，排序和未排序的不同正是分支预测是否有大概率命中。对于命中的情况，CPU 指令可以一路顺畅的执行；而对于预测失败的情况，处理器要flush掉pipelines，回滚到之前的分支，然后重新热启动，选择另一条路径，这里的性能损失非常大。</p>
+<p>那么一般怎么做分支预测呢？答案就是根据历史结果来做决定。对于排序的情况，很容易根据历史结果做出决策:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">T = branch taken</span><br><span class="line">N = branch not taken</span><br><span class="line"></span><br><span class="line">data[] = 0, 1, 2, 3, 4, ... 126, 127, 128, 129, 130, ... 250, 251, 252, ...</span><br><span class="line">branch = N  N  N  N  N  ...   N    N    T    T    T  ...   T    T    T  ...</span><br><span class="line"></span><br><span class="line">       = NNNNNNNNNNNN ... NNNNNNNTTTTTTTTT ... TTTTTTTTTT  (easy to predict)</span><br></pre></td></tr></table></figure>
+<p>而如果未排序的数组，则其取到的结果完全随机，分支预测基本无效</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">data[] = 226, 185, 125, 158, 198, 144, 217, 79, 202, 118,  14, 150, 177, 182, 133, ...</span><br><span class="line">branch =   T,   T,   N,   T,   T,   T,   T,  N,   T,   N,   N,   T,   T,   T,   N  ...</span><br><span class="line"></span><br><span class="line">       = TTNTTTTNTNNTTTN ...   (completely random - hard to predict)</span><br></pre></td></tr></table></figure>
+<h2 id="代码优化"><a href="#代码优化" class="headerlink" title="代码优化"></a>代码优化</h2><p>上面说的 CPU 分支预测是属于硬件层面，其实从上层的软件或者程序员角度也是可以协助做好分支预测的。还是回到我们最开始提到的__builtin_expect 宏，示例代码反汇编得到的代码如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">.LC1:</span><br><span class="line">    .string &quot;Hula!&quot;</span><br><span class="line">.LC2:</span><br><span class="line">    .string &quot;Woo~&quot;</span><br><span class="line"> </span><br><span class="line">    call    __isoc99_scanf</span><br><span class="line">    movl    28(%esp), %eax</span><br><span class="line">    testl   %eax, %eax</span><br><span class="line">    je  .L2</span><br><span class="line">    movl    $.LC1, (%esp)</span><br><span class="line">    call    puts</span><br><span class="line">.L3:</span><br><span class="line">    xorl    %eax, %eax</span><br><span class="line">    leave</span><br><span class="line">    ret</span><br><span class="line">.L2:</span><br><span class="line">    movl    $.LC2, (%esp)</span><br><span class="line">    call    puts</span><br><span class="line">    jmp .L3</span><br></pre></td></tr></table></figure>
+<p>对于使用了 likely 的分支，其指令将更靠近 <code>testl</code> 分支判断，CPU 在执行分支判断指令的同时，将预先取出后续指令进行执行，而另一个分支指令则需要进行跳转(<code>je .L2</code>)。其本质是优化 CPU 的指令顺序，提高流水线的执行效率。</p>
+<p>此外，编写代码时，我们也要注意分支的先后顺序，尽量将概率大的分支放在前面，尽量合并分支，尽量使用排序后的数据来判断，适当使用 goto 和 do while 来优化代码组织等。</p>
+<p>参考资料</p>
+<p><a href="http://blog.jobbole.com/40844/" target="_blank" rel="noopener">CPU流水线的探秘之旅</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/22469702" target="_blank" rel="noopener">深入理解CPU的分支预测(Branch Prediction)模型</a></p>
+<p><a href="https://www.zhihu.com/question/27650017" target="_blank" rel="noopener">如何在 C++ 代码中提示编译器某个分支的执行概率高？</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/14/无锁队列/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/14/无锁队列/" itemprop="url">无锁队列</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-14T12:51:37+08:00">
+                2018-08-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/14/无锁队列/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/14/无锁队列/" class="cy_cmt_count" data-xid="2018/08/14/无锁队列/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/13/tcp-ip备忘/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/13/tcp-ip备忘/" itemprop="url">tcp/ip备忘</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-13T13:11:03+08:00">
+                2018-08-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/13/tcp-ip备忘/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/13/tcp-ip备忘/" class="cy_cmt_count" data-xid="2018/08/13/tcp-ip备忘/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/12/匹配系统设计/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/12/匹配系统设计/" itemprop="url">匹配系统设计</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-12T14:03:05+08:00">
+                2018-08-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/12/匹配系统设计/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/12/匹配系统设计/" class="cy_cmt_count" data-xid="2018/08/12/匹配系统设计/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/11/帧同步实现实时对战/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/11/帧同步实现实时对战/" itemprop="url">帧同步实现实时对战</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-11T23:26:55+08:00">
+                2018-08-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/11/帧同步实现实时对战/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/11/帧同步实现实时对战/" class="cy_cmt_count" data-xid="2018/08/11/帧同步实现实时对战/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/11/日志组件实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/11/日志组件实现/" itemprop="url">日志组件实现</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-11T23:24:08+08:00">
+                2018-08-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/11/日志组件实现/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/11/日志组件实现/" class="cy_cmt_count" data-xid="2018/08/11/日志组件实现/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/11/定时器实现/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -971,1131 +1787,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/27/macOS安装mysql/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/27/macOS安装mysql/" itemprop="url">macOS安装mysql</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-27T10:18:22+08:00">
-                2018-06-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/06/27/macOS安装mysql/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/06/27/macOS安装mysql/" class="cy_cmt_count" data-xid="2018/06/27/macOS安装mysql/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="安装Mysql"><a href="#安装Mysql" class="headerlink" title="安装Mysql"></a>安装Mysql</h2><p>安装之前，需要查看你的 macOS 的版本，支持哪些版本的 mysql ，来对应安装，否则会出现不兼容的情况。mysql 的文档列出了各个版本支持的平台，对于 macOS，如下</p>
-<p><img src="/images/image-20180627104047807.png" alt="image-20180627104047807"></p>
-<p><img src="/images/image-20180627104126873.png" alt="image-20180627104126873"></p>
-<p>以我的 macOS 10.13 为例，支持64位8.0、5.7、5.6版本，鉴于8.0正式版本刚发布不久(2018.4)，我们这里选择5.7版本来进行安装。</p>
-<p>更多详细的平台支持信息，可以去 <a href="https://www.mysql.com/support/supportedplatforms/database.html" target="_blank" rel="noopener">官网</a> 查询</p>
-<p>选择了版本，下面就可以进行安装了。mac 平台主要有2中方式来安装 mysql</p>
-<ul>
-<li>原生包安装器 (DMG) 来进行安装。这种方式需要拥有 mac 系统的管理员权限。</li>
-<li>使用二进制压缩包来进行安装，安装包格式一般是  <code>mysql-*VERSION*-*OS*.tar.gz</code> 。可以使用 tar 或者 gzip 命令将 mysql 安装在任意目录。注意这种方式可以没有管理员权限。</li>
-<li>源码编译安装，需要预先安装 cmake，make，boost c++库等，比较繁琐。</li>
-</ul>
-<p>简单起见，我们选择第一种方式（如果你没有管理员权限，则只能选第二种方式）</p>
-<ol>
-<li><p>下载 .dmg 格式的安装包，一般我们使用社区版本，例如  <code>mysql-5.7.22-macos10.13-x86_64.dmg</code>，下载地址为 <a href="https://dev.mysql.com/downloads/mysql/5.7.html#downloads" target="_blank" rel="noopener">mysql5.7下载</a></p>
-</li>
-<li><p>下载完成后双击执行安装，如下</p>
-<p><img src="/images/image-20180627110750323.png" alt="image-20180627110750323"></p>
-</li>
-<li><p>安装过程中，会为 root 账户生成一个随机的密码，注意记住该密码，后面会用到。</p>
-</li>
-<li><p>安装完成后，我们需要为 root 修改密码，这是因为之前安装时生成的密码自动过期，只能用来登录，而不能进行操作，因此需要使用者再手动修改密码，这样就保障了安全性。</p>
-</li>
-</ol>
-<h2 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h2><p>修改密码之前，先手动启动 mysql 服务</p>
-<p>mysql 被安装在/usr/local/mysql 目录，我们将 bin 目录添加到 PATH 环境变量以方便执行 mysql 命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH=/usr/local/mysql/bin:$PATH'</span> &gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
-<p>然后就可以使用mysqld_safe 命令手动启动 mysql 进程了</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mysqld_safe --user=mysql &amp;</span><br></pre></td></tr></table></figure>
-<p>使用生成的随机密码登录到 mysql</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<p>为 root 账户设置新的密码</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; ALTER USER <span class="string">'root'</span>@<span class="string">'localhost'</span> IDENTIFIED BY <span class="string">'new_password'</span>;</span><br></pre></td></tr></table></figure>
-<p>退出后重新使用新密码登录</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<p>这样我们就能执行 mysql 的操作了</p>
-<p>另外，我们还要将刚才手动启动的 mysql 关闭，然后使用正式方式启动mysql 服务</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mysqladmin -u root -p shutdown</span><br></pre></td></tr></table></figure>
-<p>我们使用 macOS 下的服务面板来启动 mysql，依次点击系统左上角的 <strong>苹果</strong> 图标 -&gt;系统偏好设置-&gt;MySQL-&gt;Start MySQL Server</p>
-<p><img src="/images/image-20180627141058962.png" alt="image-20180627141058962"></p>
-<h2 id="新建-user"><a href="#新建-user" class="headerlink" title="新建 user"></a>新建 user</h2><p>先使用修改后的 root 密码登录</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<p>为 root 赋予所有权限</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT all ON *.* to root@localhost IDENTIFIED BY <span class="string">'root_passwd'</span>;</span><br></pre></td></tr></table></figure>
-<p>新建 philip 用户并赋予 以 db_ 开头命名的库的查询修改等权限</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT LOCK TABLES,select,insert,update,delete,create,drop,index,alter ON `db\_%`.* to philip@<span class="string">"10.%.%.%"</span> IDENTIFIED BY <span class="string">'tmpP001'</span>;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
-<p>新建 query 用户并赋予以 db_oss_开头命名的库的只读权限</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT select ON `db\_oss\_%`.* to query@<span class="string">"localhost"</span> IDENTIFIED BY <span class="string">'123'</span>;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
-<h2 id="编码配置"><a href="#编码配置" class="headerlink" title="编码配置"></a>编码配置</h2><h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>在 windows 平台，如果使用安装程序安装，则安装程序会在 mysql 安装目录自动创建一个名为 my.ini 的文件作为mysql 服务的配置文件；如果是使用 zip 压缩包安装，则需要拷贝my-default.ini为 my.ini 作为配置文件（注意，MySQL 5.7.18版本之后的 mysql 压缩包不包括 my-default.ini）</p>
-<p>在非 windows 平台，没有默认的配置文件，mysql 启动时会使用缺省的参数。因此我们需要手动创建 my.cnf 。</p>
-<p>以下命令可以查看 mysql 的参数列表以及server 启动时会读取哪些配置文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqld --verbose --<span class="built_in">help</span> | less</span><br></pre></td></tr></table></figure></p>
-<p>搜索 my.cnf 可以看到，配置文件读取顺序为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Default options are read from the following files in the given order:</span><br><span class="line">/etc/my.cnf /etc/mysql/my.cnf /usr/local/mysql/etc/my.cnf ~/.my.cnf</span><br></pre></td></tr></table></figure>
-<p>我们选择其中一个目录新建 my.cnf 即可。</p>
-<h3 id="存储编码"><a href="#存储编码" class="headerlink" title="存储编码"></a>存储编码</h3><p>字符集不仅影响 mysql 的数据存储，也影响 client 程序和 mysql server 的连接交互，因此在考虑设置编码的时候，这两方面都需要考虑。</p>
-<p>mysql 5.7 版本默认的存储字符集和字符比较规则为 <code>latin1</code>, <code>latin1_swedish_ci</code>，这与通用的 <code>utf8</code> 标准不兼容，因此我们需要修改 mysql 的默认 character set 和 collation。字符集设置按照层级分为四个：server, database, table, and column。</p>
-<p>首先查看现有的设置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show VARIABLES like &apos;%character%&apos;;</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">| Variable_name            | Value                                                     |</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">| character_set_client     | utf8                                                      |</span><br><span class="line">| character_set_connection | utf8                                                      |</span><br><span class="line">| character_set_database   | latin1                                                    |</span><br><span class="line">| character_set_filesystem | binary                                                    |</span><br><span class="line">| character_set_results    | utf8                                                      |</span><br><span class="line">| character_set_server     | latin1                                                    |</span><br><span class="line">| character_set_system     | utf8                                                      |</span><br><span class="line">| character_sets_dir       | /usr/local/mysql-5.7.22-macos10.13-x86_64/share/charsets/ |</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">8 rows in set (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; show VARIABLES like &apos;%collation%&apos;;</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">| Variable_name        | Value             |</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">| collation_connection | utf8_general_ci   |</span><br><span class="line">| collation_database   | latin1_swedish_ci |</span><br><span class="line">| collation_server     | latin1_swedish_ci |</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">3 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p>可以看到 character_set_database、character_set_server、collation_database、 collation_server 几个选项的值都为 latin1，需要修改为 utf8。</p>
-<p>在 HOME 目录创建 my.cnf 文件作为配置文件，添加以下内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">character-set-server=utf8</span><br><span class="line">collation-server=utf8_general_ci</span><br></pre></td></tr></table></figure>
-<p>完成后使用 mac 偏好设置里 的 mysql launch daemon panel来重新启动 mysql 即可。 </p>
-<p><img src="/images/image-20180704104726142.png" alt="image-20180704104726142"></p>
-<p><strong>注意</strong> 这里在配置 my.cnf 的时候需要特别注意两点</p>
-<ul>
-<li><p>假如新建 /etc/my.cnf 作为配置文件，需要将文件 mode 设置为644，否则启动会不成功或者配置被忽略</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo chmod 644 /etc/my.cnf</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>只需要设置 character-set-server 和 collation-server 两个选项，并不存在 character_set_database 和 collation_database 选项。原因是 server 级别的选项已经涵盖了 database 级别的设置。如果你需要单独设置某个 database 的编码，在输入 create table SQL语句时单独指定即可，详见 <a href="https://dev.mysql.com/doc/refman/5.7/en/charset-applications.html" target="_blank" rel="noopener">这里</a></p>
-</li>
-</ul>
-<h3 id="连接编码"><a href="#连接编码" class="headerlink" title="连接编码"></a>连接编码</h3><p>除了存储编码，我们每次通过 client 连接到 MySQL server（如 mysql client 或者PHP 脚本等）时，还需要设置该连接的交互字符集为 utf8，执行以下语句</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET NAMES &apos;utf8&apos;;</span><br></pre></td></tr></table></figure>
-<p>参考文档</p>
-<p><a href="https://dev.mysql.com/doc/refman/8.0/en/" target="_blank" rel="noopener">MySQL 官网</a></p>
-<p><a href="https://dev.mysql.com/doc/refman/5.7/en/charset-applications.html" target="_blank" rel="noopener">Configuring Application Character Set and Collation</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/19/服务器断电后自启动/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/19/服务器断电后自启动/" itemprop="url">服务器断电后自启动</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-19T10:15:57+08:00">
-                2018-06-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/06/19/服务器断电后自启动/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/06/19/服务器断电后自启动/" class="cy_cmt_count" data-xid="2018/06/19/服务器断电后自启动/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>创业公司的生产资料主要集中在自己搭建的服务器上，由于一些客观因素（没钱，环境差）导致服务器经常断电，一般周末经常性的『技术性』断电重启，导致坑爹的一早来就要手动开机、手动启动虚拟机、手动启动后台进程，不知不觉中一上午就没有了，一次两次可以，次数多了之后难免烦躁，打算一劳永逸解决这件事情。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>解决这个问题其实就是分别解决下面几个问题：</p>
-<ul>
-<li>自动开机</li>
-<li>自动开启虚拟机</li>
-<li>自动开启进程</li>
-</ul>
-<h3 id="通电自动开机"><a href="#通电自动开机" class="headerlink" title="通电自动开机"></a>通电自动开机</h3><p>关于自动开机的原理及方式有很多，比如来电自动、鼠标键盘启动、局域网自动唤醒等等，我们这里打算用来电自动的方式。</p>
-<p>通电自动开机依赖于服务器的<strong>主板支持该功能</strong>；对于支持该功能的主板，其BIOS设置里这个功能是一般默认关闭，我们需要在 BIOS 设置里开启该功能。至于具体的设置，由于不同主板设置选项各不相同，本文暂时不做论述，大家可以自行 google 或者在各厂家的产品页面寻求帮助。</p>
-<h3 id="虚拟机自启动"><a href="#虚拟机自启动" class="headerlink" title="虚拟机自启动"></a>虚拟机自启动</h3><p>为了方便服务器的管理，一般需要在物理机上安装特定的虚拟机管理软件，比较知名的如 citrix 公司的 <a href="https://xenserver.org/" target="_blank" rel="noopener">XenServer</a>、vmware的 <a href="https://www.vmware.com/products/vsphere.html" target="_blank" rel="noopener">vSphere</a> 等。自动开启虚拟机依赖具体的虚拟机管理软件。我们使用开源的XenServer，6.0之后的版本已经支持虚拟机随server启动而启动。XenServer 以 ISO 的形式提供，包含服务端、GUI客户端 XenCenter及命令行工具 xe-cli 等。详细的下载和安装可以参考 <a href="https://xenserver.org/open-source-virtualization-download.html" target="_blank" rel="noopener">官网</a> </p>
-<p>通过命令行 xe-cli 可以设置虚拟机在物理机启动后自启动，xe-cli 在 ISO 镜像文件里，以 rpm 的形式提供。以 Centos6 环境为例，安装 xe-cli：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rpm -ivh xe-cli-7.1.0-137263c.x86_64.rpm</span><br></pre></td></tr></table></figure>
-<p>注意，这里的 xe-cli 可以安装在和服务器连接的内网机器上，可以是任意一台虚拟机系统里，其本质和 GUI 形式的客户端管理工具 XenCenter 类似，只不过是命令行形式而已。</p>
-<p>我们设置需要连接的服务器物理机 ip (例如10.1.164.37)以及登录用户密码</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat ~/.xe </span><br><span class="line">server=10.1.164.37</span><br><span class="line">username=root</span><br><span class="line">password=123456</span><br></pre></td></tr></table></figure>
-<p>然后设置资源池 (vm-pool) 允许自动重启，先列出所有 pool 的 uuid，然后设置</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ xe pool-list</span><br><span class="line">uuid ( RO) : 8f05704a-09be-d56a-0b08-f6f2e8a10d46</span><br><span class="line">name-label ( RW): </span><br><span class="line">name-description ( RW): </span><br><span class="line">master ( RO): b33b36ba-6f9d-43e3-90c9-bb62e27193bf</span><br><span class="line">default-SR ( RW): &lt;not <span class="keyword">in</span> database&gt;</span><br><span class="line"></span><br><span class="line">$ xe pool-param-set uuid=8f05704a-09be-d56a-0b08-f6f2e8a10d46 other-config:auto_poweron=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
-<p>最后选择需要自动重启的虚拟机，然后设置为自动重启(同样使用 uuid 来设置)：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ xe vm-list</span><br><span class="line">uuid ( RO) : 2548c2b1-103d-8d6a-433d-77cbc8cabfb8</span><br><span class="line">name-label ( RW): Base</span><br><span class="line">power-state ( RO): halted</span><br><span class="line">uuid ( RO) : 756d3025-d365-8de3-6f54-755464534e84</span><br><span class="line">name-label ( RW): svr.test.164.43</span><br><span class="line">power-state ( RO): halted</span><br><span class="line">uuid ( RO) : 68d76d60-9b5b-40fe-b88f-edf0cd8906da</span><br><span class="line">name-label ( RW): Control domain on host: xenserver-fbilcznb</span><br><span class="line">power-state ( RO): running</span><br><span class="line"></span><br><span class="line">$ xe vm-param-set uuid=756d3025-d365-8de3-6f54-755464534e84 other-config:auto_poweron:<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">$ xe vm-param-set uuid=68d76d60-9b5b-40fe-b88f-edf0cd8906da other-config:auto_poweron:<span class="literal">true</span></span><br></pre></td></tr></table></figure>
-<p>详细可以参看 <a href="https://support.citrix.com/article/CTX133910" target="_blank" rel="noopener">这里</a></p>
-<h3 id="自动启动进程"><a href="#自动启动进程" class="headerlink" title="自动启动进程"></a>自动启动进程</h3><p>自动启动进程就比较简单了，通过 chkconfig 命令或者修改 /etc/rc.local 文件就可以在系统启动时候做任何你想做的事情了，我们在这里添加一些启动数据库和服务器进程的操作。</p>
-<h4 id="使用-chkconfig"><a href="#使用-chkconfig" class="headerlink" title="使用 chkconfig"></a>使用 chkconfig</h4><p>chkconfig 使用说明</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">用法：    chkconfig [--list] [--type &lt;type&gt;] [name]</span><br><span class="line">         chkconfig --add &lt;name&gt;</span><br><span class="line">         chkconfig --del &lt;name&gt;</span><br><span class="line">         chkconfig --override &lt;name&gt;</span><br><span class="line">         chkconfig [--level &lt;levels&gt;] [--type &lt;type&gt;] &lt;name&gt; &lt;on|off|reset|resetpriorities&gt;</span><br></pre></td></tr></table></figure>
-<p>以设置 mysqld 进程自动启动为例</p>
-<p><img src="/images/chkconfig2.png" alt="mysqld 自启动"></p>
-<p>或者 </p>
-<h4 id="使用-rc-local"><a href="#使用-rc-local" class="headerlink" title="使用 rc.local"></a>使用 rc.local</h4><p>修改 <code>/etc/rc.local</code></p>
-<p>添加 </p>
-<p><code>/etc/init.d/mysqld start</code></p>
-<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>至此，我们终于一劳永逸解决这些烦人的问题了，是时候泡杯咖啡好好享受生活了。。。。</p>
-<p>参考资料</p>
-<p><a href="https://www.cnblogs.com/voiphudong/p/3934596.html" target="_blank" rel="noopener">如何设置BIOS使服务器断电后再来电能自动开机</a></p>
-<p><a href="https://support.citrix.com/article/CTX133910" target="_blank" rel="noopener">How to Setup XenServer 6.x to Auto-Start Virtual Machines</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/24/Maven scope 备忘/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/24/Maven scope 备忘/" itemprop="url">Maven scope 备忘</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-24T11:43:36+08:00">
-                2018-05-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/05/24/Maven scope 备忘/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/05/24/Maven scope 备忘/" class="cy_cmt_count" data-xid="2018/05/24/Maven scope 备忘/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/24/Github SSH 传输研究/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/24/Github SSH 传输研究/" itemprop="url">未命名</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-24T11:43:00+08:00">
-                2018-05-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/05/24/Github SSH 传输研究/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/05/24/Github SSH 传输研究/" class="cy_cmt_count" data-xid="2018/05/24/Github SSH 传输研究/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/hexo博客搭建/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/21/hexo博客搭建/" itemprop="url">hexo 博客搭建</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T18:50:26+08:00">
-                2018-05-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/05/21/hexo博客搭建/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/05/21/hexo博客搭建/" class="cy_cmt_count" data-xid="2018/05/21/hexo博客搭建/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：</p>
-<blockquote>
-<p>可以使用 Markdown 格式编写博客源文件，支持 <a href="https://github.github.com/gfm/" target="_blank" rel="noopener">GitHub Flavored Markdown</a> 扩展格式<br>从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲染在秒级<br>一键部署，运行一条命令就可以将博客部署到 Github Pages 或者云主机站点</p>
-</blockquote>
-<p>本文将讲述如何基于 Hexo 搭建一套个人博客，有以下内容：</p>
-<ul>
-<li>基础知识</li>
-<li>本地搭建</li>
-<li>远程部署</li>
-</ul>
-<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><p>博客系统的架构图如下：</p>
-<p><img src="/images/image-20180530193646729.png" alt="博客架构"></p>
-<p>我们先需要在本地搭建一套可以访问的静态博客站点，然后将博客推送到远程服务器的仓库里，同时能自动更新到站点目录。</p>
-<p>废话不多说，下面开始具体步骤。</p>
-<h2 id="本地搭建"><a href="#本地搭建" class="headerlink" title="本地搭建"></a>本地搭建</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们需要提前安装以下工具：</p>
-<ul>
-<li>Node.js</li>
-<li>Git</li>
-</ul>
-<h5 id="安装-Node-js"><a href="#安装-Node-js" class="headerlink" title="安装 Node.js"></a>安装 Node.js</h5><p>目前(截止2018-05)官方推荐安装 Node.js v8 LTS。 有两种安装方法</p>
-<ol>
-<li>包管理器二进制安装</li>
-<li>源码安装</li>
-</ol>
-<p>如果使用源码安装，还需要安装 gcc/clang/make 等开发工具，手动编译代码，比较麻烦，因此我们选择二进制方式安装。</p>
-<p>对于 <strong>Linux</strong> 环境（以Centos为例）官方提供了setup 脚本，我们先下载下来执行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -</span><br></pre></td></tr></table></figure>
-<p>然后安装 </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum -y install nodejs</span><br></pre></td></tr></table></figure>
-<p>对于 <strong>MacOS</strong> 环境，直接使用 Homebrew 包管理器安装：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install node</span><br></pre></td></tr></table></figure>
-<p>通过下面的命令可以查看已经成功安装：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ node -v</span><br></pre></td></tr></table></figure>
-<p>更多安装信息可以查看这里 <a href="https://nodejs.org/en/download/package-manager/" target="_blank" rel="noopener">安装 Node.js</a></p>
-<h5 id="安装-git-客户端"><a href="#安装-git-客户端" class="headerlink" title="安装 git 客户端"></a>安装 git 客户端</h5><ul>
-<li><p>Mac: 使用 Homebrew 安装git：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install git</span><br></pre></td></tr></table></figure>
-<p>如果没有安装 Homebrew，好吧，使用以下ruby命令(mac自带 ruby)安装 Homebrew：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ruby -e <span class="string">"<span class="variable">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)</span>"</span> brew doctor</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Linux (Fedora, Red Hat, CentOS): </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install git-core</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>安装完成</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git version</span><br></pre></td></tr></table></figure>
-<h3 id="安装-Hexo"><a href="#安装-Hexo" class="headerlink" title="安装 Hexo"></a>安装 Hexo</h3><p>有了前面安装的Node.js，我们就可以用它配套的包管理工具 npm 来安装 hexo 了：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br><span class="line">$ hexo version</span><br></pre></td></tr></table></figure>
-<h3 id="生成示例博客"><a href="#生成示例博客" class="headerlink" title="生成示例博客"></a>生成示例博客</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init demo</span><br><span class="line">$ cd demo</span><br><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
-<p>npm会依次安装依赖的模块，最终生成的文件大致有以下这些：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── _config.yml</span><br><span class="line">├── node_modules</span><br><span class="line">├── package-lock.json</span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds</span><br><span class="line">├── source</span><br><span class="line">└── themes</span><br></pre></td></tr></table></figure>
-<p>_config.yml是 yaml 格式的配置文件，source 目录用来存放博客源文件，themes 用来放置博客主题（默认的主题为landscape）；渲染的时候还会生成 public 目录，用来存放渲染后的网页文件如 html, js, css, image 等。</p>
-<p>现在我们来添加自己的第一篇博客文章：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"hello Hexo"</span></span><br></pre></td></tr></table></figure>
-<p>生成的 Markdown 格式源文件存放在 <code>source/_posts</code> 目录，为 <code>source/_posts/hello-Hexo.md</code>，此时包括自带的 <code>hello-world.md</code> 我们已经有两篇博客：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls <span class="built_in">source</span>/_posts/</span><br><span class="line">hello-Hexo.md  hello-world.md</span><br></pre></td></tr></table></figure>
-<p>我们可以启动本地 server 来进行预览</p>
-<p>首先安装 hexo-server</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> demo</span><br><span class="line">$ npm install hexo-server --save</span><br></pre></td></tr></table></figure>
-<p>启动 server</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>浏览器打开 <code>http://localhost:5000/</code> 就可以看到博客内容了。更多关于 hexo 的使用可以参考 <a href="https://hexo.io/docs/index.html" target="_blank" rel="noopener">这里</a></p>
-<h3 id="渲染"><a href="#渲染" class="headerlink" title="渲染"></a>渲染</h3><p>hexo 提供了命令可以将 Markdown 源文件渲染成博客网页文件，供后面的远程部署使用</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>在 public 目录就会生成静态网页文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls public</span><br><span class="line">2018  archives	css  fancybox  index.html  js</span><br></pre></td></tr></table></figure>
-<h2 id="远程搭建"><a href="#远程搭建" class="headerlink" title="远程搭建"></a>远程搭建</h2><p>前面提过，我们可以将渲染出的静态博客网页文件放到 Github Pages 或者自有的云主机 vps 上，提供外网浏览服务。</p>
-<p> <a href="https://pages.github.com/" target="_blank" rel="noopener">Github Pages</a> 是Github 提供的免费网页托管服务，只需要在你的 Github 账户下新建一个 <code>&lt;username&gt;.github.io</code> 库即可托管博客站点，非常方便；</p>
-<p>如果你购买有自己的云主机（国内有阿里云、腾讯云、金山云等），安装常用的 web 服务如 nginx 也可以很简单的搭建一个博客站点。</p>
-<p>这里我们以 vps 搭建博客站点为例</p>
-<h3 id="新建操作账户"><a href="#新建操作账户" class="headerlink" title="新建操作账户"></a>新建操作账户</h3><p>首先在 vps 上新建一个操作账户，如 user00，并赋予其 sudo 权限。注意用 root 用户做如下操作</p>
-<p>新建账户并设置密码</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ adduser user00</span><br><span class="line">$ passwd user00</span><br></pre></td></tr></table></figure>
-<p>修改 /etc/sudoers 文件，为 user00 添加 sudo 权限，默认该文件是只读的，我们打开编辑权限</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 740 /etc/sudoers</span><br><span class="line">$ vim /etc/sudoers</span><br></pre></td></tr></table></figure>
-<p>在文件最后添加下面的内容</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user00 ALL=(ALL) ALL</span><br></pre></td></tr></table></figure>
-<p>保存退出后改回只读状态</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
-<p>后面的操作我们就可以避免不安全的 root 账户，使用 user00 账户来操作了。</p>
-<h3 id="安装-nginx"><a href="#安装-nginx" class="headerlink" title="安装 nginx"></a>安装 nginx</h3><p>以vps 安装了 Centos 为例，直接执行命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ su - user00</span><br><span class="line">$ sudo yum install -y nginx</span><br></pre></td></tr></table></figure>
-<p>安装完成后，启动 nginx 服务</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /etc/init.d/nginx start</span><br></pre></td></tr></table></figure>
-<p>浏览器打开<code>http://your-wan-ip/</code> 可以看到 nginx 已经可以使用了</p>
-<blockquote>
-<p>your-wan-ip 填写你的 vps 外网 ip</p>
-</blockquote>
-<h3 id="自动上传"><a href="#自动上传" class="headerlink" title="自动上传"></a>自动上传</h3><p>在上文<strong>本地搭建</strong>中我们已经可以渲染出可用的博客网页文件了（通过 hexo generate 命令），下面就需要将这些博客文件上传到我们的远程环境，即云 vps 上。</p>
-<p>Hexo提供了非常方便的上传方式，支持一键自动部署，在本地运行命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>即可部署到远程，当然它还依赖一些部署工具。hexo支持多种部署工具，如 Git、Rsync、SFTP 等，方便起见我们这选择 Git。有其他需求的可以查看 <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">deploy</a></p>
-<p>使用 Git 方式就需要我们在远程 vps 上新建一个 repository 来存放博客文件，然后就可以在本地用 git 上传了。需要以下步骤：</p>
-<ul>
-<li>安装 git</li>
-<li>创建 git 账户</li>
-<li>本地生成密钥对</li>
-<li>存储公钥</li>
-<li>新建 repository</li>
-<li>配置 hexo 上传</li>
-</ul>
-<h5 id="安装-git"><a href="#安装-git" class="headerlink" title="安装 git"></a>安装 git</h5><p>在远程 vps 上，用刚才的 user00 账户运行安装命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y git</span><br></pre></td></tr></table></figure>
-<p>因为我们需要通过 git 账户来将本地的博客文件上传至远程 vps 上的 repository 里，所以需要在远程 vps 上创建 git 账户</p>
-<h5 id="创建-git-账户"><a href="#创建-git-账户" class="headerlink" title="创建 git 账户"></a>创建 git 账户</h5><p>在远程 vps 上运行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo adduser git</span><br><span class="line">$ sudo passwd git</span><br></pre></td></tr></table></figure>
-<p>git 通过 ssh 方式上传文件时，有两种方式访问远端服务器</p>
-<ul>
-<li>密码登录</li>
-<li>公钥免密码登录</li>
-</ul>
-<p>如果使用密码登录方式，每次都需要用户输入密码会非常麻烦，因此我们选择另外一种方式，即公钥方式登录。公钥登录需要本地生成密钥对，然后保存到远端服务器。详细的 ssh 公钥登录原理可以在这里查看 <a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">ssh 公钥登录</a></p>
-<h5 id="本地生成密钥对"><a href="#本地生成密钥对" class="headerlink" title="本地生成密钥对"></a>本地生成密钥对</h5><p>切换到本地环境，运行密钥生成命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C <span class="string">"your-email@example.com"</span></span><br></pre></td></tr></table></figure>
-<p><a href="mailto:your-email@example.com" target="_blank" rel="noopener">your-email@example.com</a> 填写你的邮箱地址即可，然后一路回车，运行结束以后，在$HOME/.ssh/目录下，会新生成两个文件：id_rsa.pub 和 id_rsa。前者是你的公钥，后者是你的私钥。</p>
-<h5 id="存储公钥"><a href="#存储公钥" class="headerlink" title="存储公钥"></a>存储公钥</h5><p>有了公钥，我们就将其上传到远程 vps 上，存储起来，以后 ssh 访问就不需要密码了。在远程 vps 上，/home/git/.ssh/authorized_keys 文件用来保存公钥。</p>
-<p>首先，本地环境复制公钥内容</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat <span class="variable">$HOME</span>/.ssh/id_rsa.pub | pbcopy</span><br></pre></td></tr></table></figure>
-<p>远程 vps 上，切换为 git 账户</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo su - git</span><br></pre></td></tr></table></figure>
-<p>编辑 /home/git/.ssh/authorized_keys 文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span></span><br><span class="line">$ mkdir -p .ssh</span><br><span class="line">$ vim .ssh/authorized_keys</span><br></pre></td></tr></table></figure>
-<p>粘贴刚刚复制的公钥内容，保存退出</p>
-<p>完成之后修改该文件权限，只允许 git 账户访问</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 600 /home/git/.ssh/authorzied_keys</span><br><span class="line">$ chmod 700 /home/git/.ssh</span><br></pre></td></tr></table></figure>
-<p>现在就可以测试是否可以通过 ssh 方式从本地环境免密码登录远程 vps 了</p>
-<p>本地环境运行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -v git@server-ip</span><br></pre></td></tr></table></figure>
-<p>这里的 server-ip 填写你 vps 的外网 ip(wanip)，运行后显示连接成功</p>
-<p>接下来，我们需要新建一个 repository 目录 (例如 blog.git)来存放博客文件</p>
-<h5 id="新建-repository"><a href="#新建-repository" class="headerlink" title="新建 repository"></a>新建 repository</h5><p>在远程 vps 上，运行命令创建 git 裸库</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span></span><br><span class="line">$ mkdir -p blog.git</span><br><span class="line">$ <span class="built_in">cd</span> blog.git</span><br><span class="line">$ git init --bare</span><br></pre></td></tr></table></figure>
-<p>为了使 <code>hexo deploy</code> 命令可以运行，我们还需要做一些工作，让 hexo 通过 git 上传文件</p>
-<h5 id="配置-hexo-上传"><a href="#配置-hexo-上传" class="headerlink" title="配置 hexo 上传"></a>配置 hexo 上传</h5><p>本地环境，安装插件 <a href="https://github.com/hexojs/hexo-deployer-git" target="_blank" rel="noopener">hexo-deployer-git</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd demo</span><br><span class="line">$ npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>修改 _config.yaml 配置文件，添加 deploy 相关的字段，格式如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: &lt;repository url&gt;</span><br><span class="line">  branch: [branch]</span><br></pre></td></tr></table></figure>
-<p><code>type</code>设置为 git，<code>&lt;repository url&gt;</code> 就是我们刚刚搭建好的远程 git 仓库地址，格式为 <code>user@server-ip:/path/to/git-repo</code></p>
-<p>示例配置如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git@120.120.120.120:/home/git/blog.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-<p>将 <code>120.120.120.120</code> 替换为你 vps 的外网 ip，保存退出，执行一键部署</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean &amp;&amp; hexo generate --deploy</span><br></pre></td></tr></table></figure>
-<p>在远程 vps 的 /home/git/blog.git 目录我们已经可以看到文件已经上传上来了。</p>
-<h3 id="自动更新"><a href="#自动更新" class="headerlink" title="自动更新"></a>自动更新</h3><p>远程 vps 上 repository 建好之后，nginx 还不能访问到，我们需要借助工具，在 git repository 有文件上传时自动将更新后的文件拷贝到 nginx 的网页目录下，这样博客就会自动更新了。</p>
-<h5 id="创建网页目录"><a href="#创建网页目录" class="headerlink" title="创建网页目录"></a>创建网页目录</h5><p>在远程 vps 上，使用 user00 账户创建 /var/www/blog，并设置目录为 git 账户所有</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mkdir -p /var/www/blog</span><br><span class="line">$ sudo chown -R git:git /var/www/blog</span><br></pre></td></tr></table></figure>
-<h5 id="配置Git-Hooks"><a href="#配置Git-Hooks" class="headerlink" title="配置Git Hooks"></a>配置Git Hooks</h5><p>我们需要将 repository 目录 /home/git/blog.git 的文件自动拷贝到 nginx 目录 /var/www/blog 目录，这里我们利用 git 的 hook 机制，在 repository 有更新时，自动运行脚本将文件 checkout 到 nginx 目录</p>
-<p>编辑 git repository 的 hook 脚本 post-receive</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo su - git</span><br><span class="line">$ <span class="built_in">cd</span> /home/git/blog.git</span><br><span class="line">$ vim hooks/post-receive</span><br></pre></td></tr></table></figure>
-<p>输入以下 bash 脚本内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">git --work-tree=/var/www/blog --git-dir=/home/git/blog.git checkout -f</span><br></pre></td></tr></table></figure>
-<p>该脚本会在 git repository (/home/git/blog.git) 有上传时自动 checkout 内容到 nginx 网页目录 /var/www/blog</p>
-<p>修改完成后，赋予 post-receive 脚本可执行权限</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ chmod +x hooks/post-receive</span><br></pre></td></tr></table></figure>
-<p>现在，只要 repository 有更新，我们的 hook 脚本就会自动执行了。更多Git Hooks 的使用可以参考 <a href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks" target="_blank" rel="noopener">Git Hooks</a></p>
-<p>下面测试一下自动更新是否起效</p>
-<h5 id="测试自动更新"><a href="#测试自动更新" class="headerlink" title="测试自动更新"></a>测试自动更新</h5><p>本地环境修改一下博客 source/_posts/hello-Hexo.md</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> demo</span><br><span class="line">$ vim <span class="built_in">source</span>/_posts/hello-Hexo.md</span><br></pre></td></tr></table></figure>
-<p>任意输入一些内容，保存退出</p>
-<p>hexo 一键部署</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean &amp;&amp; hexo generate --deploy</span><br></pre></td></tr></table></figure>
-<p>然后在远程 vps 上查看目录 /var/www/blog，文件已经自动更新过来</p>
-<blockquote>
-<p>如果发现有问题，可以手动运行 git –work-tree=/var/www/blog –git-dir=/home/git/blog.git checkout -f 定位错误，修改后再次测试</p>
-</blockquote>
-<p>修改 nginx 配置使其指向我们的网页目录</p>
-<h5 id="配置-nginx"><a href="#配置-nginx" class="headerlink" title="配置 nginx"></a>配置 nginx</h5><p>user00账户，编辑配置</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vim /etc/nginx/conf.d/default.conf</span><br></pre></td></tr></table></figure>
-<p>内容如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">#</span><br><span class="line"># The default server</span><br><span class="line">#</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    #listen       [::]:80 default_server;</span><br><span class="line">    server_name  www.example.com example.com;</span><br><span class="line">    index index.html index.htm index.php default.html default.htm default.php;</span><br><span class="line">    root         /var/www/blog;</span><br><span class="line"></span><br><span class="line">    location ~ .*\.(ico|gif|jpg|jpeg|png|bmp|swf)$</span><br><span class="line">    &#123;</span><br><span class="line">        access_log   off;</span><br><span class="line">        expires      1d;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location ~ .*\.(js|css|txt|xml)?$</span><br><span class="line">    &#123;</span><br><span class="line">        access_log   off;</span><br><span class="line">        expires      12h;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        try_files $uri $uri/ =404;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意以下几点：</p>
-<blockquote>
-<p>将 <code>www.example.com example.com</code> 替换为你自己的域名<br>如果监听在默认端口80，域名需要 <a href="https://beian.aliyun.com/" target="_blank" rel="noopener">备案</a><br><code>#listen       [::]:80 default_server;</code>  该行务必注释掉，否则会提示 ipv6 监听相关的错误<br><code>root</code> 选项请填写网页目录，设置为 <code>/var/www/blog</code></p>
-</blockquote>
-<p>修改完成后重启 nginx 服务</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /etc/init.d/nginx restart</span><br></pre></td></tr></table></figure>
-<p>浏览器打开 <code>http://www.example.com/</code> 可以看到博客内容</p>
-<p>至此，远程存放博客的环境已经搭建完成。</p>
-<p>以后更新博客，只需要在本地环境编辑好 Markdown 文件，就可以一键自动部署了</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean &amp;&amp; hexo generate --deploy</span><br></pre></td></tr></table></figure>
-<p>是不是非常方便 ^ ^，赶快行动起来吧！</p>
-<p>参考资料：</p>
-<p><a href="https://segmentfault.com/a/1190000005723321" target="_blank" rel="noopener">阿里云VPS搭建自己的的Hexo博客</a></p>
-<p><a href="https://hexo.io/docs/index.html" target="_blank" rel="noopener">Hexo官方文档</a></p>
-<p><a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">SSH原理与运用（一）：远程登录</a></p>
-<p><a href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks" target="_blank" rel="noopener">Git Hooks 官方文档</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/博客搭建手记/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/21/博客搭建手记/" itemprop="url">博客搭建手记</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T18:14:49+08:00">
-                2018-05-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/05/21/博客搭建手记/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/05/21/博客搭建手记/" class="cy_cmt_count" data-xid="2018/05/21/博客搭建手记/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="总揽"><a href="#总揽" class="headerlink" title="总揽"></a>总揽</h2><p>本文将介绍利用<code>Hugo</code>来快速搭建一个简单的个人博客。相对于其他静态网站生成器来说，Hugo 具备如下特点：</p>
-<blockquote>
-<p>极快的页面编译生成速度。（ ~1 ms 每页面）<br>完全跨平台支持，可以运行在  Mac OS X,  Linux,  Windows, 以及更多!<br>安装方便 Installation<br>本地调试 Usage 时通过 LiveReload 自动即时刷新页面<br>完全的皮肤支持<br>可以部署在任何的支持 HTTP 的服务器上    </p>
-</blockquote>
-<p>在本文你将看到以下内容：</p>
-<ul>
-<li>本地搭建: 先搭建一个博客，可以本地预览</li>
-<li>远程部署：将博客部署到<code>github</code>上，对外开放浏览</li>
-</ul>
-<h2 id="本地搭建"><a href="#本地搭建" class="headerlink" title="本地搭建"></a>本地搭建</h2><p><strong>1. 首先利用 hugo 命令行新建一个 website 目录（比如<code>blog</code>），用来放置博客文件。</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo new site blog</span><br></pre></td></tr></table></figure>
-<p>生成的 blog 目录结构如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── archetypes</span><br><span class="line">├── config.toml</span><br><span class="line">├── content</span><br><span class="line">├── data</span><br><span class="line">├── layouts</span><br><span class="line">├── static</span><br><span class="line">└── themes</span><br></pre></td></tr></table></figure>
-<p><strong>2. 为博客添加一个主题，主题会放置在 blog/themes 目录下。你可以在</strong> <a href="https://themes.gohugo.io/" target="_blank" rel="noopener">themes.gohugo.io</a> <strong>上查找你喜欢的主题，这些主题一般托管在 github 上，我们可以把它下载到 themes 目录下。</strong></p>
-<p>这里我们选择一个叫 beautifulhugo 的主题：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> themes</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/halogenica/beautifulhugo.git beautifulhugo</span><br></pre></td></tr></table></figure>
-<p>然后设置默认主题为 beautifulhugo:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line">vim config.toml</span><br></pre></td></tr></table></figure>
-<p>添加以下内容到 config.toml:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">theme = &quot;beautifulhugo&quot;</span><br></pre></td></tr></table></figure>
-<p><strong>3. 利用 hugo 命令行在 content 目录中添加一篇博客文章，文章都是用<code>md</code>格式来编辑：</strong> </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo new post/first.md</span><br></pre></td></tr></table></figure>
-<p>修改 post/first.md 的内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">### Hello Hugo</span><br><span class="line"></span><br><span class="line">1. aaa</span><br><span class="line">2. bbb</span><br><span class="line">3. ccc</span><br></pre></td></tr></table></figure>
-<p><strong>4. 利用 hugo 命令构建带 content 的博客，并在本地<code>localhost:1313</code>上启动 server：</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo server -D</span><br></pre></td></tr></table></figure>
-<p><strong>5. 浏览器打开<code>http://localhost:1313/</code>可以看到博客内容。</strong></p>
-<p>至此本地搭建完成。</p>
-<h2 id="部署博客到github"><a href="#部署博客到github" class="headerlink" title="部署博客到github"></a>部署博客到github</h2><p>github页面 (<code>github pages</code>) 分两种：</p>
-<ul>
-<li><code>User/Organization Pages</code> (https://&lt;USERNAME|ORGANIZATION&gt;.github.io/)</li>
-<li><code>Project Pages</code>(https://&lt;USERNAME|ORGANIZATION&gt;.github.io/<project>/)</project></li>
-</ul>
-<p>这里我们只介绍 <code>User/Organization</code> 类型的页面，也就是将博客页面托管到以下地址：</p>
-<p><code>https://&lt;USERNAME|ORGANIZATION&gt;.github.io/</code></p>
-<p>以下为步骤：</p>
-<p><strong>1. Ctrl+C 停掉本地 server</strong></p>
-<p><strong>2. 在 github 上新建一个 repository（例如<code>blog</code>） 用来作为原始博客文件的远程仓库</strong></p>
-<p><strong>3. 提交 blog 原始文件到 github :</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">git init</span><br><span class="line">git add -f .</span><br><span class="line">git commit -m <span class="string">"first commit"</span></span><br><span class="line">git remote add origin git@github.com:&lt;USERNAME&gt;/blog.git</span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
-<p>后续如果博客有更新，再有修改需要提交，只需要执行：  </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add -A</span><br><span class="line">git commit -m <span class="string">"your commit message"</span>  </span><br><span class="line">git push origin master</span><br></pre></td></tr></table></figure>
-<p><strong>4. 再新建一个repository <code>&lt;USERNAME&gt;.github.io</code> 用来作为渲染后的博客文件的远程仓库</strong></p>
-<p><strong>5. 将<code>&lt;USERNAME&gt;.github.io</code>作为 submodule 关联到 public 目录：</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git submodule add -b master git@github.com:&lt;USERNAME&gt;/&lt;USERNAME&gt;.github.io.git public</span><br></pre></td></tr></table></figure>
-<p><strong>6. 利用 hugo命令行 build 生成渲染后的博客文件，文件的默认存放路径就是<code>public</code> </strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo -D</span><br></pre></td></tr></table></figure>
-<p><strong>7. 提交<code>public</code>目录的渲染文件到<code>github</code>:</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> public</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">"your commit message"</span></span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
-<p><strong>8. 浏览器打开<code>https://&lt;USERNAME&gt;.github.io/</code>可以看到博客内容。</strong></p>
-<p>至此博客 github 部署完成。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2146,7 +1837,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2159,7 +1850,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
