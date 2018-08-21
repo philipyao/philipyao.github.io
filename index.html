@@ -229,6 +229,192 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/21/c-c-编译过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/21/c-c-编译过程/" itemprop="url">c/c++编译过程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-21T14:35:40+08:00">
+                2018-08-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/21/c-c-编译过程/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/21/c-c-编译过程/" class="cy_cmt_count" data-xid="2018/08/21/c-c-编译过程/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>C/C++ 是高级编译型语言，执行的时候需要将容易阅读的源码编译成机器可以识别的机器指令，交由 CPU 执行。这篇文章我们来研究一下编译过程是怎样一个过程。</p>
+<p>绝大多数编译器并不是一个单一的庞大程序，它通常由六七个稍小的程序组成，这些程序由一个叫做『编译器驱动器』(compiler driver) 的控制程序来调度。整个编译过程大致可以分为四个主要阶段：</p>
+<ul>
+<li>预编译</li>
+<li>编译</li>
+<li>汇编</li>
+<li>链接</li>
+</ul>
+<p>我们以一个简单的 c 程序来举例，c 代码如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line">  </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> add(a, b) (a + b)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// here is comment</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> DEBUG</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">myfunc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"DEBUG defined\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">error</span> DEBUG not defined!</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">5</span>, b = <span class="number">4</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"addition is: %d\n"</span>, add(a, b));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 centos 环境利用 gcc 进行编译，添加选项 <code>-save-temps</code> 我们可以获取编译过程每个阶段产生的临时文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -Wall -save-temps filename.c -o filename</span><br></pre></td></tr></table></figure>
+<p>可以看到分别生成了以下文件</p>
+<p><img src="/images/image-20180821150535977.png" alt="image-20180821150535977"></p>
+<p>其中</p>
+<p><code>filename.c</code> 源码文件 </p>
+<p><code>filename.i</code> 预编译后文件</p>
+<p><code>filename.s</code> 汇编文件</p>
+<p><code>filename.o</code> 编译目标文件</p>
+<p><code>filename</code> 链接后的可执行文件</p>
+<p>下面我们分别看看每个阶段具体在进行哪些操作。</p>
+<h2 id="预编译"><a href="#预编译" class="headerlink" title="预编译"></a>预编译</h2><p>预编译阶段，编译器驱动调动预编译器处理 <strong>预编译指令</strong> ，所谓预编译指令是指以 <code>#</code> 开头的指令，主要有注释、宏、头文件包含、条件编译等，因此这个阶段包括以下几个操作</p>
+<ul>
+<li>去除注释</li>
+<li>展开宏定义</li>
+<li>展开头文件包含</li>
+<li>条件编译<code>#ifdef</code>、<code>#ifndef</code> 处理</li>
+<li>error 抛出错误信息</li>
+</ul>
+<p>我们打开预编译后的 <code>filename.i</code> 文件可以看到：注释被去除了，参数宏 <code>add(a, b)</code> 也被 <code>(a + b)</code> 替换，包含的头文件 <code>&lt;stdio.h&gt;</code> 中的内容被拷贝到源文件 <code>filename.c</code> 中；此外编译时候有没有指定 <code>-DDEBUG</code> 得到的结果 (是否有<code>myfunc</code>) 也不一样。</p>
+<blockquote>
+<p>其他的预编译指令还包括 pragma、 line 等，这里就不详细说明了</p>
+</blockquote>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>编译阶段，主要将扩展的源码文件如<code>filename.i</code> 编译成汇编文件<code>filename.s</code>，该文件包含了很多汇编指令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">  1     .file   &quot;filename.c&quot;</span><br><span class="line">  2     .section    .rodata</span><br><span class="line">  3 .LC0:</span><br><span class="line">  4     .string &quot;DEBUG defined&quot;</span><br><span class="line">  5     .text</span><br><span class="line">  6 .globl myfunc</span><br><span class="line">  7     .type   myfunc, @function</span><br><span class="line">  8 myfunc:</span><br><span class="line">  9 .LFB0:</span><br><span class="line"> 10     .cfi_startproc</span><br><span class="line">    pushq   %rbp</span><br><span class="line">    .cfi_def_cfa_offset 16</span><br><span class="line">    .cfi_offset 6, -16 </span><br><span class="line">    movq    %rsp, %rbp</span><br><span class="line">    .cfi_def_cfa_register 6</span><br><span class="line">    movl    $.LC0, %edi</span><br><span class="line">    call    puts</span><br><span class="line">    leave</span><br><span class="line">    .cfi_def_cfa 7, 8</span><br><span class="line">    ret </span><br><span class="line">    .cfi_endproc</span><br><span class="line">.LFE0:</span><br><span class="line">    .size   myfunc, .-myfunc</span><br><span class="line">    .section    .rodata</span><br><span class="line">.LC1:</span><br><span class="line">    .string &quot;addition is: %d\n&quot;</span><br><span class="line">    .text</span><br><span class="line">.globl main</span><br><span class="line">    .type   main, @function</span><br><span class="line">main:</span><br><span class="line">.LFB1:</span><br><span class="line">    .cfi_startproc</span><br><span class="line">    pushq   %rbp</span><br><span class="line">    .cfi_def_cfa_offset 16</span><br><span class="line">    .cfi_offset 6, -16 </span><br><span class="line">    movq    %rsp, %rbp</span><br><span class="line">    .cfi_def_cfa_register 6</span><br><span class="line">    subq    $16, %rsp</span><br><span class="line">    movl    $5, -8(%rbp)</span><br><span class="line">    movl    $4, -4(%rbp)</span><br><span class="line">    movl    -4(%rbp), %eax</span><br><span class="line">    movl    -8(%rbp), %edx</span><br><span class="line">    addl    %eax, %edx</span><br><span class="line">    movl    $.LC1, %eax</span><br><span class="line">    movl    %edx, %esi</span><br><span class="line">    movq    %rax, %rdi</span><br><span class="line">    movl    $0, %eax</span><br><span class="line">    call    printf</span><br><span class="line">    movl    $0, %eax</span><br><span class="line">    leave</span><br><span class="line">    .cfi_def_cfa 7, 8</span><br><span class="line">    ret </span><br><span class="line">    .cfi_endproc</span><br><span class="line">.LFE1:</span><br><span class="line">    .size   main, .-main</span><br><span class="line">    .ident  &quot;GCC: (GNU) 4.4.7 20120313 (Red Hat 4.4.7-17)&quot;</span><br><span class="line">    .section    .note.GNU-stack,&quot;&quot;,@progbits</span><br></pre></td></tr></table></figure>
+<p>整个编译过程包含词法与语义分析，源代码优化，目标代码生成、目标代码优化等阶段。</p>
+<h2 id="汇编-Assembly"><a href="#汇编-Assembly" class="headerlink" title="汇编(Assembly)"></a>汇编(<strong>Assembly</strong>)</h2><p>该过程通过调度汇编器(as)来完成，将汇编指令文件<code>filename.s</code> 翻译成与处理器结构有关的机器指令文件<code>filename.o</code>，这是一个二进制文件，不能直接查看，用 <code>file</code> 命令查看可知</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ file filename.o </span><br><span class="line">filename.o: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), not stripped</span><br></pre></td></tr></table></figure>
+<p>这一个64位 <code>ELF</code> 文件，可以使用 <code>objdump -x</code> 命令来查看所有文件头，包含符号表和重定位信息等</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">$ objdump -x filename.o</span><br><span class="line"></span><br><span class="line">filename.o:     file format elf64-x86-64</span><br><span class="line">filename.o</span><br><span class="line">architecture: i386:x86-64, flags 0x00000011:</span><br><span class="line">HAS_RELOC, HAS_SYMS</span><br><span class="line">start address 0x0000000000000000</span><br><span class="line"></span><br><span class="line">Sections:</span><br><span class="line">Idx Name          Size      VMA               LMA               File off  Algn</span><br><span class="line">  0 .text         00000049  0000000000000000  0000000000000000  00000040  2**2</span><br><span class="line">                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE</span><br><span class="line">  1 .data         00000000  0000000000000000  0000000000000000  0000008c  2**2</span><br><span class="line">                  CONTENTS, ALLOC, LOAD, DATA</span><br><span class="line">  2 .bss          00000000  0000000000000000  0000000000000000  0000008c  2**2</span><br><span class="line">                  ALLOC</span><br><span class="line">  3 .rodata       0000001f  0000000000000000  0000000000000000  0000008c  2**0</span><br><span class="line">                  CONTENTS, ALLOC, LOAD, READONLY, DATA</span><br><span class="line">  4 .comment      0000002e  0000000000000000  0000000000000000  000000ab  2**0</span><br><span class="line">                  CONTENTS, READONLY</span><br><span class="line">  5 .note.GNU-stack 00000000  0000000000000000  0000000000000000  000000d9  2**0</span><br><span class="line">                  CONTENTS, READONLY</span><br><span class="line">  6 .eh_frame     00000058  0000000000000000  0000000000000000  000000e0  2**3</span><br><span class="line">                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA</span><br><span class="line">SYMBOL TABLE:</span><br><span class="line">0000000000000000 l    df *ABS*	0000000000000000 filename.c</span><br><span class="line">0000000000000000 l    d  .text	0000000000000000 .text</span><br><span class="line">0000000000000000 l    d  .data	0000000000000000 .data</span><br><span class="line">0000000000000000 l    d  .bss	0000000000000000 .bss</span><br><span class="line">0000000000000000 l    d  .rodata	0000000000000000 .rodata</span><br><span class="line">0000000000000000 l    d  .note.GNU-stack	0000000000000000 .note.GNU-stack</span><br><span class="line">0000000000000000 l    d  .eh_frame	0000000000000000 .eh_frame</span><br><span class="line">0000000000000000 l    d  .comment	0000000000000000 .comment</span><br><span class="line">0000000000000000 g     F .text	0000000000000010 myfunc</span><br><span class="line">0000000000000000         *UND*	0000000000000000 puts</span><br><span class="line">0000000000000010 g     F .text	0000000000000039 main</span><br><span class="line">0000000000000000         *UND*	0000000000000000 <span class="built_in">printf</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">RELOCATION RECORDS FOR [.text]:</span><br><span class="line">OFFSET           TYPE              VALUE </span><br><span class="line">0000000000000005 R_X86_64_32       .rodata</span><br><span class="line">000000000000000a R_X86_64_PC32     puts-0x0000000000000004</span><br><span class="line">000000000000002f R_X86_64_32       .rodata+0x000000000000000e</span><br><span class="line">000000000000003e R_X86_64_PC32     <span class="built_in">printf</span>-0x0000000000000004</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">RELOCATION RECORDS FOR [.eh_frame]:</span><br><span class="line">OFFSET           TYPE              VALUE </span><br><span class="line">0000000000000020 R_X86_64_PC32     .text</span><br><span class="line">0000000000000040 R_X86_64_PC32     .text+0x0000000000000010</span><br></pre></td></tr></table></figure>
+<p>上面符号表里的 <code>text</code> 表示在代码段找到了定义，而有 <code>UND</code> 标识的 <code>puts</code>函数和<code>printf</code>函数因为属于库函数，尚未链接进来，因此属于未定义。</p>
+<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p>该阶段由编译器驱动程序驱动链接器(ld)来完成。ld 将生成目标文件所需要的所有<code>.o</code> 文件和需要链接的库文件(动态链接库或者静态库) 一起链接成目标文件，主要包含：地址和空间分配（<code>Address and Storage Allocation</code>），符号决议（<code>Symbol Resolution</code>），重定位（<code>Relocation</code>）等。</p>
+<p>链接主要分为动态连接和静态链接。对于静态链接，ld 会将静态库的代码直接加到可执行文件中，因此文件大小比较大。而动态链接则是指链接阶段仅仅只加入一些描述信息，而程序执行时再从系统中把相应动态库加载到内存中去。</p>
+<p>GCC 默认使用动态链接方式链接库文件。对比目标文件<code>filename.o</code> 和我们链接完成的可执行文件 <code>filename</code>大小可知，<code>text</code> 部分增加的大小为必要的描述信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ size filename.o</span><br><span class="line">   text	   data	    bss	    dec	    hex	filename</span><br><span class="line">    192	      0	      0	    192	     c0	filename.o</span><br><span class="line">$ size filename</span><br><span class="line">   text	   data	    bss	    dec	    hex	filename</span><br><span class="line">   1319	    500	     16	   1835	    72b	filename</span><br></pre></td></tr></table></figure>
+<p>再看<code>file</code>命令的输出</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ file filename</span><br><span class="line">filename: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), <span class="keyword">for</span> GNU/Linux 2.6.18, not stripped</span><br></pre></td></tr></table></figure>
+<p>可见与上面的<code>filename.o</code>不同的是该文件已经链接(GCC 默认动态连接 Linux 的 c 运行时库 libc.so.6，即 glibc )</p>
+<p>此外，利用 ldd 命令可以看到可执行程序依赖的动态链接库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ ldd -v filename</span><br><span class="line">	linux-vdso.so.1 =&gt;  (0x00007fff36f24000)</span><br><span class="line">	libc.so.6 =&gt; /lib64/libc.so.6 (0x00007f8f61001000)</span><br><span class="line">	/lib64/ld-linux-x86-64.so.2 (0x00007f8f613a0000)</span><br><span class="line"></span><br><span class="line">	Version information:</span><br><span class="line">	./filename:</span><br><span class="line">		libc.so.6 (GLIBC_2.2.5) =&gt; /lib64/libc.so.6</span><br><span class="line">	/lib64/libc.so.6:</span><br><span class="line">		ld-linux-x86-64.so.2 (GLIBC_PRIVATE) =&gt; /lib64/ld-linux-x86-64.so.2</span><br><span class="line">		ld-linux-x86-64.so.2 (GLIBC_2.3) =&gt; /lib64/ld-linux-x86-64.so.2</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>用一个图来表示整个编译的过程如下</p>
+<p><img src="/images/image-20180821172053123.png" alt="image-20180821172053123"></p>
+<p>参考资料</p>
+<p>&lt;C专家编程&gt;</p>
+<p><a href="https://www.geeksforgeeks.org/compiling-a-c-program-behind-the-scenes/" target="_blank" rel="noopener">Compiling a C program:- Behind the Scenes</a></p>
+<p><a href="http://smilejay.com/2012/01/c_compilation_stages/" target="_blank" rel="noopener">C程序编译过程浅析</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/20/GCC分支预测/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1617,176 +1803,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/27/NAS设置公网访问/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/27/NAS设置公网访问/" itemprop="url">NAS设置公网访问</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-27T12:39:00+08:00">
-                2018-07-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/07/27/NAS设置公网访问/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/07/27/NAS设置公网访问/" class="cy_cmt_count" data-xid="2018/07/27/NAS设置公网访问/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>入手了群晖 NAS 之后，一直使用厂家提供的 quickconnect 来从外网访问家里的 NAS。quickconnect 的原理其实是要通过群晖的服务器进行中转，然后再连接 NAS，由于服务器不在国内，其传输速度可想而知，通常就是几十上百 K的水平。如果只是通过 web 连接 NAS 来管理或者操作FileStation 来下载还是勉强可用的，但是如果要从外网上传文件到 NAS 或者从 NAS 下载，这种速度是不可忍受的。</p>
-<h2 id="直连"><a href="#直连" class="headerlink" title="直连"></a>直连</h2><p>要提高速度的办法，只能是外网直连 NAS 了。但是一般 NAS 都会部署在家里或者公司的内网环境，要能从外网访问，一般需要使用路由器带的端口转发或者 DMZ 功能。具体流程就是</p>
-<ol>
-<li><p>外网通过公网 IP 连接到路由器</p>
-</li>
-<li><p>路由器通过端口转发，将特定端口的包转发给内网同一网段的 NAS，从而实现通信</p>
-</li>
-</ol>
-<p>不过，在开始前，我们还有几个问题需要预先解决</p>
-<ul>
-<li><p>首先，国内大部分网络环境是光猫拨号进行上网，运营商默认会设置光猫为路由(Route)模式，猫自动进行 PPPoE拨号，同时也带有简单的路由功能，于是我们可以直接连接猫的 Lan 口进行上网。但是一般猫的路由功能很鸡肋， 往往没有无线 Wifi 功能，带的 Lan 口也有限，所以一般会在猫后面接一个专用路由器来管理家里的诸多设备及无线上网。所以 NAS 是连接到路由器，再通过光猫连接到公网环境的。这带来一个问题：如果我们能连接到光猫，也没法直接访问内网的 NAS。所幸光猫还提供了一种成为桥接(Bridage)的模式，意思是将外网和光猫后面的设备(也就是我们的路由器)进行直连，由我们的路由器来进行拨号，而光猫本事是透明的，只是用来透传数据。</p>
-<p><img src="/images/route.png" alt="image-20180727133456750"></p>
-</li>
-</ul>
-<ul>
-<li>运营商一般会给用户默认分配内网 IP，这导致我们没法连接到家里的路由器。因此需要联系运营商，让他们分配公网 IP 给我们。</li>
-</ul>
-<p>这些完成之后，我们就可以检查公网是否能访问自己的网络了，使用 ping 来检查是否畅通(如果有路由上设置了禁止 ping，需要关闭该设置)</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ping  xxx.xxx.xxx.xxx</span><br></pre></td></tr></table></figure>
-<p> 这里<code>xxx.xxx.xxx.xxx</code>是运营商分配给你的公网 IP，你可以替换为自己的来进行测试。</p>
-<blockquote>
-<p>有时候猫或者路由上设置了防火墙，禁止 ping，所以需要关闭该设置再进行测试。</p>
-</blockquote>
-<p>一般 NAS 服务的访问端口是5000(http)和5001(https)，这个可以在 NAS 里进行设置：</p>
-<p><img src="/images/dsm.png" alt="image-20180727132746453"></p>
-<p>假如 NAS 的内网 ip 是10.0.0.11，那在内网可以通过10.0.0.11:5000来访问。现在如果想在外网访问 NAS，比如说是通过  <a href="http://xxx.xxx.xxx.xxx:5000" target="_blank" rel="noopener">http://xxx.xxx.xxx.xxx:5000</a> ，那么我们就需要在路由器上配置端口转发，将路由器上所有对5000端口的访问都转发到内网 NAS 地址(即10.0.0.11)的5000端口。各个路由器可能不一样，我们这里以 R7000的梅林系统为例：</p>
-<p><img src="/images/forward.png" alt="image-20180727133636531"></p>
-<p>设置完成后，我们测试一下端口是否可以正常访问</p>
-<p><img src="/images/telnet.png" alt="image-20180727134414268"></p>
-<p>至此，通过公网 IP 我们已经顺利访问了 NAS，就如同内网访问一样。</p>
-<h2 id="域名访问"><a href="#域名访问" class="headerlink" title="域名访问"></a>域名访问</h2><p>到目前为止，似乎一切都很美好。但是需要提出的是，运营商分配分配给我们的公网 IP 往往是动态变化的，并不固定，所以如果 IP 不停发生着变化，在访问 NAS 之前我们就必须查询一次自己的 IP。好在有种称为 DDNS 的技术，可以解决这个问题。</p>
-<p>DDNS(Dynamic Domain Name Server) 翻译过来是动态域名服务，也就是不管我们的 IP 怎么动态变化，域名都能准确指向它，因此通过这个动态域名，我们就无需关心实际的 ip 是什么，每次都能访问到 NAS 上。</p>
-<p>很多路由器都带有 DDNS 功能，其工作原理大致是每次 ip 发生变化时，路由器都会将当前的 ip 上报更新到 DDNS 服务提供商，因此域名解析出来的 ip 也会随之得到更新。</p>
-<p>假设我们在路由器上开启 DDNS 时设置的域名是 myddns.asuscomm.com</p>
-<p><img src="/images/ddns.png" alt="image-20180727140519194"></p>
-<p>那么之后我们就可以通过 myddns.asuscomm.comm:5000来访问了。如果你有自己的域名，则可以设置一个 cname 类型的域名来指向  myddns.asuscomm.comm 域名。</p>
-<blockquote>
-<p>如果路由不带 DDNS 功能，可以考虑使用 NAS 的 DDNS 功能(有很多提供商可以选择)，具体请 google 设置方法。国内花生壳也提供了 DDNS 功能。</p>
-</blockquote>
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://www.dozer.cc/2016/03/synology-nas-network-setting.html" target="_blank" rel="noopener">将群晖 NAS 安全地暴露到公网中</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1837,7 +1853,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1850,7 +1866,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
