@@ -229,6 +229,223 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/28/密码学算法简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/28/密码学算法简介/" itemprop="url">密码学算法简介</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-28T15:54:15+08:00">
+                2018-07-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/07/28/密码学算法简介/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/07/28/密码学算法简介/" class="cy_cmt_count" data-xid="2018/07/28/密码学算法简介/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要介绍常用的加解密算法。常用的算法大致分为以下几类：</p>
+<ul>
+<li>哈希算法</li>
+<li>古典加密</li>
+<li>对称密钥加密</li>
+<li>非对称密钥加密</li>
+</ul>
+<h2 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h2><p>常用的哈希算法，可以对任意长度的报文计算出固定长度的摘要，俗称哈希值。哈希值相对于原文来说要简短的多，往往只有十几或者几十个字节，因此也称为摘要算法。这个计算过程理论上是单向不可逆的：从报文可以计算出摘要，但是从摘要无法逆向计算出原始的报文。</p>
+<p>哈希算法的一个重要应用就是加密密码，加密后的密码无法被逆向反推，从而达到受保护的目的。在校验密码时，我们只需要比对哈希后的值即可。</p>
+<p>此外，哈希算法还可以用来校验完整性。例如很长一段信息或者下载获得一份文件，怎么能保证就是原始的信息或者文件呢？我们只需要对比传输前后信息的哈希值或者下载文件和原始文件的哈希值即可确定是否完整。</p>
+<p>哈希算法(信息或文件) = 摘要 或 哈希值</p>
+<h3 id="SHA-1"><a href="#SHA-1" class="headerlink" title="SHA-1"></a>SHA-1</h3><p><strong>SHA-1</strong>（Secure Hash Algorithm 1）是一种密码哈希函数，美国国家安全局设计，并由美国国家标准技术研究所发布为联邦数据处理标准。SHA-1可以生成一个被称为消息摘要的160比特位( <strong>20字节</strong> )散列值，散列值通常的呈现形式为40个十六进制数。</p>
+<p>SHA-1目前已经不够安全，已经有很多有效攻击的手段，因此正在被减少使用。</p>
+<h3 id="SHA-2"><a href="#SHA-2" class="headerlink" title="SHA-2"></a>SHA-2</h3><p><strong>SHA-2</strong> 属于SHA-1算法的后继者。其下又可再分为六个不同的算法标准，包括了：SHA-224、SHA-256、SHA-384、SHA-512、SHA-512/224、SHA-512/256。后面的数字代表了最后摘要值的比特位数。</p>
+<p>SHA-2的密码安全性目前还未得到广泛信任，有待进一步验证。SHA-256( <strong>32字节</strong> )算法目前已经被 TLS1.2标准采用。</p>
+<h3 id="MD5"><a href="#MD5" class="headerlink" title="MD5"></a>MD5</h3><p><strong>MD5消息摘要算法</strong>（Message-Digest Algorithm），一种被广泛使用的密码散列函数，可以产生出一个128位（ <strong>16字节</strong> ）的散列值（hash value）。</p>
+<p>2009年，中国科学院的谢涛和冯登国用了很小的碰撞算法复杂度，破解了MD5的碰撞抵抗，该攻击在普通计算机上运行只需要数秒钟。因此，对于需要高度安全性的数据，专家一般建议改用其他算法，如SHA-2系列算法。</p>
+<h3 id="暴力破解"><a href="#暴力破解" class="headerlink" title="暴力破解"></a>暴力破解</h3><p>使用哈希算法保护的密码目前已经很容易被暴力破解，其中就采用了一种称为 table 的技术。黑客们发现如果能够实现直接建立出一个数据文件，里面事先记录了采用和目标采用同样算法计算后生成的Hash散列数值，在需要破解的时候直接调用这样的文件进行比对，破解效率就可以大幅度地，甚至成百近千近万倍地提高，这样事先构造的Hash散列数据文件在安全界被称之为Table表(文件)。最出名的Tables是Rainbow Tables，即安全界中常提及的彩虹表。正是由于Rainbow Tables的存在，使得普通电脑在5分钟内破解14位长足够复杂的Windows帐户密码成为可能。</p>
+<p>针对彩虹表之类的暴力破解方式，可以采用的方法就是添加多字节随机盐及多次哈希，增加破解建表的难度，从而提升密码相对安全性。例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">saltedhash(password) = hash(password || salt)</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">saltedhash(password) = hash(hash(password) || salt)</span><br></pre></td></tr></table></figure>
+<p>推荐使用 <strong>bcrypt</strong> 或者 <strong>PBKDF2</strong> 加盐哈希算法。</p>
+<h2 id="古典加密"><a href="#古典加密" class="headerlink" title="古典加密"></a>古典加密</h2><p>古典加密是历史上使用过的加密信息的算法，其大部分加密方式都是利用替换式密码或移项式密码，有时则是两者的混合。其于历史中经常使用，但现代已经很少使用，大部分的已经不再使用了。许多密码起源于军事上，相同立场的人常使用来寄送秘密讯息。经典的方法常攻击密码文，有时候甚至不知其密码系统，也可以使用工具，像是频率分析法。有些经典密码是使用先进的机器或是机电密码机器，像是恩尼格玛密码机。</p>
+<p>经典密码通常很容易被破解。许多经典密码可单单经由密文而破解，用暴力破解或者频率分析可以轻而易举的攻破这些加密算法。</p>
+<h3 id="替换式密码"><a href="#替换式密码" class="headerlink" title="替换式密码"></a>替换式密码</h3><p>凯撒密码是广为人知的代换密码。为了用凯撒密码法加密讯息，每个密码字母集中的字母将会被其位置的后3个字母替代。因此字母A将会被字母D替代、字母B将会被字母E替代、字母C将会被字母F替代等，最后，X、Y和Z将分别的被替代成A、B和C。例如，”WIKIPEDIA”将被加密成”ZLNLSHGLD”。凯撒把字母向后移”3”位，但其他数字也可照著作。</p>
+<h3 id="移位式密码"><a href="#移位式密码" class="headerlink" title="移位式密码"></a>移位式密码</h3><p>移位式密码，它们字母本身不变，但它们在讯息中顺序是依照一个定义明确的计划改变。许多移位式密码是基于几何而设计的。一个简单的加密（也易被破解），可以将字母向右移1位。例如，明文”Hello my name is Alice.”将变成”olleH ym eman si ecilA.”</p>
+<h2 id="加解密算法"><a href="#加解密算法" class="headerlink" title="加解密算法"></a>加解密算法</h2><p>加解密的过程和哈希是不同的，它在计算的过程中需要提供一种称为密钥的参数：</p>
+<p>加密算法(报文, 加密密钥) = 密文</p>
+<p>解密算法(密文, 解密密钥) = 报文</p>
+<p>如果加密密钥 == 解密密钥，则称为对称加密算法</p>
+<p>如果加密密钥 != 解密密钥，则称为非对称加密算法</p>
+<p>此外，根据加密计算的规则不同，还可以分为流加密算法和块加密算法 block</p>
+<h2 id="对称加密算法"><a href="#对称加密算法" class="headerlink" title="对称加密算法"></a>对称加密算法</h2><p>对称密钥加密（Symmetric-key algorithm）又称为对称加密、私钥加密、共享密钥加密，是密码学中的一类加密算法。这类算法在加密和解密时使用相同的密钥，或是使用两个可以简单地相互推算的密钥。<br>常见的对称加密算法有XOR、DES、3DES、AES、Blowfish、IDEA、RC4等。</p>
+<p>我们可以看下 openssl 命令下支持的对称加密方式</p>
+<p><img src="/images/image-20180802130404943.png" alt="image-20180802130404943"></p>
+<h3 id="Base64"><a href="#Base64" class="headerlink" title="Base64"></a>Base64</h3><p>Base64编码在 web 编程中比较常用，可以简单的加密和解密，对安全性要求不高的可以使用。该加密算法不需要密钥。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"encoding/base64"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">base64Encode</span><span class="params">(src []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> []<span class="keyword">byte</span>(base64.StdEncoding.EncodeToString(src))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">base64Decode</span><span class="params">(src []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> base64.StdEncoding.DecodeString(<span class="keyword">string</span>(src))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="XOR-异或算法"><a href="#XOR-异或算法" class="headerlink" title="XOR 异或算法"></a>XOR 异或算法</h3><p>异或算法是一种非常简单高效的算法。</p>
+<p><code>XOR</code>运算的定义是：两个值相同时，返回<code>false</code>，否则返回<code>true</code>。也就是说，<code>XOR</code>可以用来判断两个值是否不同。它还有个奇妙的特性：如果对一个值连续做两次 <code>XOR</code>，则会返回该值本身。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 第一次 XOR</span><br><span class="line">1010 ^ 1111 // 0101</span><br><span class="line"></span><br><span class="line">// 第二次 XOR</span><br><span class="line">0101 ^ 1111 // 1010</span><br></pre></td></tr></table></figure>
+<p>这个特性可以用户信息的加解密：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cipherText	= message XOR key     //加密</span><br><span class="line">message 	= cipherText XOR key  //解密</span><br></pre></td></tr></table></figure>
+<p>从上面的公式我们可以看出：</p>
+<ol>
+<li>异或加密使用的加密密钥和解密密钥都是同一个，因此它属于对称加密算法。</li>
+<li>由于异或加密是对信息的每个字节逐个比特进行异或运算，因此它属于流加密算法。</li>
+<li>异或加密是通过比特位一个个的进行异或运算来进行的，对于密钥key 的长度有一定的要求。如果密钥 key 比信息 message 短，则 key 高位需要补齐0，这会导致 message 的高位与0异或后没有发生改变，也就是说多出来的部分没有被加密。因此要保证异或加密的安全性，密钥 key 必须长于要加密的信息，这限制了异或加密的使用场景。</li>
+</ol>
+<h3 id="AES-算法"><a href="#AES-算法" class="headerlink" title="AES 算法"></a>AES 算法</h3><p>AES 高级解密算法，是当年美国联邦政府采用的加密标准，其本质算法名称叫Rijndael加密算法，被 AES 标准采用。这个标准用来替代原先的DES算法，已经被多方分析且广为全世界所使用。</p>
+<p>AES 算法基于排列和置换运算。排列是对数据位置重排，置换是将一个数据单元替换为另一个。AES 使用几种不同的方法来执行排列和置换运算。它可以使用128、192 和 256 位密钥，并且用 128 位（16字节）分组加密和解密数据。迭代加密使用一个循环结构，在该循环中重复置换和替换输入数据。</p>
+<p>下面我们看看 golang 中的 AES 包的使用。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewCipher</span><span class="params">(key []<span class="keyword">byte</span>)</span> <span class="params">(cipher.Block, error)</span></span></span><br></pre></td></tr></table></figure>
+<p>该函数返回称为 Block 的结构(可以看出 AES 是块加密算法)，key 可以是16字节、24字节、32字节，分别对应了 AES-128、AES-192、AES-256。Block 的结构如下</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Block <span class="keyword">interface</span> &#123;</span><br><span class="line">        <span class="comment">// BlockSize returns the cipher's block size.</span></span><br><span class="line">        BlockSize() <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Encrypt encrypts the first block in src into dst.</span></span><br><span class="line">        <span class="comment">// Dst and src must overlap entirely or not at all.</span></span><br><span class="line">        Encrypt(dst, src []<span class="keyword">byte</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Decrypt decrypts the first block in src into dst.</span></span><br><span class="line">        <span class="comment">// Dst and src must overlap entirely or not at all.</span></span><br><span class="line">        Decrypt(dst, src []<span class="keyword">byte</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从注释可以看到，这个结构只能加密或者解密数据的第一个块，因此对于数据长度大于block size 的情况，还需要进一步处理。这里引入密码学中的<strong>块密码的工作模式(mode of operation)</strong>的概念，它是指使用同一个密钥对多于一块的数据进行加密，并保证其安全性；它描述了加密每一数据块的过程，并常常使用基于一个通常称为<strong>初始化向量(IV)</strong>的附加输入值以进行随机化，以保证安全。常见的模式有ECB，CBC，OFB，CFB，CTR和XTS等。</p>
+<p>我们以常见的 CBC 和 CFB 模式为例来看看如何使用。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bytes"</span></span><br><span class="line">	<span class="string">"crypto/cipher"</span></span><br><span class="line">	<span class="string">"crypto/aes"</span></span><br><span class="line">	<span class="string">"crypto/rand"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">//CBC 需要补齐不足的块</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AesCBCEncrypt</span><span class="params">(text, key []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	block, err := aes.NewCipher(key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	text = PKCS5Padding(text, aes.BlockSize)</span><br><span class="line">	<span class="comment">// text = ZeroPadding(text, aes.BlockSize)</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">// The IV needs to be unique, but not secure. Therefore it's common to</span></span><br><span class="line">	<span class="comment">// include it at the beginning of the ciphertext.</span></span><br><span class="line">	ciphertext := <span class="built_in">make</span>([]<span class="keyword">byte</span>, aes.BlockSize + <span class="built_in">len</span>(text))</span><br><span class="line">	iv := ciphertext[:aes.BlockSize]</span><br><span class="line">	<span class="comment">//生成随机 iv 值</span></span><br><span class="line">	<span class="keyword">if</span> _, err := io.ReadFull(rand.Reader, iv); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	mode := cipher.NewCBCEncrypter(block, iv)</span><br><span class="line">	mode.CryptBlocks(ciphertext[aes.BlockSize:], text)</span><br><span class="line">	<span class="comment">//iv 和加密后的密文一起返回</span></span><br><span class="line">	<span class="keyword">return</span> cipherText, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//CBC 需要补齐不足的块</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AesCBCDecrypt</span><span class="params">(cipherText, key []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	block, err := aes.NewCipher(key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(cipherText) &lt; aes.BlockSize &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">"ciphterText too short"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//密文前一部分为初始化向量 iv，无需保密</span></span><br><span class="line">	iv := cipherText[:aes.BlockSize]</span><br><span class="line">	cipherText = cipherText[aes.BlockSize:]</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// CBC mode always works in whole blocks.</span></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(cipherText) % aes.BlockSize != <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"cipherText is not a multiple of the block size"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	mode := cipher.NewCBCDecrypter(block, iv)</span><br><span class="line">	<span class="comment">// CryptBlocks can work in-place if the two arguments are the same.</span></span><br><span class="line">    mode.CryptBlocks(cipherText, cipherText)</span><br><span class="line">	cipherText = PKCS5UnPadding(cipherText)</span><br><span class="line">	<span class="comment">// cipherText = ZeroUnPadding(cipherText)</span></span><br><span class="line">	<span class="keyword">return</span> cipherText, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ZeroPadding</span><span class="params">(ciphertext []<span class="keyword">byte</span>, blockSize <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	padding := blockSize - <span class="built_in">len</span>(ciphertext)%blockSize</span><br><span class="line">	padtext := bytes.Repeat([]<span class="keyword">byte</span>&#123;<span class="number">0</span>&#125;, padding)</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">append</span>(ciphertext, padtext...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ZeroUnPadding</span><span class="params">(origData []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	length := <span class="built_in">len</span>(origData)</span><br><span class="line">	unpadding := <span class="keyword">int</span>(origData[length<span class="number">-1</span>])</span><br><span class="line">	<span class="keyword">return</span> origData[:(length - unpadding)]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PKCS5Padding</span><span class="params">(ciphertext []<span class="keyword">byte</span>, blockSize <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	padding := blockSize - <span class="built_in">len</span>(ciphertext)%blockSize</span><br><span class="line">	padtext := bytes.Repeat([]<span class="keyword">byte</span>&#123;<span class="keyword">byte</span>(padding)&#125;, padding)</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">append</span>(ciphertext, padtext...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PKCS5UnPadding</span><span class="params">(origData []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	length := <span class="built_in">len</span>(origData)</span><br><span class="line">	<span class="comment">// 去掉最后一个字节 unpadding 次</span></span><br><span class="line">	unpadding := <span class="keyword">int</span>(origData[length<span class="number">-1</span>])</span><br><span class="line">	<span class="keyword">return</span> origData[:(length - unpadding)]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bytes"</span></span><br><span class="line">	<span class="string">"crypto/cipher"</span></span><br><span class="line">	<span class="string">"crypto/aes"</span></span><br><span class="line">	<span class="string">"crypto/rand"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AesCFBEncrypt</span><span class="params">(text, key []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	block, err := aes.NewCipher(key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// The IV needs to be unique, but not secure. Therefore it's common to</span></span><br><span class="line">	<span class="comment">// include it at the beginning of the ciphertext.</span></span><br><span class="line">	ciphertext := <span class="built_in">make</span>([]<span class="keyword">byte</span>, aes.BlockSize + <span class="built_in">len</span>(text))</span><br><span class="line">	iv := ciphertext[:aes.BlockSize]</span><br><span class="line">	<span class="comment">//生成随机 iv 值</span></span><br><span class="line">	<span class="keyword">if</span> _, err := io.ReadFull(rand.Reader, iv); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	stream := cipher.NewCFBEncrypter(block, iv)</span><br><span class="line">	stream.XORKeyStream(ciphertext[aes.BlockSize:], text)</span><br><span class="line">	<span class="comment">//iv 和加密后的密文一起返回</span></span><br><span class="line">	<span class="keyword">return</span> ciphertext, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AesCFBDecrypt</span><span class="params">(cipherText, key []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	block, err := aes.NewCipher(key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(cipherText) &lt; aes.BlockSize &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">"ciphterText too short"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//密文前一部分为初始化向量 iv，无需保密</span></span><br><span class="line">	iv := cipherText[:aes.BlockSize]</span><br><span class="line">	cipherText = cipherText[aes.BlockSize:]</span><br><span class="line">	</span><br><span class="line">	stream := cipher.NewCFBDecrypter(block, iv)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// XORKeyStream can work in-place if the two arguments are the same.</span></span><br><span class="line">	stream.XORKeyStream(cipherText, cipherText)</span><br><span class="line">	<span class="keyword">return</span> cipherText, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="RC4算法"><a href="#RC4算法" class="headerlink" title="RC4算法"></a>RC4算法</h3><p><strong>RC4</strong>（来自Rivest Cipher 4的缩写）是一种流加密<strong>算法</strong>，密钥长度可变。 它加解密使用相同的密钥，因此也属于对称加密<strong>算法</strong>。 <strong>RC4</strong>是有线等效加密（WEP）中采用的加密<strong>算法</strong>，也曾经是TLS可采用的<strong>算法</strong>之一。</p>
+<p>RC4算法的基本原理是先根据 key 和伪随机算法得到辅助加密用的和明文等长的 SBox，然后将 SBox 和明文进行逐字节异或XOR得来。由于RC4算法加密是采用的XOR，所以，一旦子密钥序列出现了重复，密文就有可能被破解。</p>
+<p>目前 RC4算法已经被破解，不再推荐使用。</p>
+<h2 id="非对称加密算法"><a href="#非对称加密算法" class="headerlink" title="非对称加密算法"></a>非对称加密算法</h2><p>非对称加密算法使用两把完全不同但又是完全匹配的一对钥匙：公钥和私钥。在使用不对称加密算法时，只有使用匹配的一对公钥和私钥，才能完成对明文的加密和解密过程。这对于对称加密算法来说，又安全了一步。除了加解密之外，非对称算法还可以用于数字签名，数字签名是一种用于验证对方身份的技术。</p>
+<p>具体使用时，遵循以下规则</p>
+<ul>
+<li>加密应用，使用公钥加密，私钥解密</li>
+<li>签名应用，使用私钥签名，公钥验证</li>
+</ul>
+<p>下面介绍下常用的非对称加密算法。</p>
+<h3 id="RSA-算法"><a href="#RSA-算法" class="headerlink" title="RSA 算法"></a>RSA 算法</h3><p>RSA算法基于<strong>大数因子分解难题</strong>，其核心问题是欧拉定理，是目前唯一被广泛接受并实现的通用公开加密算法。这种算法非常可靠，密钥越长，它就越难破解。根据已经披露的文献，目前被破解的最长RSA密钥是768个二进制位。也就是说，长度超过768位的密钥，还无法破解（至少没人公开宣布）。因此可以认为，1024位的RSA密钥基本安全，2048位的密钥极其安全。</p>
+<p>RSA加密的大致流程是</p>
+<ol>
+<li><p>乙方生成两把密钥（公钥和私钥）。公钥是公开的，任何人都可以获得，私钥则是保密的。</p>
+</li>
+<li><p>甲方获取乙方的公钥，然后用它对信息加密。</p>
+</li>
+<li><p>乙方得到加密后的信息，用私钥解密。</p>
+</li>
+</ol>
+<p>如果公钥加密的信息只有私钥解得开，那么只要私钥不泄漏，通信就是安全的。在实际使用中，一般选择 <strong>1024</strong> 位的密钥即可。</p>
+<h3 id="ECC-算法"><a href="#ECC-算法" class="headerlink" title="ECC 算法"></a>ECC 算法</h3><p>ECC，全称 Elliptic-curve cryptography，基于解决<strong>椭圆曲线离散对数问题</strong>的困难性上。ECC 相对于其他非对称加密方式的主要优势是其密钥更小(最小密钥长度 RSA1024位，ECC 160位)，并且提供更高的安全性，但是其加解密花费的时间相对其他要长。</p>
+<p>下面是基于 golang 官方 elliptic 库封装的 ECC 算法</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> GoECDH <span class="keyword">struct</span> &#123;</span><br><span class="line">    elliptic.Curve</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewGoECDH</span><span class="params">(curve elliptic.Curve)</span> *<span class="title">GoECDH</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> curve == <span class="literal">nil</span> &#123;</span><br><span class="line">        curve = elliptic.P256()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> &amp;GoECDH&#123;</span><br><span class="line">        Curve: curve,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ge *GoECDH)</span> <span class="title">GenerateKeys</span><span class="params">()</span> <span class="params">(pub []<span class="keyword">byte</span>, priv []<span class="keyword">byte</span>, err error)</span></span> &#123;</span><br><span class="line">    p, x, y, e := elliptic.GenerateKey(ge.Curve, rand.Reader)</span><br><span class="line">    <span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</span><br><span class="line">        err = e</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    pub = elliptic.Marshal(ge.Curve, x, y)</span><br><span class="line">    priv = p</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ge *GoECDH)</span> <span class="title">MakeSecret</span><span class="params">(pub []<span class="keyword">byte</span>, priv []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">    x, y := elliptic.Unmarshal(ge.Curve, pub)</span><br><span class="line">    secret, _ := ge.Curve.ScalarMult(x, y, priv)</span><br><span class="line">    <span class="keyword">return</span> secret.Bytes()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h6><p><a href="https://zh.wikipedia.org/wiki/%E7%B6%93%E5%85%B8%E5%AF%86%E7%A2%BC" target="_blank" rel="noopener">维基百科经典密码</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2017/05/xor.html" target="_blank" rel="noopener">XOR 加密简介</a></p>
+<p><a href="https://blog.csdn.net/xiaohu50/article/details/51682849" target="_blank" rel="noopener">golang中 AES 加密详解</a></p>
+<p><a href="https://blog.yumaojun.net/2017/02/19/go-crypto/" target="_blank" rel="noopener">密码学简介与Golang的加密库Crypto的使用</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/27/NAS设置公网访问/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1830,7 +2047,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
