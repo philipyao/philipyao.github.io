@@ -229,6 +229,156 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/30/linux下服务器端口冲突/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/30/linux下服务器端口冲突/" itemprop="url">linux下服务器端口冲突</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-30T16:52:04+08:00">
+                2018-08-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/30/linux下服务器端口冲突/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/30/linux下服务器端口冲突/" class="cy_cmt_count" data-xid="2018/08/30/linux下服务器端口冲突/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>在生产环境部署服务器集群的时候，由于服务器进程众多，需要监听的端口也非常多，通常我们会通过一定规则为每个进行指定特定的端口来绑定，这没什么问题。</p>
+<p>但是由于服务器之间需要通信，因此服务器进程之间会建立大量的 TCP 连接。在主动连接的一方，我们不必类似于监听一样手动 bind 固定的端口，操作系统会为我们随机选择一个端口，来与目的端口进行通信。当连接数量很多时，这种随机选择的端口会和我们指定的端口冲突。</p>
+<p>一种典型的情况是</p>
+<ul>
+<li><p>进程 A 和 B 启动完成，B 建立了一条连接到 A，本地端口选择为10000</p>
+</li>
+<li><p>进程 C 恰好监听在端口10000，于是 C 进程启动时就会因为端口被占用而启动失败</p>
+</li>
+</ul>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>为了解决这个问题，我们通常分别约定监听端口和随机选择端口的范围。</p>
+<p>例如，在指定监听端口的时候，我们可以指定 5000 - 15000 是可用的监听范围。而本地随机选择的端口范围设置为 15000 - 65000。这样就可以有效避免冲突。</p>
+<p>在 linux 下有内核选项可以设置本地端口的范围：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cat /proc/sys/net/ipv4/ip_local_port_range </span><br><span class="line">4000	65000</span><br></pre></td></tr></table></figure>
+<p>关于 <code>ip_local_port_range</code> 的定义如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The /proc/sys/net/ipv4/ip_local_port_range defines the local port range that is used by TCP and UDP traffic to choose the local port. You will see in the parameters of this file two numbers: The first number is the first local port allowed for TCP and UDP traffic on the server, the second is the last local port number. For high-usage systems you may change its default parameters to 32768-61000 -first-last.</span><br></pre></td></tr></table></figure>
+<p>我们利用 <code>sysctl</code> 命令修改其值为<code>15000 65000</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo sysctl -w net.ipv4.ip_local_port_range=<span class="string">"15000 65000"</span></span><br></pre></td></tr></table></figure>
+<h2 id="TIME-WAIT"><a href="#TIME-WAIT" class="headerlink" title="TIME_WAIT"></a>TIME_WAIT</h2><p>在 TCP 连接关闭时，需要经历四次挥手的过程，而主动发起关闭的一方，发送完最后一个 ACK (最后一步) 后，进入  TIME_WAIT 状态，且需要等待 <code>2MSL</code> 的时间。等待时间过去后，连接关闭。</p>
+<p>示意图如下</p>
+<p><img src="/images/D0D404D6-3813-412A-B5C5-4333E7F20F5D.png" alt="D0D404D6-3813-412A-B5C5-4333E7F20F5D"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/21/Go调度模型/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -902,7 +1052,72 @@
       
         
           
-            
+            <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>无锁队列是一种广泛使用的数据结构</p>
+<h2 id="单读单写"><a href="#单读单写" class="headerlink" title="单读单写"></a>单读单写</h2><p>我们先看下最简单的一种情况，就是一个生产者负责写，一个消费者负责读的情况。</p>
+<p>这种情况通常是利用环形缓冲区 RingBuffer （有时候也称为 circular queue）来实现，那首先看看 RingBuffer 是怎么实现读写的。</p>
+<p><img src="../../../../../../image-20180830113817331.png" alt="image-20180830113817331"></p>
+<h5 id="RingBuffer-实现"><a href="#RingBuffer-实现" class="headerlink" title="RingBuffer 实现"></a>RingBuffer 实现</h5><p>一个数组buff，大小是 SIZE，两个指针变量 head 和 tail 来表示队列的头和尾。写的时候，控制 tail 加1；读的时候，控制 head 加1。</p>
+<ul>
+<li>初始状态，数组为空，tail 和 head 都为 0</li>
+<li>写入元素时，tail 加1向后更新</li>
+<li>读取元素时，head 加1向后更新</li>
+<li>由于数组大小size有限，tail 或者 head指针不能永远向后增加，当到达数组尾部（指向<code>size-1</code>）的时候，需要绕回到数组开头，实现的时候使用 <code>val = (val + 1) % size</code> 取余即可</li>
+<li>绕回的机制正是环形缓冲的特色，因此 head 和 tail 的前后关系可能会一直变化</li>
+<li>队列为空时，读取失败，此时 head 和 tail 相等</li>
+<li>队列满时，写入失败，规定如果 tail + 1后，做可能的回绕，然后检查 tail 和head 是否相等，如果相等则满。这种约定浪费了一个元素的位置不让写入，从而保证写满时，head 和 tail差一个元素而不是相等，和队列为空的情况区分开来。此时的情况是可能是<ol>
+<li>tail 在前，head 在后且为 0， tail - head = size - 1 ，此时队列里除最后一个元素外全满，tail + 1 回绕后和head 都为 0</li>
+<li>head 在前，tail 在后，且 head - tail = 1，tail 加1后和 head 相等</li>
+</ol>
+</li>
+</ul>
+<p>PUSH</p>
+<p><img src="/images/image-20180830140357796.png" alt="image-20180830140357796"></p>
+<p>POP</p>
+<p><img src="/images/image-20180830140426815.png" alt="image-20180830140426815"></p>
+<p>EMPTY</p>
+<p><img src="/images/image-20180830140237745.png" alt="image-20180830140237745"></p>
+<p>FULL</p>
+<p><img src="/images/image-20180830140102099.png" alt="image-20180830140102099"></p>
+<p>下面看下实现代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> PKIT_RING_BUFFER_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PKIT_RING_BUFFER_H_</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">int</span> Size&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RingBuffer</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">enum</span> &#123; Capacity = Size+<span class="number">1</span> &#125;;</span><br><span class="line"></span><br><span class="line">    RingBuffer() : _tail(<span class="number">0</span>), _head(<span class="number">0</span>)&#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~RingBuffer() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">push</span><span class="params">(<span class="keyword">const</span> T&amp; item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> nextTail = increment(_tail);</span><br><span class="line">        <span class="keyword">if</span> (nextTail == _head) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;   <span class="comment">//full</span></span><br><span class="line">        &#125;</span><br><span class="line">        _array[_tail] = item;</span><br><span class="line">        _tail = nextTail;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">pop</span><span class="params">(T* item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (_head == _tail) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">//empty</span></span><br><span class="line">        &#125;</span><br><span class="line">        *item = _array[_head];</span><br><span class="line">        _head = increment(_head);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">increment</span><span class="params">(<span class="keyword">int</span> idx)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (idx + <span class="number">1</span>) % Capacity;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> _tail;</span><br><span class="line">    <span class="keyword">int</span> _head;</span><br><span class="line">    T   _array[Capacity];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//PKIT_RING_BUFFER_H_</span></span></span><br></pre></td></tr></table></figure>
+<h5 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h5><p>现在回到初始的单读单写的情况，生产者调用 push() 来唯一控制 tail 的更新，而消费者调用 pop() 来唯一控制 head 的更新。<br>实际实现时，通常分步，写入（或读取）缓冲区内容，更新指针。我们要保证：</p>
+<ul>
+<li>对 tail 和 head 指针的更新必须是原子的</li>
+<li>读的时候，先读取缓冲区内容，再更新 head</li>
+<li>写的时候，先写入内容到缓冲区，再更新 tail</li>
+</ul>
+<p>关于 int 类型赋值的原子性，C++ 标准是没有定义的，依赖于编译器的实现和系统架构的内存对齐策略等。</p>
+<p>根据 <a href="https://www.codeproject.com/script/Membership/View.aspx?mid=4385931" target="_blank" rel="noopener">KjellKod.cc</a> 的文章的说法，大部分现代处理器上，对于自然对齐的基础类型的读写是原子的，不会出现读一半或者写一半的情况。对于 x86 和 x64 平台，长度大于8的类型，其读写不保证是原子的。而对于我们的 head 和 tail，在 32 位处理器和 64 位处理器上大小分别是 4 和 8 (注：int 的大小和平台和编译器实现有关，这里说法不准) ，因此可以保证是原子的。其英文原话是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">On almost all modern processors, reads and writes of naturally aligned native types are atomic. This means that as long as the memory bus is at least as wide as the type being read or written the CPU reads and writes will happen in a single bus transaction. This makes it impossible for other threads to see them half-completed.</span><br><span class="line"></span><br><span class="line">For x86 and x64 platforms, types larger than 8 bytes are not guaranteed to be atomic. But in our example the head and tail indexes are integers of size 32bits (4 bytes) on 32-bit processor or 64bits (8bytes) on a 64-bit processor, thus making reading and writing them atomic.</span><br><span class="line"></span><br><span class="line">// Example of integers</span><br><span class="line">counter++;                // 1. not atomic operation, but three operations</span><br><span class="line">counter = 0;              // 2. this write is atomic</span><br><span class="line">other_variable = counter; // 3. this read is atomic</span><br><span class="line"></span><br><span class="line">For fun, you can compile the operations above to assembly language or use the debugger to view the disassembly. You should then see that the actual store only takes one instruction.</span><br><span class="line"></span><br><span class="line">On multiple core CPUs, this is also true. A word in memory must be coherent between all cores when it is written (using one CPU instruction). It is simply not allowed or even possible to split a 4 byte writing (I use a 32-bit example) between cores, since a word (4 bytes) is written as a single instruction.</span><br><span class="line"></span><br><span class="line">In short. Reads and writes of tail and head are atomic. First is still OK.</span><br></pre></td></tr></table></figure>
+<p>保险的措施是使用c++11中的 <code>std::atomic</code> 来保证原子性。我们修改下 head 和 tail 定义后的 ssqueue 结构(single producer &amp; single consumer queue) 如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> PKIT_SSQUEUE_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PKIT_SSQUEUE_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;atomic&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">int</span> Size&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SSQueue</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">enum</span> &#123; Capacity = Size+<span class="number">1</span> &#125;;</span><br><span class="line"></span><br><span class="line">    SSQueue() : _tail(<span class="number">0</span>), _head(<span class="number">0</span>)&#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~SSQueue() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">push</span><span class="params">(<span class="keyword">const</span> T&amp; item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> currTail = _tail.load();</span><br><span class="line">        <span class="keyword">auto</span> nextTail = increment(currTail);</span><br><span class="line">        <span class="keyword">if</span> (nextTail == _head.load()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;   <span class="comment">//full</span></span><br><span class="line">        &#125;</span><br><span class="line">        _array[currTail] = item;</span><br><span class="line">        _tail.store(nextTail);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">pop</span><span class="params">(T* item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> currHead = _head.load();</span><br><span class="line">        <span class="keyword">if</span> (currHead == _tail.load()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">//empty</span></span><br><span class="line">        &#125;</span><br><span class="line">        *item = _array[currHead];</span><br><span class="line">        _head.store(increment(currHead));</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">increment</span><span class="params">(<span class="keyword">int</span> idx)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (idx + <span class="number">1</span>) % Capacity;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; _tail;</span><br><span class="line">    <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; _head;</span><br><span class="line">    T   _array[Capacity];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//PKIT_SSQUEUE_H_</span></span></span><br></pre></td></tr></table></figure>
+<h5 id="顺序执行"><a href="#顺序执行" class="headerlink" title="顺序执行"></a>顺序执行</h5><p>由于都是分步执行，中间有可能被打断。但是只要保证了读写缓冲区的和更新指针的顺序，就能保证无锁的安全性。</p>
+<p>现在来分析一下打断的情况：<br>假如读的时候，消费者先读取了缓冲区内容，而未来得及更新 head，执行权就被生产者抢占，于是生产者读的 head 就是老的，类似快照数据。但这并没有太大影响，顶多是极端情况下由于没有更新head 导致生产者认为队列满而写入失败，下次继续写就可以了；如果队列没满，写入不受影响。<br>同样的道理，假如写的时候，生产者先写入内容到缓冲区(也可能是写一部分)，而未来得及更新 tail，执行权就被消费者抢占，于是消费者读到的 tail 也是老的。这也没有多大影响，顶多是极端情况下由于没有更新tail导致消费者认为队列空而读取失败，下次继续读就读到数据了；如果队列非空，读取不受影响。</p>
+<p>这里特别注意的是，head 和 tail 指针永远只由一方来更新，且是单方向更新。</p>
+<p>那是不是代码里先写缓冲区操作，再写更新指针操作就可以了呢？答案是否。</p>
+<p>编译器优化我们的代码时，可能会改变代码的执行顺序，反应在汇编指令的前后顺序调整。这是编译时乱序。</p>
+<p>上面提到的利用 volatile 修饰的 int 变量，vs 和 gcc 编译器似乎都能保证其汇编指令顺序，但是没有得到权威的资料证明 (<a href="https://blog.csdn.net/xtlisk/article/details/39098981" target="_blank" rel="noopener">查看</a>)</p>
+<p>此外，由于现代CPU普遍采用了多级流水线技术，一条指令的执行是多级流水线协同完成。为了提高执行效率，可以同时执行多条指令；而且随着分支预测和乱序执行的引入，互不依赖的两条指令在执行时是不保证先后顺序的，这是运行时乱序。</p>
+<p>编译器开发者和cpu厂商都遵守着内存乱序的基本原则，简单归纳如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">不能改变单线程程序的行为</span><br></pre></td></tr></table></figure>
+<p>在单线程环境，我们不必关心内存乱序的影响。而此时，我们关注的恰恰是多线程执行的情况，如何保证我们代码的顺序执行就是需要解决的关键问题。</p>
+<p>一种方式是依赖 <code>volatile int</code> 的一种实现。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="keyword">int</span> head;</span><br><span class="line"><span class="keyword">volatile</span> <span class="keyword">int</span> tail;</span><br></pre></td></tr></table></figure>
+<p>这里特别指出，volatile 关键字语义上只是提示编译器不要优化该变量，本质上和顺序执行没有任何关系。有说法是 volatile 的使用保证读写变量时其汇编指令顺序不会变更，但是没有可靠依据。</p>
+<p>而对于执行乱序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CPU Reordering Summary for x86 and x64 Platforms</span><br><span class="line"></span><br><span class="line">1. Reads moving ahead of other reads: No</span><br><span class="line">2. Writes moving ahead of other writes: No</span><br><span class="line">3. Writes moving ahead of reads: No</span><br><span class="line">4. Reads moving ahead of writes: Yes</span><br></pre></td></tr></table></figure>
+<p>由 2、3 两条保证了写的顺序不被置于读之前，且写之间顺序不乱。</p>
+<p>同样，保险的方式还是使用平台无关的机制：c++11提供的内存屏障。</p>
+<h5 id="Acquire-Release-内存屏障代码"><a href="#Acquire-Release-内存屏障代码" class="headerlink" title="Acquire-Release 内存屏障代码"></a>Acquire-Release 内存屏障代码</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> PKIT_SSQUEUE_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PKIT_SSQUEUE_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;atomic&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">int</span> Size&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SSQueue</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">enum</span> &#123; Capacity = Size+<span class="number">1</span> &#125;;</span><br><span class="line"></span><br><span class="line">    SSQueue() : _tail(<span class="number">0</span>), _head(<span class="number">0</span>)&#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~SSQueue() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">push</span><span class="params">(<span class="keyword">const</span> T&amp; item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> currTail = _tail.load(<span class="built_in">std</span>::memory_order_relaxed);</span><br><span class="line">        <span class="keyword">auto</span> nextTail = increment(currTail);</span><br><span class="line">        <span class="keyword">if</span> (nextTail == _head.load(<span class="built_in">std</span>::memory_order_acquire)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;   <span class="comment">//full</span></span><br><span class="line">        &#125;</span><br><span class="line">        _array[currTail] = item;</span><br><span class="line">        _tail.store(nextTail, <span class="built_in">std</span>::memory_order_release);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">pop</span><span class="params">(T* item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> currHead = _head.load(<span class="built_in">std</span>::memory_order_relaxed);</span><br><span class="line">        <span class="keyword">if</span> (currHead == _tail.load(<span class="built_in">std</span>::memory_order_acquire)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">//empty</span></span><br><span class="line">        &#125;</span><br><span class="line">        *item = _array[currHead];</span><br><span class="line">        _head.store(increment(currHead), <span class="built_in">std</span>::memory_order_release);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">increment</span><span class="params">(<span class="keyword">int</span> idx)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (idx + <span class="number">1</span>) % Capacity;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; _tail;</span><br><span class="line">    <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; _head;</span><br><span class="line">    T   _array[Capacity];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//PKIT_SSQUEUE_H_</span></span></span><br></pre></td></tr></table></figure>
+<p><a href="http://chonghw.github.io/blog/2016/09/05/compilermemoryreorder/" target="_blank" rel="noopener">http://chonghw.github.io/blog/2016/09/05/compilermemoryreorder/</a></p>
+<p>参考资料</p>
+<p><a href="https://sites.google.com/site/kjellhedstrom2/threadsafecircularqueue" target="_blank" rel="noopener">Lock-Free Single Producer - Single Consumer Circular Queue 1</a></p>
+<p><a href="https://www.codeproject.com/Articles/43510/Lock-Free-Single-Producer-Single-Consumer-Circular" target="_blank" rel="noopener">Lock-Free Single-Producer - Single Consumer Circular Queue 2</a></p>
+<p><a href="https://blog.csdn.net/xtlisk/article/details/39098981" target="_blank" rel="noopener">无锁环形队列，volatile和乱序执行</a></p>
+<p><a href="http://www.drdobbs.com/parallel/volatile-vs-volatile/212701484" target="_blank" rel="noopener">volatile vs. volatile</a></p>
+<p><a href="https://stackoverflow.com/questions/4437527/why-do-we-use-volatile-keyword-in-c" target="_blank" rel="noopener">Why do we use volatile keyword in C++?</a></p>
+<p><a href="http://lday.me/2017/12/02/0018_cpp_atomic_summary/" target="_blank" rel="noopener">C++内存屏障（内存顺序）总结</a></p>
+
           
         
       
@@ -1638,198 +1853,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/03/游戏中的加密应用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/03/游戏中的加密应用/" itemprop="url">游戏中的加密应用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-03T22:48:24+08:00">
-                2018-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/08/03/游戏中的加密应用/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/08/03/游戏中的加密应用/" class="cy_cmt_count" data-xid="2018/08/03/游戏中的加密应用/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="游戏中加密算法的选择"><a href="#游戏中加密算法的选择" class="headerlink" title="游戏中加密算法的选择"></a>游戏中加密算法的选择</h2><p><a href="http://www.keepmovingbuddy.com/2018/07/28/%E5%AF%86%E7%A0%81%E5%AD%A6%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/" target="_blank" rel="noopener">前面一篇文章</a> 我们已经介绍了对称解密算法和非对称加密算法，那在游戏协议通信中应该如何选择加密方式呢？</p>
-<p>那我们看看下列几个方案</p>
-<ol>
-<li>单独使用对称加密算法。典型的对称加密算法如 AES 安全性已经不错，而且加密效率高，似乎可以直接拿来使用。但问题是客户端和服务器交互时如何交换密钥？如果直接明文传输，肯定会有被嗅探的风险。所以单独使用对称加密算法存在密钥的管理问题，是不可行的。</li>
-<li>单独使用非对称加密算法。非对称加密算法基于未解决的数学难题，因此在破解上几乎不可能。其优点就是安全，但缺点就是不够快，比较耗费cpu，如果在游戏中每一次消息都用其加密，对cpu的损耗还是挺高的。</li>
-</ol>
-<p>一种折中的办法是：<strong>采用密钥交换算法交换对称加密算法的密钥，然后用对称加密算法加密数据</strong>。</p>
-<p>所谓密钥交换，通俗地说，即使有攻击者在偷窥你与服务器的网络传输，客户端（client）依然可以利用“密钥协商机制”与服务器端（server）协商出一个用来加密应用层数据的密钥（也称“会话密钥”）。</p>
-<p>那么如何进行安全的密钥交换呢？</p>
-<ul>
-<li><p>一种方案是使用非对称加密算法。原理是通信一方首先生成密钥对，私钥自己保存，然后将公钥发送给另外一方；另一方拿到公钥后，随机生成一个对称加密的密钥，然后利用公钥加密它；再把加密结果发给对方，对方用私钥解密；于是双方都得到了会话密钥。 后续通信就使用该密钥进行对称加解密。例如早期的 SSLv2只支持一种密钥协商方式，就是 基于RSA 非对称加密算法的密钥协商机制。</p>
-</li>
-<li><p>第二种方案是使用专用的密钥交换算法，如 DH算法及其改进型 ECDH算法。该交换算法比较复杂，我们在后面的内容中进行介绍。</p>
-</li>
-<li><p>还有一种方案就是基于 PSK的密钥协商。PSK 全称Pre-Shared Key，顾名思义，就是预先让通讯双方共享一些密钥（通常是对称加密的密钥）。所谓的预先，就是说，这些密钥在 TLS 连接尚未建立之前，就已经部署在通讯双方的系统内了。其具体步骤是在通讯之前，通讯双方已经预先部署了若干个共享的密钥。为了标识多个密钥，给每一个密钥定义一个唯一的 ID。协商的过程很简单：客户端把自己选好的密钥的 ID 告诉服务端。如果服务端在自己的密钥池子中找到这个 ID，就用对应的密钥与客户端通讯；否则就报错并中断连接。</p>
-</li>
-</ul>
-<p>最后一种方式考虑到所有会话都使用这些固定的密钥，比较少用到。我们只看前两种方式。</p>
-<h2 id="DH-系交换算法"><a href="#DH-系交换算法" class="headerlink" title="DH 系交换算法"></a>DH 系交换算法</h2><h3 id="DH-算法"><a href="#DH-算法" class="headerlink" title="DH 算法"></a>DH 算法</h3><p>DH，全称Diffie–Hellman key exchange，是一种安全协议。它可以让双方在完全没有对方任何预先信息的条件下通过不安全信道创建起一个密钥。这个密钥可以在后续的通讯中作为对称密钥(通过对称加密算法)来加密通讯内容。</p>
-<p>其基本原理如下</p>
-<p><img src="/images/image-20180801200114787.png" alt="image-20180801200114787"></p>
-<p>如果 <em>p</em> 是一个至少 300 位的质数，并且<em>a</em>和<em>b</em>至少有100位长， 那么即使使用全人类所有的计算资源和当今最好的算法也不可能从<em>g</em>, <em>p</em>和<em>ga</em> mod <em>p</em> 中计算出 <em>a</em>。这个问题就是著名的<strong>离散对数问题</strong>。注意<em>g</em>则不需要很大, 并且在一般的实践中通常是2或者5。</p>
-<p>密钥交换的流程主要有2步：</p>
-<ol>
-<li>初始化密钥对，并向对方公布自己的公钥</li>
-<li>构建本地密钥，作为后续加密的密钥</li>
-</ol>
-<p>以消息传递模型为例，甲方为发送者，乙方为接收者，分述甲乙双方如何构建密钥，交换密钥和加密数据。</p>
-<p>首先，甲乙双方需要在收发信息前构建自己的密钥对，如下图：</p>
-<p><img src="/images/image-20180801194410265.png" alt="image-20180801194410265"></p>
-<p>注意，乙方构建自己的密钥对必须使用甲方公钥作为参数，否则无法确保甲乙双方获得同一个私密密钥，消息加密更无从谈起。 其次，假设甲乙双方事先约定好了用于数据加密的对称加密算法（如 AES 算法），并构建本地密钥（即对称加密算法中的密钥）， 甲方需要使用自己的私钥和乙方的公钥才能构建本地密钥，即用于数据加解密操作的对称加密算法密钥。 同样，乙方需要使用自己的私钥和甲方的公钥构建本地密钥。如下图：</p>
-<p><img src="/images/image-20180801194540530.png" alt="image-20180801194540530"></p>
-<p>虽然甲乙双方使用了不同的密钥来构建本地密钥，但得到的密钥是一致的，正因为如此，甲乙双方才能顺利进行加密消息的传递。 最后，甲乙双方构建了本地密钥后，可按基于对称加密算法的消息传递模型完成消息传递，如下图：</p>
-<p><img src="/images/image-20180801201756669.png" alt="image-20180801201756669"></p>
-<h3 id="ECDH算法"><a href="#ECDH算法" class="headerlink" title="ECDH算法"></a>ECDH算法</h3><p>DH 算法有一个变种，称之为 ECDH（全称是“Elliptic Curve Diffie-Hellman”）。</p>
-<p>它与 DH 类似，差别在于： DH 依赖的是——求解“离散对数问题”的难题。 ECDH 依赖的是——求解“椭圆曲线离散对数问题”的难题。其密钥交换过程于 DH 算法基本一致，这里我们不在赘述。</p>
-<h2 id="PFS-特性的保证"><a href="#PFS-特性的保证" class="headerlink" title="PFS 特性的保证"></a>PFS 特性的保证</h2><p>PFS 全称perfect forward secrecy，中文翻译叫『完美前向保密』，是由Christoph G. Günther在EUROCRYPT ’89提出的，其最初用于定义会话密钥交换协议的一种安全性。通俗点解释，就是如果当前会话的密钥协商私钥被破解，只能影响当前会话，不能影响之前历史会话。</p>
-<p>对于 RSA 密钥协商来说，如果服务器维护的的私钥被破解，则之前所有历史会话中的加密密钥都被破解了。当然你也可以说，服务器为每次会话都产出一对用来协商的密钥对，但是这个生成过程往往比较耗费资源。</p>
-<p>而 DH 算法及其衍生 ECDH 算法，每次会话的密钥交换都是临时生成的密钥对，完全满足 PFS 的要求，且其生成过程相对于 RSA 算法要廉价的多。</p>
-<p>综上，我们更倾向于使用 ECDH+AES 的算法组合。</p>
-<p>具体选择时，我们可以考虑</p>
-<ul>
-<li>对称加密我们可以使用 <strong>AES-128</strong> 或者 <strong>XXTea</strong> 算法。</li>
-<li>密钥交换使用<strong>ECDH</strong>算法。</li>
-</ul>
-<h2 id="中间人攻击"><a href="#中间人攻击" class="headerlink" title="中间人攻击"></a>中间人攻击</h2><p><strong>中间人攻击</strong>（英语：Man-in-the-middle attack，简称MITM）是指攻击者与通讯的两端分别创建独立的联系，并交换其所收到的数据，使通讯的两端认为他们正在通过一个私密的连接与对方直接对话，但事实上整个会话都被攻击者完全控制。在中间人攻击中，攻击者可以拦截通讯双方的通话并插入新的内容。在许多情况下这是很简单的（例如，在一个未加密的Wi-Fi的接受范围内的中间人攻击者，可以将自己作为一个中间人插入这个网络）。</p>
-<p>一个中间人攻击能成功的前提条件是攻击者能将自己伪装成每一个参与会话的终端，并且不被其他终端识破。中间人攻击是一个（缺乏）相互认证的攻击。其大致过程如下图所示</p>
-<p><img src="/images/image-20180805200133630.png" alt="image-20180805200133630"></p>
-<p>目前，单纯的 ECDH + AES 算法是无法防止中间人攻击的，为此就需要引入身份认证机制，其中使用最多的就是数字认证机制，也就是 CA 证书，这也是目前广泛使用的 Https 协议（本质上是基于 TLS 加密协议）使用的方式。</p>
-<p>所谓 CA，即Certificate Authority，就是颁发数字证书的权威机构，充当『公证人』的角色。服务器拿到 CA 颁发的证书，就认为是可以被客户端信赖的，客户端确认了服务器的有效身份，后续的密钥协商和加密通信就可以认为是安全的。</p>
-<p>目前常用的数字签名算法有 DSA，RSA，ECDSA(基于 ECC 的 DSA)，其大致原理就是服务器使用私钥对一段信息进行签名(加密)，然后客户端拿到签名时候，使用公钥进行验证(解密)，如果通过，就认为签名有效。</p>
-<p>大致原理如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">第1步</span><br><span class="line">服务器方面首先要花一笔银子，在某个 CA 那里购买一个数字证书。</span><br><span class="line">该证书通常会对应几个文件：其中一个文件包含公钥，还有一个文件包含私钥。必须在服务器上部署这两个文件。</span><br><span class="line"></span><br><span class="line">第2步</span><br><span class="line">当客户端访问时，服务器首先把包含公钥的证书发送给它。</span><br><span class="line"></span><br><span class="line">第3步</span><br><span class="line">客户端验证服务器发过来的证书。如果发现其中有诈，则退出。</span><br><span class="line">由于有了这一步，就大大降低了“中间人攻击”的风险。</span><br><span class="line"></span><br><span class="line">为啥客户端（典型的如 https 协议一方的浏览器）能发现 CA 证书是否有诈？</span><br><span class="line">因为正经的 CA 证书，都是来自某个权威的 CA。如果某个 CA 足够权威，那么主流的操作系统（或浏览器）会内置该 CA 的“根证书”。（比如 Windows 中就内置了几十个权威 CA 的根证书）</span><br><span class="line">因此，客户端就可以利用系统内置的根证书，来判断服务器发过来的 CA 证书是不是某个 CA 颁发的。</span><br><span class="line"></span><br><span class="line">第4步</span><br><span class="line">如果服务器的 CA 证书没有问题，那么客户端就从该 CA 证书中提取出“公钥”。</span><br><span class="line">然后浏览器随机生成一个“对称加密的密钥”（以下称为 k）。用 CA 证书的公钥加密 k，得到密文 k&apos;，然后把 k&apos; 发送给服务器。</span><br><span class="line"></span><br><span class="line">第5步</span><br><span class="line">服务器收到客户端发过来的 k&apos;，用之前保存的私钥进行解密，得到 k。</span><br><span class="line">至此，客户端和服务器都拥有 k，“密钥交换”大功告成啦。</span><br></pre></td></tr></table></figure>
-<p>目前来说，数字签名算法+密钥协商算法+对称加密算法的组合相对来说是一种比较安全的加密通信方式，再加上 HMAC 进行摘要完整性校验，可以说能应付大部分普通攻击了。<br>而通常游戏中返回给客户端进行交互的服务器地址一般是可信赖的服务器 ip 列表，因此目前来说没有使用数字证书来防止中间人攻击的必要。因此此前提到的『密钥协商算法+对称加密算法』组合在游戏通信中得到了普遍应用。</p>
-<p>参考资料</p>
-<p><a href="https://program-think.blogspot.com/2016/09/https-ssl-tls-3.html" target="_blank" rel="noopener">密钥交换（密钥协商）算法及其原理</a></p>
-<p><a href="http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html" target="_blank" rel="noopener">图解SSL/TLS协议</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1875,7 +1903,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1888,7 +1916,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>

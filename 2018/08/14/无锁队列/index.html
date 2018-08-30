@@ -79,14 +79,23 @@
 
 
 
+<meta name="description" content="引子无锁队列是一种广泛使用的数据结构 单读单写我们先看下最简单的一种情况，就是一个生产者负责写，一个消费者负责读的情况。 这种情况通常是利用环形缓冲区 RingBuffer （有时候也称为 circular queue）来实现，那首先看看 RingBuffer 是怎么实现读写的。  RingBuffer 实现一个数组buff，大小是 SIZE，两个指针变量 head 和 tail 来表示队列的头和">
 <meta property="og:type" content="article">
 <meta property="og:title" content="无锁队列">
 <meta property="og:url" content="http://yoursite.com/2018/08/14/无锁队列/index.html">
 <meta property="og:site_name" content="PHILIP x BLOG">
+<meta property="og:description" content="引子无锁队列是一种广泛使用的数据结构 单读单写我们先看下最简单的一种情况，就是一个生产者负责写，一个消费者负责读的情况。 这种情况通常是利用环形缓冲区 RingBuffer （有时候也称为 circular queue）来实现，那首先看看 RingBuffer 是怎么实现读写的。  RingBuffer 实现一个数组buff，大小是 SIZE，两个指针变量 head 和 tail 来表示队列的头和">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-14T04:51:37.839Z">
+<meta property="og:image" content="http://yoursite.com/image-20180830113817331.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180830140357796.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180830140426815.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180830140237745.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180830140102099.png">
+<meta property="og:updated_time" content="2018-08-30T08:27:45.618Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="无锁队列">
+<meta name="twitter:description" content="引子无锁队列是一种广泛使用的数据结构 单读单写我们先看下最简单的一种情况，就是一个生产者负责写，一个消费者负责读的情况。 这种情况通常是利用环形缓冲区 RingBuffer （有时候也称为 circular queue）来实现，那首先看看 RingBuffer 是怎么实现读写的。  RingBuffer 实现一个数组buff，大小是 SIZE，两个指针变量 head 和 tail 来表示队列的头和">
+<meta name="twitter:image" content="http://yoursite.com/image-20180830113817331.png">
 
 
 
@@ -307,7 +316,72 @@
       
 
       
-        
+        <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>无锁队列是一种广泛使用的数据结构</p>
+<h2 id="单读单写"><a href="#单读单写" class="headerlink" title="单读单写"></a>单读单写</h2><p>我们先看下最简单的一种情况，就是一个生产者负责写，一个消费者负责读的情况。</p>
+<p>这种情况通常是利用环形缓冲区 RingBuffer （有时候也称为 circular queue）来实现，那首先看看 RingBuffer 是怎么实现读写的。</p>
+<p><img src="../../../../../../image-20180830113817331.png" alt="image-20180830113817331"></p>
+<h5 id="RingBuffer-实现"><a href="#RingBuffer-实现" class="headerlink" title="RingBuffer 实现"></a>RingBuffer 实现</h5><p>一个数组buff，大小是 SIZE，两个指针变量 head 和 tail 来表示队列的头和尾。写的时候，控制 tail 加1；读的时候，控制 head 加1。</p>
+<ul>
+<li>初始状态，数组为空，tail 和 head 都为 0</li>
+<li>写入元素时，tail 加1向后更新</li>
+<li>读取元素时，head 加1向后更新</li>
+<li>由于数组大小size有限，tail 或者 head指针不能永远向后增加，当到达数组尾部（指向<code>size-1</code>）的时候，需要绕回到数组开头，实现的时候使用 <code>val = (val + 1) % size</code> 取余即可</li>
+<li>绕回的机制正是环形缓冲的特色，因此 head 和 tail 的前后关系可能会一直变化</li>
+<li>队列为空时，读取失败，此时 head 和 tail 相等</li>
+<li>队列满时，写入失败，规定如果 tail + 1后，做可能的回绕，然后检查 tail 和head 是否相等，如果相等则满。这种约定浪费了一个元素的位置不让写入，从而保证写满时，head 和 tail差一个元素而不是相等，和队列为空的情况区分开来。此时的情况是可能是<ol>
+<li>tail 在前，head 在后且为 0， tail - head = size - 1 ，此时队列里除最后一个元素外全满，tail + 1 回绕后和head 都为 0</li>
+<li>head 在前，tail 在后，且 head - tail = 1，tail 加1后和 head 相等</li>
+</ol>
+</li>
+</ul>
+<p>PUSH</p>
+<p><img src="/images/image-20180830140357796.png" alt="image-20180830140357796"></p>
+<p>POP</p>
+<p><img src="/images/image-20180830140426815.png" alt="image-20180830140426815"></p>
+<p>EMPTY</p>
+<p><img src="/images/image-20180830140237745.png" alt="image-20180830140237745"></p>
+<p>FULL</p>
+<p><img src="/images/image-20180830140102099.png" alt="image-20180830140102099"></p>
+<p>下面看下实现代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> PKIT_RING_BUFFER_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PKIT_RING_BUFFER_H_</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">int</span> Size&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RingBuffer</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">enum</span> &#123; Capacity = Size+<span class="number">1</span> &#125;;</span><br><span class="line"></span><br><span class="line">    RingBuffer() : _tail(<span class="number">0</span>), _head(<span class="number">0</span>)&#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~RingBuffer() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">push</span><span class="params">(<span class="keyword">const</span> T&amp; item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> nextTail = increment(_tail);</span><br><span class="line">        <span class="keyword">if</span> (nextTail == _head) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;   <span class="comment">//full</span></span><br><span class="line">        &#125;</span><br><span class="line">        _array[_tail] = item;</span><br><span class="line">        _tail = nextTail;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">pop</span><span class="params">(T* item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (_head == _tail) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">//empty</span></span><br><span class="line">        &#125;</span><br><span class="line">        *item = _array[_head];</span><br><span class="line">        _head = increment(_head);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">increment</span><span class="params">(<span class="keyword">int</span> idx)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (idx + <span class="number">1</span>) % Capacity;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> _tail;</span><br><span class="line">    <span class="keyword">int</span> _head;</span><br><span class="line">    T   _array[Capacity];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//PKIT_RING_BUFFER_H_</span></span></span><br></pre></td></tr></table></figure>
+<h5 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h5><p>现在回到初始的单读单写的情况，生产者调用 push() 来唯一控制 tail 的更新，而消费者调用 pop() 来唯一控制 head 的更新。<br>实际实现时，通常分步，写入（或读取）缓冲区内容，更新指针。我们要保证：</p>
+<ul>
+<li>对 tail 和 head 指针的更新必须是原子的</li>
+<li>读的时候，先读取缓冲区内容，再更新 head</li>
+<li>写的时候，先写入内容到缓冲区，再更新 tail</li>
+</ul>
+<p>关于 int 类型赋值的原子性，C++ 标准是没有定义的，依赖于编译器的实现和系统架构的内存对齐策略等。</p>
+<p>根据 <a href="https://www.codeproject.com/script/Membership/View.aspx?mid=4385931" target="_blank" rel="noopener">KjellKod.cc</a> 的文章的说法，大部分现代处理器上，对于自然对齐的基础类型的读写是原子的，不会出现读一半或者写一半的情况。对于 x86 和 x64 平台，长度大于8的类型，其读写不保证是原子的。而对于我们的 head 和 tail，在 32 位处理器和 64 位处理器上大小分别是 4 和 8 (注：int 的大小和平台和编译器实现有关，这里说法不准) ，因此可以保证是原子的。其英文原话是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">On almost all modern processors, reads and writes of naturally aligned native types are atomic. This means that as long as the memory bus is at least as wide as the type being read or written the CPU reads and writes will happen in a single bus transaction. This makes it impossible for other threads to see them half-completed.</span><br><span class="line"></span><br><span class="line">For x86 and x64 platforms, types larger than 8 bytes are not guaranteed to be atomic. But in our example the head and tail indexes are integers of size 32bits (4 bytes) on 32-bit processor or 64bits (8bytes) on a 64-bit processor, thus making reading and writing them atomic.</span><br><span class="line"></span><br><span class="line">// Example of integers</span><br><span class="line">counter++;                // 1. not atomic operation, but three operations</span><br><span class="line">counter = 0;              // 2. this write is atomic</span><br><span class="line">other_variable = counter; // 3. this read is atomic</span><br><span class="line"></span><br><span class="line">For fun, you can compile the operations above to assembly language or use the debugger to view the disassembly. You should then see that the actual store only takes one instruction.</span><br><span class="line"></span><br><span class="line">On multiple core CPUs, this is also true. A word in memory must be coherent between all cores when it is written (using one CPU instruction). It is simply not allowed or even possible to split a 4 byte writing (I use a 32-bit example) between cores, since a word (4 bytes) is written as a single instruction.</span><br><span class="line"></span><br><span class="line">In short. Reads and writes of tail and head are atomic. First is still OK.</span><br></pre></td></tr></table></figure>
+<p>保险的措施是使用c++11中的 <code>std::atomic</code> 来保证原子性。我们修改下 head 和 tail 定义后的 ssqueue 结构(single producer &amp; single consumer queue) 如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> PKIT_SSQUEUE_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PKIT_SSQUEUE_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;atomic&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">int</span> Size&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SSQueue</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">enum</span> &#123; Capacity = Size+<span class="number">1</span> &#125;;</span><br><span class="line"></span><br><span class="line">    SSQueue() : _tail(<span class="number">0</span>), _head(<span class="number">0</span>)&#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~SSQueue() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">push</span><span class="params">(<span class="keyword">const</span> T&amp; item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> currTail = _tail.load();</span><br><span class="line">        <span class="keyword">auto</span> nextTail = increment(currTail);</span><br><span class="line">        <span class="keyword">if</span> (nextTail == _head.load()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;   <span class="comment">//full</span></span><br><span class="line">        &#125;</span><br><span class="line">        _array[currTail] = item;</span><br><span class="line">        _tail.store(nextTail);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">pop</span><span class="params">(T* item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> currHead = _head.load();</span><br><span class="line">        <span class="keyword">if</span> (currHead == _tail.load()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">//empty</span></span><br><span class="line">        &#125;</span><br><span class="line">        *item = _array[currHead];</span><br><span class="line">        _head.store(increment(currHead));</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">increment</span><span class="params">(<span class="keyword">int</span> idx)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (idx + <span class="number">1</span>) % Capacity;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; _tail;</span><br><span class="line">    <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; _head;</span><br><span class="line">    T   _array[Capacity];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//PKIT_SSQUEUE_H_</span></span></span><br></pre></td></tr></table></figure>
+<h5 id="顺序执行"><a href="#顺序执行" class="headerlink" title="顺序执行"></a>顺序执行</h5><p>由于都是分步执行，中间有可能被打断。但是只要保证了读写缓冲区的和更新指针的顺序，就能保证无锁的安全性。</p>
+<p>现在来分析一下打断的情况：<br>假如读的时候，消费者先读取了缓冲区内容，而未来得及更新 head，执行权就被生产者抢占，于是生产者读的 head 就是老的，类似快照数据。但这并没有太大影响，顶多是极端情况下由于没有更新head 导致生产者认为队列满而写入失败，下次继续写就可以了；如果队列没满，写入不受影响。<br>同样的道理，假如写的时候，生产者先写入内容到缓冲区(也可能是写一部分)，而未来得及更新 tail，执行权就被消费者抢占，于是消费者读到的 tail 也是老的。这也没有多大影响，顶多是极端情况下由于没有更新tail导致消费者认为队列空而读取失败，下次继续读就读到数据了；如果队列非空，读取不受影响。</p>
+<p>这里特别注意的是，head 和 tail 指针永远只由一方来更新，且是单方向更新。</p>
+<p>那是不是代码里先写缓冲区操作，再写更新指针操作就可以了呢？答案是否。</p>
+<p>编译器优化我们的代码时，可能会改变代码的执行顺序，反应在汇编指令的前后顺序调整。这是编译时乱序。</p>
+<p>上面提到的利用 volatile 修饰的 int 变量，vs 和 gcc 编译器似乎都能保证其汇编指令顺序，但是没有得到权威的资料证明 (<a href="https://blog.csdn.net/xtlisk/article/details/39098981" target="_blank" rel="noopener">查看</a>)</p>
+<p>此外，由于现代CPU普遍采用了多级流水线技术，一条指令的执行是多级流水线协同完成。为了提高执行效率，可以同时执行多条指令；而且随着分支预测和乱序执行的引入，互不依赖的两条指令在执行时是不保证先后顺序的，这是运行时乱序。</p>
+<p>编译器开发者和cpu厂商都遵守着内存乱序的基本原则，简单归纳如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">不能改变单线程程序的行为</span><br></pre></td></tr></table></figure>
+<p>在单线程环境，我们不必关心内存乱序的影响。而此时，我们关注的恰恰是多线程执行的情况，如何保证我们代码的顺序执行就是需要解决的关键问题。</p>
+<p>一种方式是依赖 <code>volatile int</code> 的一种实现。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="keyword">int</span> head;</span><br><span class="line"><span class="keyword">volatile</span> <span class="keyword">int</span> tail;</span><br></pre></td></tr></table></figure>
+<p>这里特别指出，volatile 关键字语义上只是提示编译器不要优化该变量，本质上和顺序执行没有任何关系。有说法是 volatile 的使用保证读写变量时其汇编指令顺序不会变更，但是没有可靠依据。</p>
+<p>而对于执行乱序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CPU Reordering Summary for x86 and x64 Platforms</span><br><span class="line"></span><br><span class="line">1. Reads moving ahead of other reads: No</span><br><span class="line">2. Writes moving ahead of other writes: No</span><br><span class="line">3. Writes moving ahead of reads: No</span><br><span class="line">4. Reads moving ahead of writes: Yes</span><br></pre></td></tr></table></figure>
+<p>由 2、3 两条保证了写的顺序不被置于读之前，且写之间顺序不乱。</p>
+<p>同样，保险的方式还是使用平台无关的机制：c++11提供的内存屏障。</p>
+<h5 id="Acquire-Release-内存屏障代码"><a href="#Acquire-Release-内存屏障代码" class="headerlink" title="Acquire-Release 内存屏障代码"></a>Acquire-Release 内存屏障代码</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> PKIT_SSQUEUE_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PKIT_SSQUEUE_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;atomic&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">int</span> Size&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SSQueue</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">enum</span> &#123; Capacity = Size+<span class="number">1</span> &#125;;</span><br><span class="line"></span><br><span class="line">    SSQueue() : _tail(<span class="number">0</span>), _head(<span class="number">0</span>)&#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~SSQueue() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">push</span><span class="params">(<span class="keyword">const</span> T&amp; item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> currTail = _tail.load(<span class="built_in">std</span>::memory_order_relaxed);</span><br><span class="line">        <span class="keyword">auto</span> nextTail = increment(currTail);</span><br><span class="line">        <span class="keyword">if</span> (nextTail == _head.load(<span class="built_in">std</span>::memory_order_acquire)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;   <span class="comment">//full</span></span><br><span class="line">        &#125;</span><br><span class="line">        _array[currTail] = item;</span><br><span class="line">        _tail.store(nextTail, <span class="built_in">std</span>::memory_order_release);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">pop</span><span class="params">(T* item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> currHead = _head.load(<span class="built_in">std</span>::memory_order_relaxed);</span><br><span class="line">        <span class="keyword">if</span> (currHead == _tail.load(<span class="built_in">std</span>::memory_order_acquire)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">//empty</span></span><br><span class="line">        &#125;</span><br><span class="line">        *item = _array[currHead];</span><br><span class="line">        _head.store(increment(currHead), <span class="built_in">std</span>::memory_order_release);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">increment</span><span class="params">(<span class="keyword">int</span> idx)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (idx + <span class="number">1</span>) % Capacity;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; _tail;</span><br><span class="line">    <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; _head;</span><br><span class="line">    T   _array[Capacity];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//PKIT_SSQUEUE_H_</span></span></span><br></pre></td></tr></table></figure>
+<p><a href="http://chonghw.github.io/blog/2016/09/05/compilermemoryreorder/" target="_blank" rel="noopener">http://chonghw.github.io/blog/2016/09/05/compilermemoryreorder/</a></p>
+<p>参考资料</p>
+<p><a href="https://sites.google.com/site/kjellhedstrom2/threadsafecircularqueue" target="_blank" rel="noopener">Lock-Free Single Producer - Single Consumer Circular Queue 1</a></p>
+<p><a href="https://www.codeproject.com/Articles/43510/Lock-Free-Single-Producer-Single-Consumer-Circular" target="_blank" rel="noopener">Lock-Free Single-Producer - Single Consumer Circular Queue 2</a></p>
+<p><a href="https://blog.csdn.net/xtlisk/article/details/39098981" target="_blank" rel="noopener">无锁环形队列，volatile和乱序执行</a></p>
+<p><a href="http://www.drdobbs.com/parallel/volatile-vs-volatile/212701484" target="_blank" rel="noopener">volatile vs. volatile</a></p>
+<p><a href="https://stackoverflow.com/questions/4437527/why-do-we-use-volatile-keyword-in-c" target="_blank" rel="noopener">Why do we use volatile keyword in C++?</a></p>
+<p><a href="http://lday.me/2017/12/02/0018_cpp_atomic_summary/" target="_blank" rel="noopener">C++内存屏障（内存顺序）总结</a></p>
+
       
     </div>
     
@@ -400,8 +474,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -416,7 +499,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -429,7 +512,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
@@ -468,6 +551,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引子"><span class="nav-number">1.</span> <span class="nav-text">引子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单读单写"><span class="nav-number">2.</span> <span class="nav-text">单读单写</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#RingBuffer-实现"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">RingBuffer 实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#原子性"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">原子性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#顺序执行"><span class="nav-number">2.0.0.3.</span> <span class="nav-text">顺序执行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Acquire-Release-内存屏障代码"><span class="nav-number">2.0.0.4.</span> <span class="nav-text">Acquire-Release 内存屏障代码</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
