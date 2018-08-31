@@ -367,7 +367,7 @@
 <p>而另外一个选项 <code>net.ipv4.tcp_tw_recycle</code>意思是开启 TIME_WAIT 状态 sockets 的快速回收。之前 2MSL 时间才回收的连接，很可能很快就被回收（一种说法回收时间是连接的 RTT）。启用之后，对于涉及 NAT 的网络情况会产生一些问题，因此<strong>不建议使用</strong>。似乎该选项在新版的 linux 内核中已经被废弃。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tcp_tw_recycle (Boolean; default: disabled; since Linux 2.4)</span><br><span class="line">	Enable fast recycling of TIME_WAIT sockets.  Enabling this option is not recommended 	 since this causes problems when working with NAT  (Network Address Translation).</span><br></pre></td></tr></table></figure>
 <p>参考资料</p>
-<p><a href="https://zhuanlan.zhihu.com/p/20365900" target="_blank" rel="noopener">网络编程（六）：端口那些事儿</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/20365900" target="_blank" rel="noopener">网络编程（六）：端口那些事儿</a></p>
 <p><a href="http://wudaijun.com/2015/10/tcp-notes-2/" target="_blank" rel="noopener">TCP服务器参见问题和参数设置</a></p>
 <p><a href="https://vincent.bernat.im/en/blog/2014-tcp-time-wait-state-linux" target="_blank" rel="noopener">Coping with the TCP TIME-WAIT state on busy Linux servers</a></p>
 
