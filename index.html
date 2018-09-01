@@ -324,10 +324,8 @@
 <p>看 <code>RES</code> 列的实际占用内存并不高，但是虚拟内存 <code>VIRT</code> 就将近3倍于实际使用内存，多出来的内存基本就是 cache 住的文件缓存了。</p>
 <p>为了查看进程打开了哪些进程，我们 lsof 看下</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -p PID</span><br></pre></td></tr></table></figure>
-<p>具体结果由于涉及业务这里就不贴了， 打开的文件主要是程序可执行文件、连接的 so、网络连接、日志文件等。</p>
-<p>从 size 大小看除日志文件外，其他都很小。</p>
-<p>我们的日志轮转大小是100M，打开的日志文件大概有 200M 左右，总的加起来也不会有4G 大小。</p>
-<p>于是猜想，是不是可能缓存了其他日志文件。由于我们测试为了方便查找问题，是开启 DEBUG 级别日志的，因此日志量比较大，一个小时单个进程轮转了9个日志文件，如果缓存了部分，那就很客观了。为了证实这个猜想，我查找了一些工具来统计 cache 内存的大小。</p>
+<p>具体结果由于涉及业务这里就不贴了， 打开的文件主要是程序可执行文件、连接的 so、网络连接、日志文件等。从 size 大小看除日志文件外，其他都很小。我们的日志轮转大小是100M，打开的日志文件大概有 200M 左右，总的加起来也不会有4G 大小。</p>
+<p>于是猜想，是不是可能缓存了其他日志文件。由于我们测试为了方便查找问题，是开启 DEBUG 级别日志的，因此日志量比较大，一个小时单个进程轮转了9个日志文件，如果缓存了部分，那就很可观了。为了证实这个猜想，我查找了一些工具来统计 cache 内存的大小。</p>
 <h2 id="统计大小"><a href="#统计大小" class="headerlink" title="统计大小"></a>统计大小</h2><p>网上推荐了 <a href="https://code.google.com/archive/p/linux-ftools/" target="_blank" rel="noopener">linux-ftools</a> 这个工具来进行统计，<code>fincore</code> 是其中的一个。<code>fincore</code> 的工作原理是将指定的文件的相应 inode data 与 kernel 的 page cache table 做对比，如果 page cache table 有这个 inode 信息，就找该inode 对应的 data block 的大小。因为 kernel 的 page cache table 只存储 data block 的引用而不是文件名，即文件的 inode 信息。所以并没有任何一个工具运行一次就可以找出所有的文件使用缓存的情况。 </p>
 <p>不过遗憾的是，linux-ftools 不再维护了，编译这个程序会出问题。所幸的是，还有个 Go 实现的类似功能的工具，叫 pcstat，下载方式是</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -L -o pcstat https://github.com/tobert/pcstat/raw/2014-05-02-01/pcstat.x86_64</span><br><span class="line">或者</span><br><span class="line">curl -L -o pcstat https://github.com/tobert/pcstat/raw/2014-05-02-01/pcstat.x86_32</span><br></pre></td></tr></table></figure>
