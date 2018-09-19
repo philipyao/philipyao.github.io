@@ -92,7 +92,7 @@
 <meta property="og:image" content="http://yoursite.com/images/image-20180822173934726.png">
 <meta property="og:image" content="http://yoursite.com/images/image-20180822194002035.png">
 <meta property="og:image" content="http://yoursite.com/images/image-20180822205943304.png">
-<meta property="og:updated_time" content="2018-08-24T04:08:13.079Z">
+<meta property="og:updated_time" content="2018-09-15T07:22:18.536Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Go调度模型">
 <meta name="twitter:description" content="Go 的 Runtime下面这张图说明了 Go 程序在执行时与操作系统的大致交互原理。  我们编写的 Go 程序除了运行自己的逻辑之外，还会涉及到与操作系统的交互，例如分配内存、创建 goroutine、通过channel与其他 goroutine 进行交互等。那么程序代码和操作系统之间是怎么交互的呢？这就用到了 go 里的 runtime 库。runtime 库主要的功能包含垃圾回收、调度、go">
@@ -340,7 +340,7 @@
 <p>大致的调度示意图如下</p>
 <p><img src="/images/image-20180822173934726.png" alt="image-20180822173934726"></p>
 <p>图中一共有6个 goroutine，被放入 3 个队列 P1、P2、P3 来调度。其中有 3 个 G 已经在对应的 M 中运行，另外 3 个在队列中等待执行。</p>
-<p>那么程序启动后如何选择 P 的数量呢？默认情况下，它等于 CPU 的逻辑核心数。例如我的 Mac 是单 CPU 双核四线程的，则 P 的数量就是4。这个数量也可以通过 <code>GOMAXPROCS</code> 环境变量或者 <code>runtime.GOMAXPROCS()</code> 函数来进行设置，一般来说使用默认的即可。</p>
+<p>那么程序启动后如何选择 P 的数量呢？默认情况下，它等于 CPU 的逻辑核心数。例如我的 Mac 是单 CPU 双核四线程的，则 P 的数量就是 4。这个数量也可以通过 <code>GOMAXPROCS</code> 环境变量或者 <code>runtime.GOMAXPROCS()</code> 函数来进行设置，一般来说使用默认的即可。</p>
 <p>下面我们分别来看看以下几种场景，调度器如何工作：</p>
 <h5 id="场景1：创建-goroutine"><a href="#场景1：创建-goroutine" class="headerlink" title="场景1：创建 goroutine"></a>场景1：创建 <code>goroutine</code></h5><p>goroutine 的创建通过 <code>go func()</code>语句来触发，实际调用的是 <code>runtime.newproc</code> 函数 </p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newproc</span><span class="params">(siz <span class="keyword">int32</span>, fn *funcval)</span></span> &#123;</span><br><span class="line">    argp := add(unsafe.Pointer(&amp;fn), sys.PtrSize)</span><br><span class="line">	pc := getcallerpc()</span><br><span class="line">	systemstack(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		newproc1(fn, (*<span class="keyword">uint8</span>)(argp), siz, pc)</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -550,7 +550,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -563,7 +563,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>

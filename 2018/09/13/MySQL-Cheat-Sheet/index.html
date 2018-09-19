@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Mysql CheatSheet," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="安装版本选择关于 mysql 的版本选择，可以参考 如何选择 MySQL 版本 这篇文章。我们选择社区版的 5.6 版本。 安装步骤为了方便用户安装，MySQl 官方提供了单独的 repository，对于Linux 发行版，有专门的 yum 源和 apt 源。将源添加好后，就可以很方便的通过 linux 的 yum 或者 apt 工具进行安装。这里我们以 yum 为例来讲述 MySQL 社区版本">
+<meta name="keywords" content="Mysql CheatSheet">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL Cheat Sheet">
+<meta property="og:url" content="http://yoursite.com/2018/09/13/MySQL-Cheat-Sheet/index.html">
+<meta property="og:site_name" content="PHILIP x BLOG">
+<meta property="og:description" content="安装版本选择关于 mysql 的版本选择，可以参考 如何选择 MySQL 版本 这篇文章。我们选择社区版的 5.6 版本。 安装步骤为了方便用户安装，MySQl 官方提供了单独的 repository，对于Linux 发行版，有专门的 yum 源和 apt 源。将源添加好后，就可以很方便的通过 linux 的 yum 或者 apt 工具进行安装。这里我们以 yum 为例来讲述 MySQL 社区版本">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-19T11:43:33.813Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL Cheat Sheet">
+<meta name="twitter:description" content="安装版本选择关于 mysql 的版本选择，可以参考 如何选择 MySQL 版本 这篇文章。我们选择社区版的 5.6 版本。 安装步骤为了方便用户安装，MySQl 官方提供了单独的 repository，对于Linux 发行版，有专门的 yum 源和 apt 源。将源添加好后，就可以很方便的通过 linux 的 yum 或者 apt 工具进行安装。这里我们以 yum 为例来讲述 MySQL 社区版本">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/13/MySQL-Cheat-Sheet/"/>
+
+
+
+
+
+  <title>MySQL Cheat Sheet | PHILIP x BLOG</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">PHILIP x BLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">心有猛虎，细嗅蔷薇</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/13/MySQL-Cheat-Sheet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySQL Cheat Sheet</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-13T09:33:08+08:00">
+                2018-09-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/09/13/MySQL-Cheat-Sheet/#SOHUCS" itemprop="discussionUrl">
+                  <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2018/09/13/MySQL-Cheat-Sheet/" itemprop="commentsCount"></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h5 id="版本选择"><a href="#版本选择" class="headerlink" title="版本选择"></a>版本选择</h5><p>关于 mysql 的版本选择，可以参考 <a href="http://dev.mysql.com/downloads/repo/yum/" target="_blank" rel="noopener">如何选择 MySQL 版本</a> 这篇文章。我们选择社区版的 5.6 版本。</p>
+<h5 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h5><p>为了方便用户安装，MySQl 官方提供了单独的 repository，对于Linux 发行版，有专门的 yum 源和 apt 源。将源添加好后，就可以很方便的通过 linux 的 yum 或者 apt 工具进行安装。这里我们以 yum 为例来讲述 MySQL 社区版本的安装过程。</p>
+<ul>
+<li>首先下载  MySQL yum 源，页面位于 <a href="https://dev.mysql.com/downloads/repo/yum/" target="_blank" rel="noopener">Download MySQL Yum Repository</a> </li>
+</ul>
+<blockquote>
+<p>注意下载的文件名虽然统一叫做 <code>mysql80-community-release-&lt;platform-and-version&gt;.noarch.rpm</code>，但是里面包含了 8.0，5.7，5.6，5.5 等各个版本以及工具。</p>
+</blockquote>
+<ul>
+<li><p>本地安装下载的源，我们以 centos7为例，下载的文件为 <code>mysql80-community-release-el7-1.noarch.rpm</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo rpm -Uvh mysql80-community-release-el7-1.noarch.rpm</span><br><span class="line">$ rpm -qa | grep mysql</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看启用的版本，默认是启用 8.0 版本</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ yum repolist enabled | grep mysql</span><br><span class="line">mysql-connectors-community/x86_64 MySQL Connectors Community                  65</span><br><span class="line">mysql-tools-community/x86_64      MySQL Tools Community                       69</span><br><span class="line">mysql80-community/x86_64          MySQL 8.0 Community Server                 412</span><br></pre></td></tr></table></figure>
+<ul>
+<li>修改启用版本为 5.6</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum-config-manager --<span class="built_in">disable</span> mysql80-community</span><br><span class="line">$ sudo yum-config-manager --<span class="built_in">enable</span> mysql56-community</span><br></pre></td></tr></table></figure>
+<ul>
+<li>安装</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install mysql-community-server</span><br><span class="line">$ mysql --version</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果安装时下载有问题，可以考虑修改 /etc/yum.conf 里的 proxy 代理配置为你的 http 代理地址 <a href="http://your_proxy_ip:port" target="_blank" rel="noopener">http://your_proxy_ip:port</a></p>
+</blockquote>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>默认安装路径是 <code>/var/lib/mysql</code>, 可以自定义数据文件路径。一般来说云主机的 data 盘较大，可以将数据库的数据存放于此</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">datadir=/data/mysql</span><br><span class="line">socket=/data/mysql/mysql.sock</span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">socket=/data/mysql/mysql.sock   # 供 mysql client 连接用</span><br></pre></td></tr></table></figure>
+<p>这里自定义的<code>/data/mysql</code> 路径需要设置为 mysql 用户拥有</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo chown -R mysql:mysql /data/mysql</span><br></pre></td></tr></table></figure>
+<p>开启慢查询</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">slow_query_log=1</span><br><span class="line">long_query_time=1 # 1s</span><br><span class="line">slow_query_log_file=/data/mysql/mysqld-slow.log</span><br></pre></td></tr></table></figure>
+<p>开启 binlog</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line"><span class="built_in">log</span>-bin=mysql-bin</span><br></pre></td></tr></table></figure>
+<p>设置字符集(character)及校对规则(collation，字符串比较规则)，字符集默认是 latin1，我们设置为 utf8</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">character-set-server=utf8</span><br><span class="line">collation-server=utf8_general_ci</span><br></pre></td></tr></table></figure>
+<p>配置完成后，启动 mysqld 服务器进程</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo service mysqld start</span><br></pre></td></tr></table></figure>
+<h2 id="安全性控制"><a href="#安全性控制" class="headerlink" title="安全性控制"></a>安全性控制</h2><p>运行 <code>mysql_secure_installation</code> 命令，来对新安装的 mysql 进行安全性设置，这包括 root 密码设置、限制 root 只能本机登录、删除 test 库、删除匿名用户等。对于生产环境，强烈建议设置一下。</p>
+<blockquote>
+<p>注意 5.7 及以上版本已经不需要运行该命令</p>
+</blockquote>
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><p>使用 sysbench 工具来对 MySQL 进行测试(这里我们只测试 select primary key)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ sysbench /usr/share/sysbench/oltp_read_only.lua <span class="built_in">help</span></span><br><span class="line">sysbench 1.0.9 (using system LuaJIT 2.0.4)</span><br><span class="line"></span><br><span class="line">oltp_read_only.lua options:</span><br><span class="line">  --distinct_ranges=N           Number of SELECT DISTINCT queries per transaction [1]</span><br><span class="line">  --sum_ranges=N                Number of SELECT SUM() queries per transaction [1]</span><br><span class="line">  --skip_trx[=on|off]           Don<span class="string">'t start explicit transactions and execute all queries in the AUTOCOMMIT mode [off]</span></span><br><span class="line"><span class="string">  --secondary[=on|off]          Use a secondary index in place of the PRIMARY KEY [off]</span></span><br><span class="line"><span class="string">  --create_secondary[=on|off]   Create a secondary index in addition to the PRIMARY KEY [on]</span></span><br><span class="line"><span class="string">  --index_updates=N             Number of UPDATE index queries per transaction [1]</span></span><br><span class="line"><span class="string">  --range_size=N                Range size for range SELECT queries [100]</span></span><br><span class="line"><span class="string">  --auto_inc[=on|off]           Use AUTO_INCREMENT column as Primary Key (for MySQL), or its alternatives in other DBMS. When disabled, use client-generated IDs [on]</span></span><br><span class="line"><span class="string">  --delete_inserts=N            Number of DELETE/INSERT combination per transaction [1]</span></span><br><span class="line"><span class="string">  --tables=N                    Number of tables [1]</span></span><br><span class="line"><span class="string">  --mysql_storage_engine=STRING Storage engine, if MySQL is used [innodb]</span></span><br><span class="line"><span class="string">  --non_index_updates=N         Number of UPDATE non-index queries per transaction [1]</span></span><br><span class="line"><span class="string">  --table_size=N                Number of rows per table [10000]</span></span><br><span class="line"><span class="string">  --pgsql_variant=STRING        Use this PostgreSQL variant when running with the PostgreSQL driver. The only currently supported variant is '</span>redshift<span class="string">'. When enabled, create_secondary is automatically disabled, and delete_inserts is set to 0</span></span><br><span class="line"><span class="string">  --simple_ranges=N             Number of simple range SELECT queries per transaction [1]</span></span><br><span class="line"><span class="string">  --order_ranges=N              Number of SELECT ORDER BY queries per transaction [1]</span></span><br><span class="line"><span class="string">  --range_selects[=on|off]      Enable/disable all range SELECT queries [on]</span></span><br><span class="line"><span class="string">  --point_selects=N             Number of point SELECT queries per transaction [10]</span></span><br></pre></td></tr></table></figure>
+<p>准备数据</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">$ sysbench /usr/share/sysbench/oltp_read_only.lua --threads=4  --mysql-user=root --mysql-password=ta0mee@tm --mysql-db=db_test --db-driver=mysql --tables=10 --table_size=1000000 prepare</span><br><span class="line"></span><br><span class="line">sysbench 1.0.9 (using system LuaJIT 2.0.4)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Creating table <span class="string">'sbtest3'</span>...</span><br><span class="line">Creating table <span class="string">'sbtest4'</span>...</span><br><span class="line">Creating table <span class="string">'sbtest1'</span>...</span><br><span class="line">Creating table <span class="string">'sbtest2'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest3'</span></span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest2'</span></span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest4'</span></span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest1'</span></span><br><span class="line">Creating a secondary index on <span class="string">'sbtest4'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest2'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest1'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest3'</span>...</span><br><span class="line">Creating table <span class="string">'sbtest8'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest8'</span></span><br><span class="line">Creating table <span class="string">'sbtest6'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest6'</span></span><br><span class="line">Creating table <span class="string">'sbtest5'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest5'</span></span><br><span class="line">Creating table <span class="string">'sbtest7'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest7'</span></span><br><span class="line">Creating a secondary index on <span class="string">'sbtest8'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest6'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest5'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest7'</span>...</span><br><span class="line">Creating table <span class="string">'sbtest10'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest10'</span></span><br><span class="line">Creating table <span class="string">'sbtest9'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest9'</span></span><br><span class="line">Creating a secondary index on <span class="string">'sbtest10'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest9'</span>...</span><br></pre></td></tr></table></figure>
+<p>数据准备好之后，开始运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">$ sysbench /usr/share/sysbench/oltp_read_only.lua --threads=16 --events=0 --time=300 --mysql-db=db_test --mysql-user=root --mysql-password=ta0mee@tm --db-driver=mysql --table_size=1000000 --range_selects=off --db-ps-mode=<span class="built_in">disable</span> --report-interval=1 --histogram run</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">[ 298s ] thds: 16 tps: 4907.59 qps: 58910.03 (r/w/o: 49095.86/0.00/9814.17) lat (ms,95%): 4.03 err/s: 0.00 reconn/s: 0.00</span><br><span class="line">[ 299s ] thds: 16 tps: 4915.22 qps: 58992.64 (r/w/o: 49161.20/0.00/9831.44) lat (ms,95%): 4.03 err/s: 0.00 reconn/s: 0.00</span><br><span class="line">[ 300s ] thds: 16 tps: 4909.87 qps: 58891.44 (r/w/o: 49070.70/0.00/9820.74) lat (ms,95%): 4.03 err/s: 0.00 reconn/s: 0.00</span><br><span class="line"></span><br><span class="line">SQL statistics:</span><br><span class="line">    queries performed:</span><br><span class="line">        <span class="built_in">read</span>:                            14678040</span><br><span class="line">        write:                           0</span><br><span class="line">        other:                           2935608</span><br><span class="line">        total:                           17613648</span><br><span class="line">    transactions:                        1467804 (4892.54 per sec.)</span><br><span class="line">    queries:                             17613648 (58710.46 per sec.)</span><br><span class="line">    ignored errors:                      0      (0.00 per sec.)</span><br><span class="line">    reconnects:                          0      (0.00 per sec.)</span><br><span class="line"></span><br><span class="line">General statistics:</span><br><span class="line">    total time:                          300.0070s</span><br><span class="line">    total number of events:              1467804</span><br><span class="line"></span><br><span class="line">Latency (ms):</span><br><span class="line">         min:                                  0.80</span><br><span class="line">         avg:                                  3.27</span><br><span class="line">         max:                                114.77</span><br><span class="line">         95th percentile:                      3.96</span><br><span class="line">         sum:                            4797566.33</span><br><span class="line"></span><br><span class="line">Threads fairness:</span><br><span class="line">    events (avg/stddev):           91737.7500/481.98</span><br><span class="line">    execution time (avg/stddev):   299.8479/0.00</span><br></pre></td></tr></table></figure>
+<h2 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h2><p>通过 <code>mysql_secure_installation</code> 脚本设置好 root 密码后，就可以登录了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -h [host] -u [user] -p</span><br><span class="line">Enter password: ********</span><br></pre></td></tr></table></figure>
+<p>登录并使用某一数据库(例子中密码前面不能有空格)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -h [host] -u [user] -p[passwd] [DB_NAME]</span><br></pre></td></tr></table></figure>
+<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><p>创建用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE USER &apos;user&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;</span><br></pre></td></tr></table></figure>
+<p>删除用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; DROP USER &apos;user&apos;@&apos;host&apos;;</span><br></pre></td></tr></table></figure>
+<p>赋权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT SELECT, INSERT, DELETE ON base.* TO &apos;user&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;</span><br><span class="line">mysql&gt; GRANT SELECT ON `db\_oss\_%`.* TO &apos;query&apos;@&apos;172.31.%&apos; IDENTIFIED BY &apos;123&apos;;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<p>更新密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET PASSWORD FOR &apos;user&apos;@&apos;host&apos; = PASSWORD(&apos;new_pass&apos;);</span><br></pre></td></tr></table></figure>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><p>查看当前正在 use 的库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt; select database();</span><br><span class="line">+------------+</span><br><span class="line">| database() |</span><br><span class="line">+------------+</span><br><span class="line">| mysql      |</span><br><span class="line">+------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>查看建表语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show create table t_xxx;</span><br></pre></td></tr></table></figure>
+<p>查看索引</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show index from table t_xxx;</span><br></pre></td></tr></table></figure>
+<p>查看字符集</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &apos;character_set_%&apos;;</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| Variable_name            | Value                      |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| character_set_client     | utf8                       |</span><br><span class="line">| character_set_connection | utf8                       |</span><br><span class="line">| character_set_database   | utf8                       |</span><br><span class="line">| character_set_filesystem | binary                     |</span><br><span class="line">| character_set_results    | utf8                       |</span><br><span class="line">| character_set_server     | utf8                       |</span><br><span class="line">| character_set_system     | utf8                       |</span><br><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">8 rows in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; show variables like &apos;collation%&apos;;</span><br><span class="line">+----------------------+-----------------+</span><br><span class="line">| Variable_name        | Value           |</span><br><span class="line">+----------------------+-----------------+</span><br><span class="line">| collation_connection | utf8_general_ci |</span><br><span class="line">| collation_database   | utf8_general_ci |</span><br><span class="line">| collation_server     | utf8_general_ci |</span><br><span class="line">+----------------------+-----------------+</span><br><span class="line">3 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>查看连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show processlist;</span><br></pre></td></tr></table></figure>
+<p>设置连接编码为 utf8</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET NAMES &apos;utf8&apos;;</span><br></pre></td></tr></table></figure>
+<p>修改表结构</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; ALTER TABLE [table] ADD COLUMN [column] VARCHAR(120);</span><br><span class="line">mysql&gt; ALTER TABLE [table] DROP COLUMN [column];</span><br></pre></td></tr></table></figure>
+<p>插入一条记录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; INSERT INTO [table] ([column], [column]) VALUES (&apos;[value]&apos;, &apos;[value]&apos;);</span><br></pre></td></tr></table></figure>
+<p>解释执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT * FROM [table] WHERE [column] LIKE &apos;%[value]%&apos;;</span><br></pre></td></tr></table></figure>
+<p>更新数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; UPDATE [table] SET [column] = &apos;[updated-value]&apos; WHERE [column] = [value];</span><br></pre></td></tr></table></figure>
+<p>为一列或者多列添加命名索引</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; ALTER TABLE table ADD INDEX [index_name](column, ...);</span><br><span class="line">mysql&gt; CREATE [UNIQUE|FULLTEXT] INDEX index_name ON table (column,...);</span><br></pre></td></tr></table></figure>
+<p>删除索引</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; DROP INDEX index_name;</span><br></pre></td></tr></table></figure>
+<p>使用 group by 和 having 来获取特定组数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM table GROUP BY column_1 HAVING condition;</span><br></pre></td></tr></table></figure>
+<p>设置所有 row 的某一列</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; UPDATE table SET column_1 = value_1, ...;</span><br></pre></td></tr></table></figure>
+<h2 id="备份和恢复"><a href="#备份和恢复" class="headerlink" title="备份和恢复"></a>备份和恢复</h2><h5 id="物理备份"><a href="#物理备份" class="headerlink" title="物理备份"></a>物理备份</h5><p>物理备份是拷贝数据库的文件，比较快，适用于数据迁移等场景。</p>
+<h5 id="逻辑备份"><a href="#逻辑备份" class="headerlink" title="逻辑备份"></a>逻辑备份</h5><p>逻辑备份可以无视版本和架构对数据进行备份，比如进行 mysql 升级就可以使用逻辑备份来备份数据。逻辑备份通常结合全量备份和增量备份。</p>
+<p>在 mysql 服务器本地，使用 mysqldump 进行全量备份</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump --single-transaction --all-databases --flush-logs -u [username] -p &gt; db_backup.sql</span><br></pre></td></tr></table></figure>
+<p>如果要备份特定的库和表，可以这样</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump --single-transaction --flush-logs -u [username] -p db_name] &lt;table_name&gt; &gt; db_backup.sql</span><br></pre></td></tr></table></figure>
+<p>如果不需要导出建库，使用–no-create–db选项，不需要建表语句，使用 –no-create-info 选项；导出特定条件的行，使用 –where 选项。例如</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump -h 10.137.213.82 -udbuser -ppassword --no-create-info db_hgame_1020 t_user --<span class="built_in">where</span>=<span class="string">"accid=776085"</span> &gt; /tmp/776085.sql</span><br></pre></td></tr></table></figure>
+<p>导入备份的 sql 语句</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -hhostname -uusername -ppassword databasename &lt; backupfile.sql</span><br></pre></td></tr></table></figure>
+<p>或者使用 mysql 的 source 命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; source backup.sql;</span><br></pre></td></tr></table></figure>
+<p>如果备份的数据比较大，可以压缩一下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump -u [username] -p --default-character-set=utf8 [db_name] | gzip &gt; backup.sql.gz</span><br><span class="line">$ gunzip -c backup.sql.gz | mysql -u [username] -p [db_name] 1&gt; load.log 2&gt;err.log</span><br></pre></td></tr></table></figure>
+<p>如果想将一台服务器的数据直接导入另外一台机器，可以</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump -u root -p database_name | mysql -h other-host database_name</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>mysqldump 需要 SELECT 权限，对于没有指定 –single-transaction 选项的还需要 LOCK TABLES 权限。</p>
+</blockquote>
+<p>对于增量备份，可以使用 binlog。</p>
+<p>查看所有的 binlog</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show binary logs;</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| Log_name         | File_size |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| mysql-bin.000001 |       120 |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>查看当前正在写的 binlog</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show master status;</span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |</span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">| mysql-bin.000001 |      120 |              |                  |                   |</span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>导出特定时间的 binlog 以便根据 pos 来进行具体恢复(binlog 是二进制格式，利用 mysqlbinlog 工具导出成 sql)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqlbinlog --start-datetime=<span class="string">"2018-05-20 9:58:00"</span> --stop-datetime=<span class="string">"2018-05-20 10:01:00"</span> /data/mysql/mysql-bin.000001 &gt; /tmp/mysql_restore.sql</span><br></pre></td></tr></table></figure>
+<p>通过 mysql_restore.sql 我们发现只需要恢复到 log_pos 为368312 的位置，则执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqlbinlog --stop-position=368312 /data/mysql/mysql-bin.000001 | mysql -uroot -p</span><br></pre></td></tr></table></figure>
+<h2 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h2><p>先查询安装了哪些 mysql 的文件，例如</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ rpm -qa | grep mysql</span><br><span class="line">mysql-community-libs-5.7.21-1.el7.x86_64</span><br><span class="line">mysql-community-devel-5.7.21-1.el7.x86_64</span><br><span class="line">mysql-community-client-5.7.21-1.el7.x86_64</span><br><span class="line">mysql-community-server-5.7.21-1.el7.x86_64</span><br><span class="line">mysql-community-common-5.7.21-1.el7.x86_64</span><br><span class="line">mysql-community-libs-compat-5.7.21-1.el7.x86_64</span><br></pre></td></tr></table></figure>
+<p>然后使用 <code>yum remove</code> 命令卸载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum remove mysql</span><br><span class="line">$ sudo yum remove mysql-community-common</span><br><span class="line">$ sudo yum -y remove mysql-libs</span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>如果已知旧密码，需要修改 root 密码为新密码，可以这样</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">which</span> mysqladmin</span><br><span class="line">/usr/bin/mysqladmin</span><br><span class="line">$ /usr/bin/mysqladmin -u root -p password <span class="string">'new-password'</span></span><br><span class="line">Enter password:</span><br></pre></td></tr></table></figure>
+<p>如果忘记密码，在 my.cnf [mysqld] 部分最后添加  skip-grant-tables 选项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">skip-grant-tables</span><br></pre></td></tr></table></figure>
+<p>重启 mysqld</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo service mysqld restart</span><br></pre></td></tr></table></figure>
+<p>使用 root 无需密码登录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot</span><br></pre></td></tr></table></figure>
+<p>更新密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt; UPDATE user SET password=password(&apos;new-password&apos;) WHERE user = &apos;root&apos; ;</span><br><span class="line">mysql&gt; flush privileges ;</span><br></pre></td></tr></table></figure>
+<p>退出，删除 skip-grant-tables 选项并重启 mysqld 即可</p>
+<p>参考资料</p>
+<p><a href="http://www.ywnds.com/?p=9806" target="_blank" rel="noopener">如何选择 MySQL 版本</a></p>
+<p><a href="https://severalnines.com/blog/how-benchmark-performance-mysql-mariadb-using-sysbench" target="_blank" rel="noopener">How to Benchmark Performance of MySQL &amp; MariaDB using SysBench</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Mysql-CheatSheet/" rel="tag"># Mysql CheatSheet</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/03/深入浅出MySQL-笔记之优化/" rel="next" title="<深入浅出MySQL>笔记之优化">
+                <i class="fa fa-chevron-left"></i> <深入浅出MySQL>笔记之优化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">philipyao</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/philipyao" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:sjtutrume@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#版本选择"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">版本选择</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#安装步骤"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">安装步骤</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置"><span class="nav-number">2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安全性控制"><span class="nav-number">3.</span> <span class="nav-text">安全性控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#性能测试"><span class="nav-number">4.</span> <span class="nav-text">性能测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#登录"><span class="nav-number">5.</span> <span class="nav-text">登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#权限"><span class="nav-number">6.</span> <span class="nav-text">权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用命令"><span class="nav-number">7.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#备份和恢复"><span class="nav-number">8.</span> <span class="nav-text">备份和恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#物理备份"><span class="nav-number">8.0.0.1.</span> <span class="nav-text">物理备份</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#逻辑备份"><span class="nav-number">8.0.0.2.</span> <span class="nav-text">逻辑备份</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#卸载"><span class="nav-number">9.</span> <span class="nav-text">卸载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">10.</span> <span class="nav-text">其他</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">philipyao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+<div style="text-align:center;width:100%;height:50">
+   备案号：沪ICP备17048801号
+<div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+    <script type="text/javascript">
+    (function(){
+      var appid = 'cytDLaiT8';
+      var conf = 'b538eee17c601ce84536734d50d0b035';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){
+        window.changyan.api.config({appid:appid,conf:conf})});
+      }
+    })();
+    </script>
+    <script type="text/javascript" src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
