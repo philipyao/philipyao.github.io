@@ -86,16 +86,16 @@
 <meta property="og:site_name" content="PHILIP x BLOG">
 <meta property="og:description" content="引子无锁队列是一种广泛使用的数据结构 单读单写我们先看下最简单的一种情况，就是一个生产者负责写，一个消费者负责读的情况。 这种情况通常是利用环形缓冲区 RingBuffer （有时候也称为 circular queue）来实现，那首先看看 RingBuffer 是怎么实现读写的。  RingBuffer 实现一个数组buff，大小是 SIZE，两个指针变量 head 和 tail 来表示队列的头和">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/image-20180830113817331.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20180830113817331.png">
 <meta property="og:image" content="http://yoursite.com/images/image-20180830140357796.png">
 <meta property="og:image" content="http://yoursite.com/images/image-20180830140426815.png">
 <meta property="og:image" content="http://yoursite.com/images/image-20180830140237745.png">
 <meta property="og:image" content="http://yoursite.com/images/image-20180830140102099.png">
-<meta property="og:updated_time" content="2018-09-08T08:45:03.415Z">
+<meta property="og:updated_time" content="2018-10-16T07:07:37.879Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="无锁队列">
 <meta name="twitter:description" content="引子无锁队列是一种广泛使用的数据结构 单读单写我们先看下最简单的一种情况，就是一个生产者负责写，一个消费者负责读的情况。 这种情况通常是利用环形缓冲区 RingBuffer （有时候也称为 circular queue）来实现，那首先看看 RingBuffer 是怎么实现读写的。  RingBuffer 实现一个数组buff，大小是 SIZE，两个指针变量 head 和 tail 来表示队列的头和">
-<meta name="twitter:image" content="http://yoursite.com/image-20180830113817331.png">
+<meta name="twitter:image" content="http://yoursite.com/images/image-20180830113817331.png">
 
 
 
@@ -319,7 +319,7 @@
         <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>无锁队列是一种广泛使用的数据结构</p>
 <h2 id="单读单写"><a href="#单读单写" class="headerlink" title="单读单写"></a>单读单写</h2><p>我们先看下最简单的一种情况，就是一个生产者负责写，一个消费者负责读的情况。</p>
 <p>这种情况通常是利用环形缓冲区 RingBuffer （有时候也称为 circular queue）来实现，那首先看看 RingBuffer 是怎么实现读写的。</p>
-<p><img src="../../../../../../image-20180830113817331.png" alt="image-20180830113817331"></p>
+<p><img src="/images/image-20180830113817331.png" alt="image-20180830113817331"></p>
 <h5 id="RingBuffer-实现"><a href="#RingBuffer-实现" class="headerlink" title="RingBuffer 实现"></a>RingBuffer 实现</h5><p>一个数组buff，大小是 SIZE，两个指针变量 head 和 tail 来表示队列的头和尾。写的时候，控制 tail 加1；读的时候，控制 head 加1。</p>
 <ul>
 <li>初始状态，数组为空，tail 和 head 都为 0</li>
@@ -516,7 +516,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
