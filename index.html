@@ -229,6 +229,157 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/17/Go泛型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/17/Go泛型/" itemprop="url">Go泛型</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-17T16:06:45+08:00">
+                2018-10-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/10/17/Go泛型/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/10/17/Go泛型/" class="cy_cmt_count" data-xid="2018/10/17/Go泛型/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Go 语言本身不支持泛型 generics。我们这里主要看下怎么处理泛型的需求。</p>
+<h2 id="泛型数据"><a href="#泛型数据" class="headerlink" title="泛型数据"></a>泛型数据</h2><p>如果要存储泛型数据，Go 提供了空接口 interface{}。可以将任意的数据结构存储到 interface{} 中，然后使用的时候需要做一下 cast 转换。</p>
+<h2 id="泛型函数"><a href="#泛型函数" class="headerlink" title="泛型函数"></a>泛型函数</h2><p>这种使用比较常用，意思是针对不同的数据类型，需要运行同样的一套函数化的流程或者算法。</p>
+<p>目前 Go 并不支持这种传统意义上的泛型编程。<code>Jon Bodner</code> 在他的 <a href="https://medium.com/capital-one-tech/closures-are-the-generics-for-go-cb32021fb5b5" target="_blank" rel="noopener">Closures are the Generics for Go</a> 这篇文章中提供了一种间接实现泛型函数需求的做法，就是利用回调形式的闭包。</p>
+<p>简单来说，就是将需要泛型抽象的一套流程和算法封装成一个公共接口，并且提供一个回调，可以在回调时候利用闭包的特性来读取或者修改变量 T，而 T 在通常的泛型编程中是需要传给泛型函数的。</p>
+<p>下面是一个C++ 中的泛型函数的使用，compare 就是一套函数化的流程或者算法。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">compare</span><span class="params">(<span class="keyword">const</span> T &amp;lhs, <span class="keyword">const</span> T &amp;rhs)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (lhs &lt; rhs) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (rhs &lt; lhs) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 Go 中如果实现类似的效果呢？方法就是回调闭包函数。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">compare</span><span class="params">(fnCmp <span class="keyword">func</span>()</span> <span class="title">int</span>) <span class="title">bool</span></span> &#123;</span><br><span class="line">    ret := fnCmp()</span><br><span class="line">    <span class="keyword">return</span> ret &gt;= <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">var</span> b <span class="keyword">int</span> = <span class="number">2</span>;</span><br><span class="line">    result := compare(<span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (a &lt; b) &#123;<span class="keyword">return</span> <span class="number">-1</span>&#125;</span><br><span class="line">        <span class="keyword">if</span> (a &gt; b) &#123;<span class="keyword">return</span> <span class="number">1</span>&#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;)</span><br><span class="line">    fmt.Println(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过闭包的特性，可以不需要传之前需要的泛型参数 T，就可以对变量进行读取和修改。</p>
+<p>我们只需要将相同的流程抽象成一个公共接口，这里是<code>compare</code>，然后将不同的部分通过回调闭包的形式作为参数让公共接口调用即可，这里是 <code>fnCmp func() int</code> 参数。</p>
+<p>另一个比较恰当的例子是数据库的批量分页拉取。针对每个业务的数据库表，都可能会需要分页拉取 table 里的所有数据，就有必要将分页拉取的操作封装成一个公共接口，拉取后通过闭包参数来让调用方自定义后续操作。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> records []*DBTerritoryRespawn</span><br><span class="line">batchGet(dbtbl, fields, wheres, <span class="function"><span class="keyword">func</span><span class="params">(rows [][]hqdb.TbField)</span></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> _, row := <span class="keyword">range</span> rows &#123;</span><br><span class="line">        record := do_something_with(row)</span><br><span class="line">        records = <span class="built_in">append</span>(records, record)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>每次拉取一页（batchGet 内部调用一次闭包函数），都可以修改最终的结果 <code>records</code>。</p>
+<p>利用闭包，我们可以方便的抽象出一个通用的排序接口</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span>(</span><br><span class="line">    <span class="string">"sort"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> sorter <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="built_in">len</span> <span class="keyword">int</span></span><br><span class="line">    fnSwap <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="function">    <span class="title">fnLess</span> <span class="title">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="params">(s sorter)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> s.<span class="built_in">len</span> &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s sorter)</span> <span class="title">Swap</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    s.fnSwap(i, j)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s sorter)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> s.fnLess(i, j)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//slice排序</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Sort</span><span class="params">(<span class="built_in">len</span> <span class="keyword">int</span>, fnSwap <span class="keyword">func</span>(i, j <span class="keyword">int</span>)</span>, <span class="title">fnLess</span> <span class="title">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span>)</span> &#123;</span><br><span class="line">    sort.Sort(sorter&#123;<span class="built_in">len</span>, fnSwap, fnLess&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    data := []<span class="keyword">int</span>&#123;<span class="number">2</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">    Sort(<span class="built_in">len</span>(data), <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">        data[i], data[j] = data[j], data[i]</span><br><span class="line">    &#125;, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">        <span class="keyword">return</span> data[i] &lt; data[j]</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只不过这里用了2个闭包函数 fnSwap 和 fnLess。</p>
+<p>以上通过 closure 闭包提供的解决方式实质上使用了软件理论中的<code>side-effects</code>来实现的，意思是函数调用会影响调用方的数据。现代编程理论认为这是一种不好的方式，和其相对的是函数化编程。</p>
+<p>这里仅仅是提供一个泛型的一种 <code>work around</code>，所以还是期待未来 Go 能支持真正意义上的泛型。</p>
+<p>参考资料</p>
+<p><a href="https://medium.com/capital-one-tech/closures-are-the-generics-for-go-cb32021fb5b5" target="_blank" rel="noopener">Closures are the Generics for Go</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/29/服务器性能优化备忘/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -328,7 +479,7 @@
 <p>利用 list 命令查看具体是那一行</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(pprof) list moveSight</span><br></pre></td></tr></table></figure>
 <p>找到具体数据结构后，就可以有针对性的修改。一般来说 map 的优化主要是 key 要使用比较简单的类型，这样计算 hash 的时候也比较快。通常来说 int 类型 key 比 string 类型的 key 要快。此外由于 map 的内存增长是指数级的，新插入的时候如果发现空间不足，需要重新分配空间 hashGrow 和进行内存 typedmemmove，很耗性能，所以如果能预估 map 的大小，最好一开始就分配足够大的空间，以空间换时间。</p>
-<h2 id="机器人策略"><a href="#机器人策略" class="headerlink" title="机器人策略"></a>机器人策略</h2><p>参考资料</p>
+<h2 id="机器人策略"><a href="#机器人策略" class="headerlink" title="机器人策略"></a>机器人策略</h2><h2 id="Lua-Profile"><a href="#Lua-Profile" class="headerlink" title="Lua Profile"></a>Lua Profile</h2><p>参考资料</p>
 <p><a href="https://blog.golang.org/profiling-go-programs" target="_blank" rel="noopener">Profiling Go Programs</a></p>
 
           
@@ -1939,8 +2090,43 @@
 <h5 id="Acquire-Release-内存屏障代码"><a href="#Acquire-Release-内存屏障代码" class="headerlink" title="Acquire-Release 内存屏障代码"></a>Acquire-Release 内存屏障代码</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> PKIT_SSQUEUE_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PKIT_SSQUEUE_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;atomic&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">int</span> Size&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SSQueue</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">enum</span> &#123; Capacity = Size+<span class="number">1</span> &#125;;</span><br><span class="line"></span><br><span class="line">    SSQueue() : _tail(<span class="number">0</span>), _head(<span class="number">0</span>)&#123;&#125;</span><br><span class="line">    <span class="keyword">virtual</span> ~SSQueue() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">push</span><span class="params">(<span class="keyword">const</span> T&amp; item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> currTail = _tail.load(<span class="built_in">std</span>::memory_order_relaxed);</span><br><span class="line">        <span class="keyword">auto</span> nextTail = increment(currTail);</span><br><span class="line">        <span class="keyword">if</span> (nextTail == _head.load(<span class="built_in">std</span>::memory_order_acquire)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;   <span class="comment">//full</span></span><br><span class="line">        &#125;</span><br><span class="line">        _array[currTail] = item;</span><br><span class="line">        _tail.store(nextTail, <span class="built_in">std</span>::memory_order_release);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">pop</span><span class="params">(T* item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> currHead = _head.load(<span class="built_in">std</span>::memory_order_relaxed);</span><br><span class="line">        <span class="keyword">if</span> (currHead == _tail.load(<span class="built_in">std</span>::memory_order_acquire)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">//empty</span></span><br><span class="line">        &#125;</span><br><span class="line">        *item = _array[currHead];</span><br><span class="line">        _head.store(increment(currHead), <span class="built_in">std</span>::memory_order_release);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">increment</span><span class="params">(<span class="keyword">int</span> idx)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (idx + <span class="number">1</span>) % Capacity;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; _tail;</span><br><span class="line">    <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; _head;</span><br><span class="line">    T   _array[Capacity];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//PKIT_SSQUEUE_H_</span></span></span><br></pre></td></tr></table></figure>
 <p><a href="http://chonghw.github.io/blog/2016/09/05/compilermemoryreorder/" target="_blank" rel="noopener">http://chonghw.github.io/blog/2016/09/05/compilermemoryreorder/</a></p>
 <h2 id="多读多写"><a href="#多读多写" class="headerlink" title="多读多写"></a>多读多写</h2><p>如果情况扩展到多读多写的情况，我们就不能像上面这样来实现了。必须要借助 CPU 提供的 CAS 操作指令。</p>
-<p>链表实现的 lock-free 队列会有 ABA 问题。</p>
-<p>下面看下环形数组实现的多读多写的无锁队列。</p>
+<h5 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h5><p>Compare &amp; Set，或是 Compare &amp; Swap，<strong>现在几乎所有的CPU指令都支持CAS的原子操作，X86下对应的是 CMPXCHG 汇编指令。</strong>有了这个原子操作，我们就可以用其来实现各种无锁（lock free）的数据结构。</p>
+<p>维基百科是这么说的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">In computer science, compare-and-swap (CAS) is an atomic instruction used in multithreading to achieve synchronization. It compares the contents of a memory location with a given value and, only if they are the same, modifies the contents of that memory location to a new given value. This is done as a single atomic operation. The atomicity guarantees that the new value is calculated based on up-to-date information; if the value had been updated by another thread in the meantime, the write would fail. The result of the operation must indicate whether it performed the substitution; this can be done either with a simple boolean response (this variant is often called compare-and-set), or by returning the value read from the memory location (not the value written to it).</span><br><span class="line">Algorithms built around CAS typically read some key memory location and remember the old value. Based on that old value, they compute some new value. Then they try to swap in the new value using CAS, where the comparison checks for the location still being equal to the old value. If CAS indicates that the attempt has failed, it has to be repeated from the beginning: the location is re-read, a new value is re-computed and the CAS is tried again.</span><br></pre></td></tr></table></figure>
+<p>使用 c 代码形象的来表示这个操作就是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">compare_and_swap</span><span class="params">(<span class="keyword">int</span> *accum, <span class="keyword">int</span> *dest, <span class="keyword">int</span> newval)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (*accum == *dest) &#123;</span><br><span class="line">      *dest = newval;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      *accum = *dest;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将变量值 <em>accum 与 </em>dest 进行 compare，如果相等则进行 Swap/Set。如果不相等，则返回一个标识值。上层需要重复调用该 CAS 操作，直到操作成功。</p>
+<h5 id="C-中使用-CAS"><a href="#C-中使用-CAS" class="headerlink" title="C 中使用 CAS"></a>C 中使用 CAS</h5><p>C 语言中使用 CAS，可以使用</p>
+<ul>
+<li><p><a href="https://en.wikipedia.org/wiki/C11_(C_standard_revision" target="_blank" rel="noopener">C11</a>) <code>&lt;stdatomic.h&gt;</code> 里的一系列函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_<span class="function">Bool <span class="title">atomic_compare_exchange_strong</span><span class="params">( <span class="keyword">volatile</span> A* obj,</span></span></span><br><span class="line"><span class="function"><span class="params">                                      C* expected, C desired )</span></span>;</span><br><span class="line">_<span class="function">Bool <span class="title">atomic_compare_exchange_weak</span><span class="params">( <span class="keyword">volatile</span> A *obj, </span></span></span><br><span class="line"><span class="function"><span class="params">                                    C* expected, C desired )</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>特定编译器的非标准 C 扩展</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//GCC</span></span><br><span class="line"><span class="keyword">bool</span> __sync_bool_compare_and_swap (type *ptr, type oldval type newval, ...)	</span><br><span class="line">type __sync_val_compare_and_swap (type *ptr, type oldval type newval, ...)</span><br><span class="line"></span><br><span class="line"><span class="comment">//Windows API</span></span><br><span class="line">InterlockedCompareExchange ( __inout LONG <span class="keyword">volatile</span> *Target,</span><br><span class="line">                                __in LONG Exchange,</span><br><span class="line">                                __in LONG Comperand);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>直接调用<code>compare-and-swap</code> 汇编指令编写的函数。</p>
+</li>
+</ul>
+<p>下面是使用链表实现的基于 CAS 操作的无锁队列</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">EnQueue(x) <span class="comment">//进队列</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//准备新加入的结点数据</span></span><br><span class="line">    q = <span class="keyword">new</span> record();</span><br><span class="line">    q-&gt;value = x;</span><br><span class="line">    q-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        p = tail; <span class="comment">//取链表尾指针的快照</span></span><br><span class="line">    &#125; <span class="keyword">while</span>(CAS(p-&gt;next, <span class="literal">NULL</span>, q) != TRUE); <span class="comment">//如果没有把结点链在尾指针上，再试</span></span><br><span class="line"> </span><br><span class="line">    CAS(tail, p, q); <span class="comment">//置尾结点</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">DeQueue() <span class="comment">//出队列</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">do</span>&#123;</span><br><span class="line">        p = head;</span><br><span class="line">        <span class="keyword">if</span> (p-&gt;next == <span class="literal">NULL</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> ERR_EMPTY_QUEUE;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">while</span>( CAS(head, p, p-&gt;next) != TRUE );</span><br><span class="line">    <span class="keyword">return</span> p-&gt;next-&gt;value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="ABA-问题"><a href="#ABA-问题" class="headerlink" title="ABA 问题"></a>ABA 问题</h5><p>所谓ABA（<a href="http://en.wikipedia.org/wiki/ABA_problem" target="_blank" rel="noopener">见维基百科的ABA词条</a>），问题基本是这个样子：</p>
+<ol>
+<li>进程P1在共享变量中读到值为A</li>
+<li>P1被抢占了，进程P2执行</li>
+<li>P2把共享变量里的值从A改成了B，再改回到A，此时被P1抢占。</li>
+<li>P1回来看到共享变量里的值没有被改变，于是继续执行。</li>
+</ol>
+<p>虽然P1以为变量值没有改变，继续执行了，但是这个会引发一些潜在的问题。<strong>ABA问题最容易发生在lock free 的算法中的，CAS首当其冲，因为CAS判断的是指针的地址。如果这个地址被重用了呢，问题就很大了。</strong>（地址被重用是很经常发生的，一个内存分配后释放了，再分配，很有可能还是原来的地址）</p>
+<p>比如上述的DeQueue()函数，因为我们要让head和tail分开，所以我们引入了一个dummy指针给head，当我们做CAS的之前，如果head的那块内存被DeQueue() 然后回收并被重用了，而重用的内存又被EnQueue()进来了，这会有很大的问题。（<strong>内存管理中重用内存基本上是一种很常见的行为</strong>）</p>
+<p>维基百科上给了一个解——使用double-CAS（双保险的CAS），例如，在32位系统上，我们要检查64位的内容</p>
+<p>1）一次用CAS检查双倍长度的值，前半部是指针，后半部分是一个计数器。</p>
+<p>2）只有这两个都一样，才算通过检查。然后把指针赋新的值，并把计数器累加1。</p>
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><ol>
+<li><p>无锁队列主要是通过CAS、FAA这些原子操作，和Retry-Loop实现。</p>
+</li>
+<li><p>对于Retry-Loop，其实和锁什么什么两样。只是这种“锁”的粒度变小了，主要是“锁”HEAD和TAIL这两个关键资源。而不是整个数据结构。</p>
+</li>
+</ol>
 <p>参考资料</p>
 <p><a href="https://sites.google.com/site/kjellhedstrom2/threadsafecircularqueue" target="_blank" rel="noopener">Lock-Free Single Producer - Single Consumer Circular Queue 1</a></p>
 <p><a href="https://www.codeproject.com/Articles/43510/Lock-Free-Single-Producer-Single-Consumer-Circular" target="_blank" rel="noopener">Lock-Free Single-Producer - Single Consumer Circular Queue 2</a></p>
@@ -1949,137 +2135,8 @@
 <p><a href="https://stackoverflow.com/questions/4437527/why-do-we-use-volatile-keyword-in-c" target="_blank" rel="noopener">Why do we use volatile keyword in C++?</a></p>
 <p><a href="http://lday.me/2017/12/02/0018_cpp_atomic_summary/" target="_blank" rel="noopener">C++内存屏障（内存顺序）总结</a></p>
 <p><a href="http://preshing.com/20120710/memory-barriers-are-like-source-control-operations/" target="_blank" rel="noopener">Memory Barriers Are Like Source Control Operations</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/13/tcp-ip备忘/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/13/tcp-ip备忘/" itemprop="url">tcp/ip备忘</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-13T13:11:03+08:00">
-                2018-08-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/08/13/tcp-ip备忘/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/08/13/tcp-ip备忘/" class="cy_cmt_count" data-xid="2018/08/13/tcp-ip备忘/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            
+<p><a href="https://coolshell.cn/articles/8239.html" target="_blank" rel="noopener">无锁队列的实现</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
           
         
       
@@ -2164,7 +2221,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2177,7 +2234,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>

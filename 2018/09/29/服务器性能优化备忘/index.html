@@ -88,7 +88,7 @@
 <meta property="og:description" content="最近对服务器进行了一次性能优化，这里记录一下要点以供备忘。 Go Profilegolang 官方提供了一个称为 pprof 的性能调优工具。我们可以利用该工具来进行诊断。pprof 的原理是每秒钟暂停100次，然后对当前正在运行的 goroutine 堆栈进行采样并记录次数。 pprof 开启对于服务器，一般通过 http 方式来启用 pprof，例如 12345import _ &quot;net/ht">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/image-20180930144018771.png">
-<meta property="og:updated_time" content="2018-09-30T07:48:06.488Z">
+<meta property="og:updated_time" content="2018-10-16T12:26:43.694Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="服务器性能优化备忘">
 <meta name="twitter:description" content="最近对服务器进行了一次性能优化，这里记录一下要点以供备忘。 Go Profilegolang 官方提供了一个称为 pprof 的性能调优工具。我们可以利用该工具来进行诊断。pprof 的原理是每秒钟暂停100次，然后对当前正在运行的 goroutine 堆栈进行采样并记录次数。 pprof 开启对于服务器，一般通过 http 方式来启用 pprof，例如 12345import _ &quot;net/ht">
@@ -330,7 +330,7 @@
 <p>利用 list 命令查看具体是那一行</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(pprof) list moveSight</span><br></pre></td></tr></table></figure>
 <p>找到具体数据结构后，就可以有针对性的修改。一般来说 map 的优化主要是 key 要使用比较简单的类型，这样计算 hash 的时候也比较快。通常来说 int 类型 key 比 string 类型的 key 要快。此外由于 map 的内存增长是指数级的，新插入的时候如果发现空间不足，需要重新分配空间 hashGrow 和进行内存 typedmemmove，很耗性能，所以如果能预估 map 的大小，最好一开始就分配足够大的空间，以空间换时间。</p>
-<h2 id="机器人策略"><a href="#机器人策略" class="headerlink" title="机器人策略"></a>机器人策略</h2><p>参考资料</p>
+<h2 id="机器人策略"><a href="#机器人策略" class="headerlink" title="机器人策略"></a>机器人策略</h2><h2 id="Lua-Profile"><a href="#Lua-Profile" class="headerlink" title="Lua Profile"></a>Lua Profile</h2><p>参考资料</p>
 <p><a href="https://blog.golang.org/profiling-go-programs" target="_blank" rel="noopener">Profiling Go Programs</a></p>
 
       
@@ -371,6 +371,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/17/Go泛型/" rel="prev" title="Go泛型">
+                Go泛型 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -452,7 +456,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -465,7 +469,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
@@ -514,7 +518,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Go-Profile"><span class="nav-number">1.</span> <span class="nav-text">Go Profile</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#pprof-开启"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">pprof 开启</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#pprof-诊断热点函数"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">pprof 诊断热点函数</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#机器人策略"><span class="nav-number">2.</span> <span class="nav-text">机器人策略</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Go-Profile"><span class="nav-number">1.</span> <span class="nav-text">Go Profile</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#pprof-开启"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">pprof 开启</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#pprof-诊断热点函数"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">pprof 诊断热点函数</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#机器人策略"><span class="nav-number">2.</span> <span class="nav-text">机器人策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lua-Profile"><span class="nav-number">3.</span> <span class="nav-text">Lua Profile</span></a></li></ol></div>
             
 
           </div>

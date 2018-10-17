@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Golang 泛型," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Go 语言本身不支持泛型 generics。我们这里主要看下怎么处理泛型的需求。 泛型数据如果要存储泛型数据，Go 提供了空接口 interface{}。可以将任意的数据结构存储到 interface{} 中，然后使用的时候需要做一下 cast 转换。 泛型函数这种使用比较常用，意思是针对不同的数据类型，需要运行同样的一套函数化的流程或者算法。 目前 Go 并不支持这种传统意义上的泛型编程。Jon">
+<meta name="keywords" content="Golang 泛型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go泛型">
+<meta property="og:url" content="http://yoursite.com/2018/10/17/Go泛型/index.html">
+<meta property="og:site_name" content="PHILIP x BLOG">
+<meta property="og:description" content="Go 语言本身不支持泛型 generics。我们这里主要看下怎么处理泛型的需求。 泛型数据如果要存储泛型数据，Go 提供了空接口 interface{}。可以将任意的数据结构存储到 interface{} 中，然后使用的时候需要做一下 cast 转换。 泛型函数这种使用比较常用，意思是针对不同的数据类型，需要运行同样的一套函数化的流程或者算法。 目前 Go 并不支持这种传统意义上的泛型编程。Jon">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-10-17T10:06:16.012Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Go泛型">
+<meta name="twitter:description" content="Go 语言本身不支持泛型 generics。我们这里主要看下怎么处理泛型的需求。 泛型数据如果要存储泛型数据，Go 提供了空接口 interface{}。可以将任意的数据结构存储到 interface{} 中，然后使用的时候需要做一下 cast 转换。 泛型函数这种使用比较常用，意思是针对不同的数据类型，需要运行同样的一套函数化的流程或者算法。 目前 Go 并不支持这种传统意义上的泛型编程。Jon">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/10/17/Go泛型/"/>
+
+
+
+
+
+  <title>Go泛型 | PHILIP x BLOG</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">PHILIP x BLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">心有猛虎，细嗅蔷薇</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/17/Go泛型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Go泛型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-17T16:06:45+08:00">
+                2018-10-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/10/17/Go泛型/#SOHUCS" itemprop="discussionUrl">
+                  <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2018/10/17/Go泛型/" itemprop="commentsCount"></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Go 语言本身不支持泛型 generics。我们这里主要看下怎么处理泛型的需求。</p>
+<h2 id="泛型数据"><a href="#泛型数据" class="headerlink" title="泛型数据"></a>泛型数据</h2><p>如果要存储泛型数据，Go 提供了空接口 interface{}。可以将任意的数据结构存储到 interface{} 中，然后使用的时候需要做一下 cast 转换。</p>
+<h2 id="泛型函数"><a href="#泛型函数" class="headerlink" title="泛型函数"></a>泛型函数</h2><p>这种使用比较常用，意思是针对不同的数据类型，需要运行同样的一套函数化的流程或者算法。</p>
+<p>目前 Go 并不支持这种传统意义上的泛型编程。<code>Jon Bodner</code> 在他的 <a href="https://medium.com/capital-one-tech/closures-are-the-generics-for-go-cb32021fb5b5" target="_blank" rel="noopener">Closures are the Generics for Go</a> 这篇文章中提供了一种间接实现泛型函数需求的做法，就是利用回调形式的闭包。</p>
+<p>简单来说，就是将需要泛型抽象的一套流程和算法封装成一个公共接口，并且提供一个回调，可以在回调时候利用闭包的特性来读取或者修改变量 T，而 T 在通常的泛型编程中是需要传给泛型函数的。</p>
+<p>下面是一个C++ 中的泛型函数的使用，compare 就是一套函数化的流程或者算法。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">compare</span><span class="params">(<span class="keyword">const</span> T &amp;lhs, <span class="keyword">const</span> T &amp;rhs)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (lhs &lt; rhs) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (rhs &lt; lhs) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 Go 中如果实现类似的效果呢？方法就是回调闭包函数。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">compare</span><span class="params">(fnCmp <span class="keyword">func</span>()</span> <span class="title">int</span>) <span class="title">bool</span></span> &#123;</span><br><span class="line">    ret := fnCmp()</span><br><span class="line">    <span class="keyword">return</span> ret &gt;= <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">var</span> b <span class="keyword">int</span> = <span class="number">2</span>;</span><br><span class="line">    result := compare(<span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (a &lt; b) &#123;<span class="keyword">return</span> <span class="number">-1</span>&#125;</span><br><span class="line">        <span class="keyword">if</span> (a &gt; b) &#123;<span class="keyword">return</span> <span class="number">1</span>&#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;)</span><br><span class="line">    fmt.Println(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过闭包的特性，可以不需要传之前需要的泛型参数 T，就可以对变量进行读取和修改。</p>
+<p>我们只需要将相同的流程抽象成一个公共接口，这里是<code>compare</code>，然后将不同的部分通过回调闭包的形式作为参数让公共接口调用即可，这里是 <code>fnCmp func() int</code> 参数。</p>
+<p>另一个比较恰当的例子是数据库的批量分页拉取。针对每个业务的数据库表，都可能会需要分页拉取 table 里的所有数据，就有必要将分页拉取的操作封装成一个公共接口，拉取后通过闭包参数来让调用方自定义后续操作。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> records []*DBTerritoryRespawn</span><br><span class="line">batchGet(dbtbl, fields, wheres, <span class="function"><span class="keyword">func</span><span class="params">(rows [][]hqdb.TbField)</span></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> _, row := <span class="keyword">range</span> rows &#123;</span><br><span class="line">        record := do_something_with(row)</span><br><span class="line">        records = <span class="built_in">append</span>(records, record)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>每次拉取一页（batchGet 内部调用一次闭包函数），都可以修改最终的结果 <code>records</code>。</p>
+<p>利用闭包，我们可以方便的抽象出一个通用的排序接口</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span>(</span><br><span class="line">    <span class="string">"sort"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> sorter <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="built_in">len</span> <span class="keyword">int</span></span><br><span class="line">    fnSwap <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="function">    <span class="title">fnLess</span> <span class="title">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="params">(s sorter)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> s.<span class="built_in">len</span> &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s sorter)</span> <span class="title">Swap</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    s.fnSwap(i, j)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s sorter)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> s.fnLess(i, j)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//slice排序</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Sort</span><span class="params">(<span class="built_in">len</span> <span class="keyword">int</span>, fnSwap <span class="keyword">func</span>(i, j <span class="keyword">int</span>)</span>, <span class="title">fnLess</span> <span class="title">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span>)</span> &#123;</span><br><span class="line">    sort.Sort(sorter&#123;<span class="built_in">len</span>, fnSwap, fnLess&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    data := []<span class="keyword">int</span>&#123;<span class="number">2</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">    Sort(<span class="built_in">len</span>(data), <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">        data[i], data[j] = data[j], data[i]</span><br><span class="line">    &#125;, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">        <span class="keyword">return</span> data[i] &lt; data[j]</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只不过这里用了2个闭包函数 fnSwap 和 fnLess。</p>
+<p>以上通过 closure 闭包提供的解决方式实质上使用了软件理论中的<code>side-effects</code>来实现的，意思是函数调用会影响调用方的数据。现代编程理论认为这是一种不好的方式，和其相对的是函数化编程。</p>
+<p>这里仅仅是提供一个泛型的一种 <code>work around</code>，所以还是期待未来 Go 能支持真正意义上的泛型。</p>
+<p>参考资料</p>
+<p><a href="https://medium.com/capital-one-tech/closures-are-the-generics-for-go-cb32021fb5b5" target="_blank" rel="noopener">Closures are the Generics for Go</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Golang-泛型/" rel="tag"># Golang 泛型</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/29/服务器性能优化备忘/" rel="next" title="服务器性能优化备忘">
+                <i class="fa fa-chevron-left"></i> 服务器性能优化备忘
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">philipyao</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/philipyao" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:sjtutrume@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型数据"><span class="nav-number">1.</span> <span class="nav-text">泛型数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型函数"><span class="nav-number">2.</span> <span class="nav-text">泛型函数</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">philipyao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+<div style="text-align:center;width:100%;height:50">
+   备案号：沪ICP备17048801号
+<div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+    <script type="text/javascript">
+    (function(){
+      var appid = 'cytDLaiT8';
+      var conf = 'b538eee17c601ce84536734d50d0b035';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){
+        window.changyan.api.config({appid:appid,conf:conf})});
+      }
+    })();
+    </script>
+    <script type="text/javascript" src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
