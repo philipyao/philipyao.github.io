@@ -79,20 +79,24 @@
 
 
 
-<meta name="description" content="C/C++ 是高级编译型语言，执行的时候需要将容易阅读的源码编译成机器可以识别的机器指令，交由 CPU 执行。这篇文章我们来研究一下编译是怎样一个过程。 绝大多数编译器并不是一个单一的庞大程序，它通常由六七个稍小的程序组成，这些程序由一个叫做『编译器驱动器』(compiler driver) 的控制程序来调度。整个编译过程大致可以分为四个主要阶段：  预编译 编译 汇编 链接  我们以一个简单的">
+<meta name="description" content="C/C++ 是高级编译型语言，执行的时候需要将容易阅读的源码编译成机器可以识别的机器指令，交由 CPU 执行。这篇文章我们来研究一下编译是怎样一个过程。 绝大多数编译器并不是一个单一的庞大程序，它通常由六七个稍小的程序组成，这些程序由一个叫做『编译器驱动器』(compiler driver) 的控制程序来调度。整个编译过程大致可以分为四个主要阶段：  预处理 编译 汇编 链接  我们以一个简单的">
 <meta name="keywords" content="c&#x2F;c++ 编译 链接">
 <meta property="og:type" content="article">
 <meta property="og:title" content="c&#x2F;c++编译过程">
 <meta property="og:url" content="http://yoursite.com/2018/08/21/c-c-编译过程/index.html">
 <meta property="og:site_name" content="PHILIP x BLOG">
-<meta property="og:description" content="C/C++ 是高级编译型语言，执行的时候需要将容易阅读的源码编译成机器可以识别的机器指令，交由 CPU 执行。这篇文章我们来研究一下编译是怎样一个过程。 绝大多数编译器并不是一个单一的庞大程序，它通常由六七个稍小的程序组成，这些程序由一个叫做『编译器驱动器』(compiler driver) 的控制程序来调度。整个编译过程大致可以分为四个主要阶段：  预编译 编译 汇编 链接  我们以一个简单的">
+<meta property="og:description" content="C/C++ 是高级编译型语言，执行的时候需要将容易阅读的源码编译成机器可以识别的机器指令，交由 CPU 执行。这篇文章我们来研究一下编译是怎样一个过程。 绝大多数编译器并不是一个单一的庞大程序，它通常由六七个稍小的程序组成，这些程序由一个叫做『编译器驱动器』(compiler driver) 的控制程序来调度。整个编译过程大致可以分为四个主要阶段：  预处理 编译 汇编 链接  我们以一个简单的">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/image-20180821150535977.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20181217144627779.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20181216215749680.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20181217143846903.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20181217141632692.png">
 <meta property="og:image" content="http://yoursite.com/images/image-20180821172053123.png">
-<meta property="og:updated_time" content="2018-08-21T10:07:59.081Z">
+<meta property="og:updated_time" content="2018-12-17T06:47:59.535Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="c&#x2F;c++编译过程">
-<meta name="twitter:description" content="C/C++ 是高级编译型语言，执行的时候需要将容易阅读的源码编译成机器可以识别的机器指令，交由 CPU 执行。这篇文章我们来研究一下编译是怎样一个过程。 绝大多数编译器并不是一个单一的庞大程序，它通常由六七个稍小的程序组成，这些程序由一个叫做『编译器驱动器』(compiler driver) 的控制程序来调度。整个编译过程大致可以分为四个主要阶段：  预编译 编译 汇编 链接  我们以一个简单的">
+<meta name="twitter:description" content="C/C++ 是高级编译型语言，执行的时候需要将容易阅读的源码编译成机器可以识别的机器指令，交由 CPU 执行。这篇文章我们来研究一下编译是怎样一个过程。 绝大多数编译器并不是一个单一的庞大程序，它通常由六七个稍小的程序组成，这些程序由一个叫做『编译器驱动器』(compiler driver) 的控制程序来调度。整个编译过程大致可以分为四个主要阶段：  预处理 编译 汇编 链接  我们以一个简单的">
 <meta name="twitter:image" content="http://yoursite.com/images/image-20180821150535977.png">
 
 
@@ -317,7 +321,7 @@
         <p>C/C++ 是高级编译型语言，执行的时候需要将容易阅读的源码编译成机器可以识别的机器指令，交由 CPU 执行。这篇文章我们来研究一下编译是怎样一个过程。</p>
 <p>绝大多数编译器并不是一个单一的庞大程序，它通常由六七个稍小的程序组成，这些程序由一个叫做『编译器驱动器』(compiler driver) 的控制程序来调度。整个编译过程大致可以分为四个主要阶段：</p>
 <ul>
-<li>预编译</li>
+<li>预处理</li>
 <li>编译</li>
 <li>汇编</li>
 <li>链接</li>
@@ -335,7 +339,7 @@
 <p><code>filename.o</code> 编译目标文件</p>
 <p><code>filename</code> 链接后的可执行文件</p>
 <p>下面我们分别看看每个阶段具体在进行哪些操作。</p>
-<h2 id="预编译"><a href="#预编译" class="headerlink" title="预编译"></a>预编译</h2><p>预编译阶段，编译器驱动调动预编译器处理 <strong>预编译指令</strong> ，所谓预编译指令是指以 <code>#</code> 开头的指令，主要有注释、宏、头文件包含、条件编译等，因此这个阶段包括以下几个操作</p>
+<h2 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h2><p>预处理阶段，编译器驱动调动预处理器处理 <strong>预处理指令</strong> ，所谓预处理指令是指以 <code>#</code> 开头的指令，主要有注释、宏、头文件包含、条件编译等，因此这个阶段包括以下几个操作</p>
 <ul>
 <li>去除注释</li>
 <li>展开宏定义</li>
@@ -343,20 +347,55 @@
 <li>条件编译<code>#ifdef</code>、<code>#ifndef</code> 处理</li>
 <li>error 抛出错误信息</li>
 </ul>
-<p>我们打开预编译后的 <code>filename.i</code> 文件可以看到：注释被去除了，参数宏 <code>add(a, b)</code> 也被 <code>(a + b)</code> 替换，包含的头文件 <code>&lt;stdio.h&gt;</code> 中的内容被拷贝到源文件 <code>filename.c</code> 中；此外编译时候有没有指定 <code>-DDEBUG</code> 得到的结果 (是否有<code>myfunc</code>) 也不一样。</p>
+<p>我们打开预处理后的 <code>filename.i</code> 文件可以看到：注释被去除了，参数宏 <code>add(a, b)</code> 也被 <code>(a + b)</code> 替换，包含的头文件 <code>&lt;stdio.h&gt;</code> 中的内容被拷贝到源文件 <code>filename.c</code> 中；此外编译时候有没有指定 <code>-DDEBUG</code> 得到的结果 (是否有<code>myfunc</code>) 也不一样。</p>
 <blockquote>
-<p>其他的预编译指令还包括 pragma、 line 等，这里就不详细说明了</p>
+<p>其他的预处理指令还包括 pragma、 line 等，这里就不详细说明了</p>
 </blockquote>
-<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>编译阶段，主要将扩展的源码文件如<code>filename.i</code> 编译成汇编文件<code>filename.s</code>，该文件包含了很多汇编指令。</p>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>编译阶段，主要将扩展的源码文件如<code>filename.i</code> 编译成汇编文件<code>filename.s</code>。其中又分为三个主要步骤：</p>
+<ul>
+<li><p>Lexical Analysis / tokenization 词法分析。</p>
+<p>主要就是将输入的源码文件从左到右逐个字符(character)的分析，划分成不同的 token：symbols, numbers, identifiers, strings, operators 等。下面看个例子</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    <span class="keyword">int</span> b;</span><br><span class="line">    a = b = <span class="number">4</span>;</span><br><span class="line">    <span class="keyword">return</span> a - b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//经过词法分析，会产生以下 token</span></span><br><span class="line">Scanner production:</span><br><span class="line">[Keyword(Int), Id(<span class="string">"main"</span>), Symbol(LParen), Symbol(RParen), Symbol(LBrace), Keyword(Int), Id(<span class="string">"a"</span>), Symbol(Semicolon), Keyword(Int), Id(<span class="string">"b"</span>), Symbol(Semicolon), Id(<span class="string">"a"</span>), Operator(Assignment), Id(<span class="string">"b"</span>),</span><br><span class="line">Operator(Assignment), Integer(<span class="number">4</span>), Symbol(Semicolon), Keyword(Return), Id(<span class="string">"a"</span>), Operator(Minus), Id(<span class="string">"b"</span>), Symbol(Semicolon), Symbol(RBrace)]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Parsing 语法解析。</p>
+<p>该过程是将上面词法分析产生的 tokens 进行匹配，看是否符合特定的模式：如函数调用、变量赋值、数学运算、表达式求值等等。最终，语法分析会产生一种称为 AST (abstract syntax tree) 的语法树结构。</p>
+<p><img src="/images/image-20181217144627779.png" alt="image-20181217144627779"></p>
+<p>上面就是 <code>12 + 3</code> 对应的AST结构</p>
+<p><img src="/images/image-20181216215749680.png" alt="image-20181216215749680"></p>
+<p>上面是 C 代码 <code>if(net&gt;0.0)total+=net*(1.0+tax/100.0);</code> 经过词法分析和语法分析生成的AST 结构</p>
+</li>
+<li><p>Code generator 代码生成。</p>
+<p>代码生成的主要任务，就是将上述的中间结果即 AST 树结构转换成一行行线性的机器指令。包括</p>
+<ul>
+<li><p>选用什么样的指令。通过对 AST 树执行后续遍历 (postorder traversal) 依次选用指令。例如，对于 AST <code>W := ADD(X,MUL(Y,Z))</code> ，根是 <code>ADD</code> ，左右节点分别是 <code>X</code> 和 <code>MUL(Y,Z)</code>，指令会是 <code>t1 := X</code> 和 <code>t2 := MUL(Y,Z)</code> ，最后是 <code>ADD W, t1, t2</code></p>
+</li>
+<li><p>安排指令顺序。由于CPU流水线机制，可能会有乱序执行以提高代码执行效率。</p>
+</li>
+<li><p>变量的寄存器分配</p>
+</li>
+<li><p>调试代码生成</p>
+</li>
+</ul>
+<p>此外它还会对生成的指令进行一定的优化。</p>
+</li>
+</ul>
+<p>很多情况下，代码生成的机器指令为汇编代码，包含了很多汇编指令。</p>
+<p>下面是 <code>filename.c</code> 编译生成的汇编指令代码 <code>filename.s</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">  1     .file   &quot;filename.c&quot;</span><br><span class="line">  2     .section    .rodata</span><br><span class="line">  3 .LC0:</span><br><span class="line">  4     .string &quot;DEBUG defined&quot;</span><br><span class="line">  5     .text</span><br><span class="line">  6 .globl myfunc</span><br><span class="line">  7     .type   myfunc, @function</span><br><span class="line">  8 myfunc:</span><br><span class="line">  9 .LFB0:</span><br><span class="line"> 10     .cfi_startproc</span><br><span class="line">    pushq   %rbp</span><br><span class="line">    .cfi_def_cfa_offset 16</span><br><span class="line">    .cfi_offset 6, -16 </span><br><span class="line">    movq    %rsp, %rbp</span><br><span class="line">    .cfi_def_cfa_register 6</span><br><span class="line">    movl    $.LC0, %edi</span><br><span class="line">    call    puts</span><br><span class="line">    leave</span><br><span class="line">    .cfi_def_cfa 7, 8</span><br><span class="line">    ret </span><br><span class="line">    .cfi_endproc</span><br><span class="line">.LFE0:</span><br><span class="line">    .size   myfunc, .-myfunc</span><br><span class="line">    .section    .rodata</span><br><span class="line">.LC1:</span><br><span class="line">    .string &quot;addition is: %d\n&quot;</span><br><span class="line">    .text</span><br><span class="line">.globl main</span><br><span class="line">    .type   main, @function</span><br><span class="line">main:</span><br><span class="line">.LFB1:</span><br><span class="line">    .cfi_startproc</span><br><span class="line">    pushq   %rbp</span><br><span class="line">    .cfi_def_cfa_offset 16</span><br><span class="line">    .cfi_offset 6, -16 </span><br><span class="line">    movq    %rsp, %rbp</span><br><span class="line">    .cfi_def_cfa_register 6</span><br><span class="line">    subq    $16, %rsp</span><br><span class="line">    movl    $5, -8(%rbp)</span><br><span class="line">    movl    $4, -4(%rbp)</span><br><span class="line">    movl    -4(%rbp), %eax</span><br><span class="line">    movl    -8(%rbp), %edx</span><br><span class="line">    addl    %eax, %edx</span><br><span class="line">    movl    $.LC1, %eax</span><br><span class="line">    movl    %edx, %esi</span><br><span class="line">    movq    %rax, %rdi</span><br><span class="line">    movl    $0, %eax</span><br><span class="line">    call    printf</span><br><span class="line">    movl    $0, %eax</span><br><span class="line">    leave</span><br><span class="line">    .cfi_def_cfa 7, 8</span><br><span class="line">    ret </span><br><span class="line">    .cfi_endproc</span><br><span class="line">.LFE1:</span><br><span class="line">    .size   main, .-main</span><br><span class="line">    .ident  &quot;GCC: (GNU) 4.4.7 20120313 (Red Hat 4.4.7-17)&quot;</span><br><span class="line">    .section    .note.GNU-stack,&quot;&quot;,@progbits</span><br></pre></td></tr></table></figure>
-<p>整个编译过程包含词法与语义分析，源代码优化，目标代码生成、目标代码优化等阶段。</p>
+<p>编译过程还可以被分为 前端、后端，前端包括前面提到的词法分析、语法分析，生成 AST 结构；后端指代码生成，输入是 AST，输出机器指令代码或者汇编代码。其实，前后端中间还有个中端，做些优化的工作。</p>
+<p>前后端的工作是独立的，互相不依赖。对于不同的语言，编译器可能使用不同类型的前端来生成 AST，而后端其输入只要求是AST，因此可以复用。举例来说，对于知名编译器 GCC (the GNU Compiler Collection)，其不同的前端可以编译 <code>C,C++,Objective-C,Fortran,Ada,Go,D</code> 成 AST，而通过统一的后端将 AST 转换成汇编代码。</p>
+<p>编译的整个过程用一张图来表示就是</p>
+<p><img src="/images/image-20181217143846903.png" alt="image-20181217143846903"></p>
 <h2 id="汇编-Assembly"><a href="#汇编-Assembly" class="headerlink" title="汇编(Assembly)"></a>汇编(<strong>Assembly</strong>)</h2><p>该过程通过调度汇编器(as)来完成，将汇编指令文件<code>filename.s</code> 翻译成与处理器结构有关的机器指令文件<code>filename.o</code>，这是一个二进制文件，不能直接查看，用 <code>file</code> 命令查看可知</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ file filename.o </span><br><span class="line">filename.o: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), not stripped</span><br></pre></td></tr></table></figure>
 <p>这一个64位 <code>ELF</code> 文件，可以使用 <code>objdump -x</code> 命令来查看所有文件头，包含符号表和重定位信息等</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">$ objdump -x filename.o</span><br><span class="line"></span><br><span class="line">filename.o:     file format elf64-x86-64</span><br><span class="line">filename.o</span><br><span class="line">architecture: i386:x86-64, flags 0x00000011:</span><br><span class="line">HAS_RELOC, HAS_SYMS</span><br><span class="line">start address 0x0000000000000000</span><br><span class="line"></span><br><span class="line">Sections:</span><br><span class="line">Idx Name          Size      VMA               LMA               File off  Algn</span><br><span class="line">  0 .text         00000049  0000000000000000  0000000000000000  00000040  2**2</span><br><span class="line">                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE</span><br><span class="line">  1 .data         00000000  0000000000000000  0000000000000000  0000008c  2**2</span><br><span class="line">                  CONTENTS, ALLOC, LOAD, DATA</span><br><span class="line">  2 .bss          00000000  0000000000000000  0000000000000000  0000008c  2**2</span><br><span class="line">                  ALLOC</span><br><span class="line">  3 .rodata       0000001f  0000000000000000  0000000000000000  0000008c  2**0</span><br><span class="line">                  CONTENTS, ALLOC, LOAD, READONLY, DATA</span><br><span class="line">  4 .comment      0000002e  0000000000000000  0000000000000000  000000ab  2**0</span><br><span class="line">                  CONTENTS, READONLY</span><br><span class="line">  5 .note.GNU-stack 00000000  0000000000000000  0000000000000000  000000d9  2**0</span><br><span class="line">                  CONTENTS, READONLY</span><br><span class="line">  6 .eh_frame     00000058  0000000000000000  0000000000000000  000000e0  2**3</span><br><span class="line">                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA</span><br><span class="line">SYMBOL TABLE:</span><br><span class="line">0000000000000000 l    df *ABS*	0000000000000000 filename.c</span><br><span class="line">0000000000000000 l    d  .text	0000000000000000 .text</span><br><span class="line">0000000000000000 l    d  .data	0000000000000000 .data</span><br><span class="line">0000000000000000 l    d  .bss	0000000000000000 .bss</span><br><span class="line">0000000000000000 l    d  .rodata	0000000000000000 .rodata</span><br><span class="line">0000000000000000 l    d  .note.GNU-stack	0000000000000000 .note.GNU-stack</span><br><span class="line">0000000000000000 l    d  .eh_frame	0000000000000000 .eh_frame</span><br><span class="line">0000000000000000 l    d  .comment	0000000000000000 .comment</span><br><span class="line">0000000000000000 g     F .text	0000000000000010 myfunc</span><br><span class="line">0000000000000000         *UND*	0000000000000000 puts</span><br><span class="line">0000000000000010 g     F .text	0000000000000039 main</span><br><span class="line">0000000000000000         *UND*	0000000000000000 <span class="built_in">printf</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">RELOCATION RECORDS FOR [.text]:</span><br><span class="line">OFFSET           TYPE              VALUE </span><br><span class="line">0000000000000005 R_X86_64_32       .rodata</span><br><span class="line">000000000000000a R_X86_64_PC32     puts-0x0000000000000004</span><br><span class="line">000000000000002f R_X86_64_32       .rodata+0x000000000000000e</span><br><span class="line">000000000000003e R_X86_64_PC32     <span class="built_in">printf</span>-0x0000000000000004</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">RELOCATION RECORDS FOR [.eh_frame]:</span><br><span class="line">OFFSET           TYPE              VALUE </span><br><span class="line">0000000000000020 R_X86_64_PC32     .text</span><br><span class="line">0000000000000040 R_X86_64_PC32     .text+0x0000000000000010</span><br></pre></td></tr></table></figure>
 <p>上面符号表里的 <code>text</code> 表示在代码段找到了定义，而有 <code>UND</code> 标识的 <code>puts</code>函数和<code>printf</code>函数因为属于库函数，尚未链接进来，因此属于未定义。</p>
-<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p>该阶段由编译器驱动程序驱动链接器(ld)来完成。ld 将生成目标文件所需要的所有<code>.o</code> 文件和需要链接的库文件(动态链接库或者静态库) 一起链接成目标文件，主要包含：地址和空间分配（<code>Address and Storage Allocation</code>），符号决议（<code>Symbol Resolution</code>），重定位（<code>Relocation</code>）等。</p>
-<p>链接主要分为动态连接和静态链接。对于静态链接，ld 会将静态库的代码直接加到可执行文件中，因此文件大小比较大。而动态链接则是指链接阶段仅仅只加入一些描述信息，而程序执行时再从系统中把相应动态库加载到内存中去。</p>
+<p>上面的<code>filename.o</code> 文件虽然是二进制指令文件，但是还不能被执行。最终的可执行文件还要经过下面的链接过程。</p>
+<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p>该阶段由编译器驱动程序驱动链接器 linker 来完成。linker 只和平台有关，是不同操作系统下的工具程序。对于windows平台，linker.exe 是链接器 (集成在Visual Studio中)，它将多个<code>.obj</code>文件和库文件一起链接成 <code>.exe</code>可执行文件或库文件；对于 linux 和 mac 平台，ld (也是GNU出品) 是链接器，它将多个 <code>.o</code> 文件和库文件一起链接成二进制可执行文件或库文件。</p>
+<p>链接器的工作主要包含：地址和空间分配（<code>Address and Storage Allocation</code>），符号决议（<code>Symbol Resolution</code>），重定位（<code>Relocation</code>）等。</p>
+<p><img src="/images/image-20181217141632692.png" alt="image-20181217141632692"></p>
+<p>链接主要分为动态连接和静态链接。对于静态链接，linker 会将静态库的代码直接加到可执行文件中，因此文件大小比较大。而动态链接则是指链接阶段仅仅只加入一些描述信息，而程序执行时再从系统中把相应动态库加载到内存中去。</p>
 <p>GCC 默认使用动态链接方式链接库文件。对比目标文件<code>filename.o</code> 和我们链接完成的可执行文件 <code>filename</code>大小可知，<code>text</code> 部分增加的大小为必要的描述信息</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ size filename.o</span><br><span class="line">   text	   data	    bss	    dec	    hex	filename</span><br><span class="line">    192	      0	      0	    192	     c0	filename.o</span><br><span class="line">$ size filename</span><br><span class="line">   text	   data	    bss	    dec	    hex	filename</span><br><span class="line">   1319	    500	     16	   1835	    72b	filename</span><br></pre></td></tr></table></figure>
 <p>再看<code>file</code>命令的输出</p>
@@ -369,6 +408,7 @@
 <p>参考资料</p>
 <p>&lt;C专家编程&gt;</p>
 <p><a href="https://www.geeksforgeeks.org/compiling-a-c-program-behind-the-scenes/" target="_blank" rel="noopener">Compiling a C program:- Behind the Scenes</a></p>
+<p><a href="https://towardsdatascience.com/understanding-compilers-for-humans-version-2-157f0edb02dd" target="_blank" rel="noopener">Understanding Compilers — For Humans (Version 2)</a></p>
 <p><a href="http://smilejay.com/2012/01/c_compilation_stages/" target="_blank" rel="noopener">C程序编译过程浅析</a></p>
 
       
@@ -494,7 +534,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -507,7 +547,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
@@ -556,7 +596,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#预编译"><span class="nav-number">1.</span> <span class="nav-text">预编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编译"><span class="nav-number">2.</span> <span class="nav-text">编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#汇编-Assembly"><span class="nav-number">3.</span> <span class="nav-text">汇编(Assembly)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链接"><span class="nav-number">4.</span> <span class="nav-text">链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#预处理"><span class="nav-number">1.</span> <span class="nav-text">预处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编译"><span class="nav-number">2.</span> <span class="nav-text">编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#汇编-Assembly"><span class="nav-number">3.</span> <span class="nav-text">汇编(Assembly)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链接"><span class="nav-number">4.</span> <span class="nav-text">链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>

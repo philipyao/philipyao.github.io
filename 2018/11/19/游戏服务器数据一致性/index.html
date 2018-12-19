@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="游戏服务器是一种很常见的分布式系统，分布式系统最大的难题是状态同步，CAP 定理是这方面的原理。 CAP定理  Consistency 一致性  Availability 可用性  Partition tolerance 分区容错性   CAP 这三个指标不可能同时做到，最多只能满足其二。这个结论就叫做 CAP 定理。 Partition tolerance 分区容错，意思是分布式的各节点（也叫区">
+<meta property="og:type" content="article">
+<meta property="og:title" content="游戏服务器数据一致性">
+<meta property="og:url" content="http://yoursite.com/2018/11/19/游戏服务器数据一致性/index.html">
+<meta property="og:site_name" content="PHILIP x BLOG">
+<meta property="og:description" content="游戏服务器是一种很常见的分布式系统，分布式系统最大的难题是状态同步，CAP 定理是这方面的原理。 CAP定理  Consistency 一致性  Availability 可用性  Partition tolerance 分区容错性   CAP 这三个指标不可能同时做到，最多只能满足其二。这个结论就叫做 CAP 定理。 Partition tolerance 分区容错，意思是分布式的各节点（也叫区">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/image-20181119135742290.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20181119140749199.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20181119140847181.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20181119141002062.png">
+<meta property="og:image" content="http://yoursite.com/images/image-20181119141107638.png">
+<meta property="og:updated_time" content="2018-11-21T09:40:31.058Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="游戏服务器数据一致性">
+<meta name="twitter:description" content="游戏服务器是一种很常见的分布式系统，分布式系统最大的难题是状态同步，CAP 定理是这方面的原理。 CAP定理  Consistency 一致性  Availability 可用性  Partition tolerance 分区容错性   CAP 这三个指标不可能同时做到，最多只能满足其二。这个结论就叫做 CAP 定理。 Partition tolerance 分区容错，意思是分布式的各节点（也叫区">
+<meta name="twitter:image" content="http://yoursite.com/images/image-20181119135742290.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/19/游戏服务器数据一致性/"/>
+
+
+
+
+
+  <title>游戏服务器数据一致性 | PHILIP x BLOG</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">PHILIP x BLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">心有猛虎，细嗅蔷薇</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/19/游戏服务器数据一致性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">游戏服务器数据一致性</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-19T13:55:27+08:00">
+                2018-11-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/11/19/游戏服务器数据一致性/#SOHUCS" itemprop="discussionUrl">
+                  <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2018/11/19/游戏服务器数据一致性/" itemprop="commentsCount"></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>游戏服务器是一种很常见的分布式系统，分布式系统最大的难题是状态同步，CAP 定理是这方面的原理。</p>
+<h3 id="CAP定理"><a href="#CAP定理" class="headerlink" title="CAP定理"></a>CAP定理</h3><p><img src="/images/image-20181119135742290.png" alt="image-20181119135742290"></p>
+<ul>
+<li><p>Consistency 一致性</p>
+</li>
+<li><p>Availability 可用性</p>
+</li>
+<li><p>Partition tolerance 分区容错性</p>
+</li>
+</ul>
+<p>CAP 这三个指标不可能同时做到，最多只能满足其二。这个结论就叫做 CAP 定理。</p>
+<p><strong><code>Partition tolerance</code> 分区容错</strong>，意思是分布式的各节点（也叫区）之间通信是不可靠的。一般来说，分区容错无法避免，因此可以认为 CAP 的 P 总是成立。CAP 定理告诉我们，剩下的 C 和 A 无法同时做到。</p>
+<p><strong><code>Consistency</code> 一致性</strong>，意思是从各个节点访问同一数据，其值必须都是最新的，即一致的。节点的多份数据必须通过一定的算法做同步。</p>
+<p>举例来说，某条记录是 v0，用户向 G1 发起一个写操作，将其改为 v1。</p>
+<p><img src="/images/image-20181119140749199.png" alt="image-20181119140749199"></p>
+<p><img src="/images/image-20181119140847181.png" alt="image-20181119140847181"></p>
+<p>此时如果有用户向 G2 发起读操作，由于 G2 的值没有发生变化，因此返回的是 v0。G1 和 G2 读操作的结果不一致，这就不满足一致性了。</p>
+<p><img src="/images/image-20181119141002062.png" alt="image-20181119141002062"></p>
+<p>为了让 G2 也能变为 v1，就要在 G1 写操作的时候，让 G1 向 G2 发送一条消息，要求 G2 也改成 v1。</p>
+<p><img src="/images/image-20181119141107638.png" alt="image-20181119141107638"></p>
+<p>注意这里说的其实是强一致性。相对的还有弱一致性，即最终一致性。</p>
+<p><strong>Availability 可用性</strong>， 意思是通过任意节点都可以拿到数据，强调服务的可用性。一般可以用 <code>服务可用时间/总服务时间</code> 去度量。比如4个9的可用性，即99.99%，换算到一年的时间内，可以反推出最长故障时间：</p>
+<p><code>365 × 86400 ×（1-99.99%）秒 = 3153.6 秒 = 52.56 分钟</code></p>
+<p>保证系统各个环节无单点、大部分故障可自愈是保障高可用性的关键。</p>
+<p>以下为一些案例：</p>
+<ol>
+<li>CDN 缓存。最大可用性 + 最终一致性。各CDN节点的数据可以在运行一段时间后才趋于一致。</li>
+<li>zookeeper。强一致性 + 不错的可用性。paxos/raft 一致性算法保证一致性。当出现分区(P故障)的时候，并非是完全不可用的，它提供了在大多数节点连通的情况下的可用性保证。</li>
+<li>两阶段提交协议：强一致性 + 糟糕的可用性。两阶段提交协议中任意一节点与协调节点之间发生了分区，则服务完全终止。</li>
+<li>Git。优先保证可用性，一般就是提交在本地。远程合并时，有一个专门的合并算法处理一致性问题，遇到无法处理的冲突（小部分情况下），把选择权交给了用户。</li>
+</ol>
+<h3 id="游戏中的数据一致性"><a href="#游戏中的数据一致性" class="headerlink" title="游戏中的数据一致性"></a>游戏中的数据一致性</h3><p>游戏是一种逻辑极其复杂，数据结构繁杂的系统，需要处理的问题千差万别；不同的游戏类型，其要求也是不同的，不能简单的套用理论上的CAP定理，去过分强调系统的一致性或者可用性。对于游戏中产生的数据，我们可以分为以下几大类：</p>
+<ul>
+<li>玩家的存档数据。这部分数据可以说是游戏中最重要的数据了，通常我们的考虑是强一致性。</li>
+<li>全局重要数据，如工会数据、SLG大地图城池数据等。这也要求强一致性。</li>
+<li>旁路数据，如好友列表数据。因为好友信息，如名字、等级、头像等，这些数据的更新有一定的延迟容忍度，可以做成弱一致性，保证最终的数据一致性即可。</li>
+</ul>
+<h3 id="多方修改"><a href="#多方修改" class="headerlink" title="多方修改"></a>多方修改</h3><p>对于玩家存档数据和全局重要数据，很可能有多方同时修改，如何保证强一致性呢？</p>
+<p>方法一，某一玩家的数据读取或者修改统一指定到特定逻辑进程来操作。例如A在进程1，玩家B在进程2，如果A想读取或者修改B的数据，将修改请求统一发放到进程2处理，完成后返回进程1。这样处理有个问题，如果某一个进程挂掉，该进程上的玩家都无法得到服务。好处是简单，没有同时读写的问题。</p>
+<p>方法二，所有进程对等，玩家操作不一定落在某一固定进程处理，所有进程的需要做的就是取玩家的数据，修改，然后存入数据层。一般在逻辑层做乐观锁机制，保证多进程同时修改一个玩家数据。简单的可以设置一个版本号，更新的时候去检查版本号，不一致则失败，需要做回滚。这种情况一般要求业务需求可以重试，如很多游戏里的偷菜等玩法就采用这种方式。复杂的地方在回滚怎么做。这种方式的并发性能比较高。</p>
+<p>方法三，对于同时操作概率比较大的数据，如公会数据、大地图数据等，可以添加独占锁，严格保证一致性。这种方式性能会比较低，并发不高。可以做的改进是用读写锁。</p>
+<p>方法二和方法三的情况，无论是操作玩家数据或者全局数据，本质上都是用的是锁（乐观锁和悲观锁），所以要注意尽量减小锁的粒度，做垂直划分：将关联度低的数据拆分成多块，分别加锁控制，减小锁冲突。</p>
+<h3 id="数据软拷贝"><a href="#数据软拷贝" class="headerlink" title="数据软拷贝"></a>数据软拷贝</h3><p>所谓数据软拷贝，意思是对核心数据的冗余备份，用以提高性能和逻辑复杂度。</p>
+<p>举个例子，上文提到的好友列表中的某一个玩家的数据，如名字、等级等，在该玩家存档数据中一定是准确的，这个由强一致性保证。这是不是意味着拥有该玩家为好友的所有其他玩家，其好友列表中一定要实时更新？答案是否。我们可以为所有玩家维护一份冗余的简要数据放到全局服务中；各逻辑服如果有玩家存档数据更新，只需要同时通知简要数据修改，但可能更新失败，这可以容忍。下次找个时机，如玩家登录时再使用存档数据同步一下简要数据。拉取玩家好友列表，直接取简要数据里的数据即可。</p>
+<p>另一个例子，是公会相关数据。全局的公会数据需要维护公会的基本信息，以及成员的信息；同时玩家存档数据需要记录自己属于哪个公会。这里我们就需要区分数据准确性，通常认为公会数据是准确的，玩家存档里的是软拷贝。如果有一个玩家加入公会，永远以公会数据做基本判断，加入成功后再同步玩家存档数据。如果同步出错怎么办？其实问题不大，只是其他玩家看到的软拷贝是脏数据。找个时机，如玩家登录时从公会服拉取同步一下，或者公会服控制定时 push 到游戏逻辑服。</p>
+<h3 id="事务数据"><a href="#事务数据" class="headerlink" title="事务数据"></a>事务数据</h3><p>分布式事务经常出现在互联网产品中，如电商后台的订单系统，就会涉及一个操作修改多份数据：下单会修改商品库存、订单、支付信息等，要求事务性。</p>
+<p>游戏中类似的系统有建角，双向好友，拍卖行，特定玩法如俘虏与被俘虏等。</p>
+<p>一种做法是用状态机，将事务的各个操作拆分N个原子操作，然后每一步都有其对应的回滚逻辑，如果中间失败，依次回滚。</p>
+<p>另一种做法是互联网产品中经常使用的方式，利用消息队列的方式保存消息，利用消息队列的重传特性，如果中间失败，则会重传继续重试。这里要注意，对于操作要做到幂等性，即使重试多次调用接口不会多次运行逻辑。</p>
+<p>不使用两阶段提交是因为，有可能多个原子步骤之间有依赖关系；并且两阶段提交整个过程是阻塞的，第一阶段prepare 会锁住资源，这是不可接受的。</p>
+<p>参考资料</p>
+<p><a href="http://www.ruanyifeng.com/blog/2018/07/cap.html" target="_blank" rel="noopener">CAP 定理的含义</a></p>
+<p><a href="http://gad.qq.com/article/detail/15801" target="_blank" rel="noopener">有一千个程序员，就有一千种对CAP的解读</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/18/深度探索C-对象模型总结1/" rel="next" title="深度探索C++对象模型总结1">
+                <i class="fa fa-chevron-left"></i> 深度探索C++对象模型总结1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/21/GUID生成/" rel="prev" title="GUID生成">
+                GUID生成 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">philipyao</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/philipyao" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:sjtutrume@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#CAP定理"><span class="nav-number">1.</span> <span class="nav-text">CAP定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#游戏中的数据一致性"><span class="nav-number">2.</span> <span class="nav-text">游戏中的数据一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多方修改"><span class="nav-number">3.</span> <span class="nav-text">多方修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据软拷贝"><span class="nav-number">4.</span> <span class="nav-text">数据软拷贝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事务数据"><span class="nav-number">5.</span> <span class="nav-text">事务数据</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">philipyao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+<div style="text-align:center;width:100%;height:50">
+   备案号：沪ICP备17048801号
+<div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+    <script type="text/javascript">
+    (function(){
+      var appid = 'cytDLaiT8';
+      var conf = 'b538eee17c601ce84536734d50d0b035';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){
+        window.changyan.api.config({appid:appid,conf:conf})});
+      }
+    })();
+    </script>
+    <script type="text/javascript" src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

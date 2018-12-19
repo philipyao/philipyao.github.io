@@ -88,7 +88,7 @@
 <meta property="og:description" content="引子最近在做服务器压力测试，经常关注的就是服务器的负载情况。我们目前服务器的逻辑进程主要使用 lua 编写，开启定期 GC 后单个用户占用内存大概在1M 左右，开多逻辑进程后，单个进程占用内存都不大。 这次的小范围内部测试，只申请了一台 4 核 8 G的机器，测试开始后，cpu 和其他负载都不大。但是跑了大概1个小时左右，查看内存发现 free 的很少，只有几百兆了。其实实际占用的也并不多，但是很">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/image-20180901122607751.png">
-<meta property="og:updated_time" content="2018-09-01T06:02:33.906Z">
+<meta property="og:updated_time" content="2018-11-11T15:02:25.781Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux内存Cache问题定位">
 <meta name="twitter:description" content="引子最近在做服务器压力测试，经常关注的就是服务器的负载情况。我们目前服务器的逻辑进程主要使用 lua 编写，开启定期 GC 后单个用户占用内存大概在1M 左右，开多逻辑进程后，单个进程占用内存都不大。 这次的小范围内部测试，只申请了一台 4 核 8 G的机器，测试开始后，cpu 和其他负载都不大。但是跑了大概1个小时左右，查看内存发现 free 的很少，只有几百兆了。其实实际占用的也并不多，但是很">
@@ -324,7 +324,7 @@
 <p><img src="/images/image-20180901122607751.png" alt="image-20180901122607751"></p>
 <p><code>shift + M</code> 按内存占用排序后可以看到，果然是我们的游戏进程占用最多。</p>
 <p>看 <code>RES</code> 列的实际占用内存并不高，但是虚拟内存 <code>VIRT</code> 就将近3倍于实际使用内存，多出来的内存基本就是 cache 住的文件缓存了。</p>
-<p>为了查看进程打开了哪些进程，我们 lsof 看下</p>
+<p>为了查看进程打开了哪些文件，我们 lsof 看下</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -p PID</span><br></pre></td></tr></table></figure>
 <p>具体结果由于涉及业务这里就不贴了， 打开的文件主要是程序可执行文件、连接的 so、网络连接、日志文件等。从 size 大小看除日志文件外，其他都很小。我们的日志轮转大小是100M，打开的日志文件大概有 200M 左右，总的加起来也不会有4G 大小。</p>
 <p>于是猜想，是不是可能缓存了其他日志文件。由于我们测试为了方便查找问题，是开启 DEBUG 级别日志的，因此日志量比较大，一个小时单个进程轮转了9个日志文件，如果缓存了部分，那就很可观了。为了证实这个猜想，我查找了一些工具来统计 cache 内存的大小。</p>
@@ -469,7 +469,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -482,7 +482,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>

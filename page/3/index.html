@@ -229,6 +229,1260 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/11/日志组件实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/11/日志组件实现/" itemprop="url">日志组件实现</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-11T23:24:08+08:00">
+                2018-08-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/11/日志组件实现/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/11/日志组件实现/" class="cy_cmt_count" data-xid="2018/08/11/日志组件实现/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/11/定时器实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/11/定时器实现/" itemprop="url">定时器实现</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-11T15:03:01+08:00">
+                2018-08-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/11/定时器实现/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/11/定时器实现/" class="cy_cmt_count" data-xid="2018/08/11/定时器实现/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>定时器是游戏开发中常用的基础组件，本文介绍几种定时器组件的实现方法。</p>
+<h2 id="Linux-内核定时器实现"><a href="#Linux-内核定时器实现" class="headerlink" title="Linux 内核定时器实现"></a>Linux 内核定时器实现</h2><p>Linux 内核的定时器从1997年之后基本没有修改过，最终版本是使用时间轮算法的定时器。定时器的最大设置超时范围是 2^32 个jiffies。设置 jiffie 为毫秒级或者秒级，就可以控制定时器的精度。例如 jiffie 设置为100ms，即1秒相当于10个jiffie，则定时器的最大范围是</p>
+<p>2^32 / 10 / 86400 = 4971 天</p>
+<p>该实现主要提供了以下接口添加或者删除定时器：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">timer = add_timer(expire)</span><br><span class="line">del_timer(timer)</span><br></pre></td></tr></table></figure>
+<p>定时器的超时 <code>expire</code> 被定义位 n 个 jiffies</p>
+<p>如果定时器超时，则调用注册的回调函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">timer-&gt;fn(timer-&gt;data)</span><br></pre></td></tr></table></figure>
+<p>最初始定时器的实现采用的是最简单的方式，就是将所有的定时器串成一个有序的双向链表。</p>
+<p>这种方式添加定时器的方式就是从前往后遍历顺序链表，找到合适的位置插入，时间复杂度是 o(n)；删除定时器则非常简单，是 o(1)复杂度；超时复杂度也是 o(1)。这种定时器的实现方式缺点在与管理大量定时器时，效率不高。</p>
+<p>另一种能想到的定时器实现方式，是使用二叉排序树。左子树的超时时间比右子树的超时时间小，于是每次添加定时器时只需要二分查找，因此复杂度是 o(log(N))；删除和超时则是 o(1)；</p>
+<p>还有一种方式，就是申请 2^32个桶，然后每个桶中维护一个 list 用来存放定时器，而每个 jiffie 对应一个桶，定时器的插入操作就是简单的索引到桶，然后执行 list_add() 操作，时间复杂度变为 o(1)；同样的，删除和超时都是 o(1) 操作。其实这就是最初版本的基于时间轮的算法，如下图所示</p>
+<p><img src="/images/image-20180811184344832.png" alt="image-20180811184344832"></p>
+<p>这种方式时间复杂度是最低的，但是其需要的内存空间巨大，尤其是在定时器数量不多的时候，是个很大的浪费。</p>
+<p>那么，有没有一种方式是对这种桶方式的改进，能同时满足时间复杂度和空间复杂度呢？这就是目前采用的多精度时间轮算法。多精度有种很形象的比喻，就是平时看到的水表</p>
+<p><img src="/images/image-20180811170405558.png" alt="image-20180811170405558"></p>
+<p>在上面的水表中，为了表示度量范围，分成了不同的单位，比如 1000，100，10 等等，相似的，表示一个 32bits 的范围，也不需要 2^32 个元素的数组。</p>
+<p>具体实施时，将所有的 jiffie 分成5组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1..256, 257..16384, 16385..1048576, 1048577..67108864, 67108865..4294967295</span><br></pre></td></tr></table></figure>
+<p>第一组，就是即将到期的256个jiffie，为每个 jiffie 分配一个桶(bucket)，一共是256个桶。 这里每个桶里定时器的到期时间都是相同的，精度为1jiffie。</p>
+<p>第二组，我们分为64个桶，每个桶里存放接下来到期的256个 jiffie 对应的定时器。在这里，可以看到桶里定时器的到期时间是不同的，也就是精度是256 jiffies。</p>
+<p>第三组，还是分为64个桶，于是每个桶的精度就是 256 * 64  = 16384 jiffies。</p>
+<p>第四组，还是分为64个桶，每个桶的精度是 256 <em> 64 </em> 64 =  1048576 jiffies。</p>
+<p>最后一组，依旧分为64个桶，每个桶的精度是 256 <em> 64 </em> 64 * 64 = 67108864 jiffies。</p>
+<p>最终我们用到的桶的数量是 256+64+64+64+64 = 512 buckets。也就是说我们通过控制桶的精度，将2^32个 jiffies (32 bits) 分成了 8 + 6 + 6 + 6 + 6 bits 。可能有人问了，为什么这么分呢，为什么不是  8 + 8 + 8 + 8 ? 从作者的回复来看，主要是  256 + 256 + 256 + 256 = 1024个桶，这比512个桶空间占用多。</p>
+<p>那么如何插入定时器呢？首先根据定时器的 expire 来定位到放到哪一组中，然后再定位到具体的桶 index。注意，除了第一组之外其他组的桶中，定时器的到期时间都可能是不同的。例如到期时间分别是 260 jiffies 和 265 jiffies 的定时器都会被放入第二组的第一个桶中( 257 jiffies ~ 512jiffies 都在这个桶中)。这表示这些桶中的定时器是『部分排序的』，本质上是对他们的高位进行排序。插入定时器的操作只是定位到具体的桶 index，然后执行 list_add() 操作(链表本身不需要排序)，时间复杂度是 o(1)；而删除也是一样定位组和桶 index，时间复杂度 o(1)。</p>
+<p>问题是怎么执行定时器的超时呢？第一组里的256个桶没有问题，我们只需要在时间轮的指针逐次增加1并指向对应的 jiffies 时，执行其对应桶里的所有定时器即可。那如果指针指向第 257 jiffie 呢？从前面的分析我们可以知道，第 257 jiffie 指向的桶里可能包含 257 jiffies ~ 512 jiffies 这 256个 jiffies 的定时器，它们是非顺序地存储在桶的链表内，不能直接执行。执行前，需要做的就是将这个桶里的所有定时器全部重新映射到第一组的256个桶里，即将粗精度的定时器重新进行细精度的划分/排序。由于时间指针已经指向第257 jiffies，那么第二组第一个桶里的所有定时器的相对超时时间必定都减少了256 jiffies，因为重新添加时，会落到第一组的细精度桶区间内。同样的过程，我们在指针指向第三组 (16385jiffies ~ 1048576jiffies) 的定时器时，将这组里各桶的定时器重新添加映射到前面两组的桶内。后面各组的执行也类似。</p>
+<p>重新添加/映射完成之后，每次我们只用执行相对于定时器指针相差 256个 jiffies 的定时器(也就是总是执行第一组里的定时器)，如果超过256则再继续执行重新添加/映射，再执行映射后的第一组，如此循环。</p>
+<p>本质上，这种策略称为一种『延迟排序』，即定时器在很久到期时，我们对其进行粗粒度的排序，即只排序高位，就是定位放入哪个桶即可，从而提高效率。而当快要执行时，才将其进行细粒度排序及定位。这带来一个很明显的好处是，如果定时器不执行(即到期前就被删除)，由于添加和删除的时间复杂度都是 o(1)，其效率将非常高。</p>
+<p>在定时器的实际使用时，很多确实是没有到期即被删除。可以想像下大量防止网络超时的定时器。</p>
+<h2 id="最小堆定时器"><a href="#最小堆定时器" class="headerlink" title="最小堆定时器"></a>最小堆定时器</h2><p>最小堆也是实现定时器的一种常用方式，例如 libevent 库的定时器就是使用的最小堆优先级队列。Golang 官方库中的 timer 也是使用的最小堆原理。</p>
+<p>所谓最小堆，其实是一颗特殊的二叉树，其所有节点的值都比左右子节点的值要小。因此整个二叉树的最小值就在 root 元素。每次检查定时器是否到期时，我们检查 root 元素是否到期即可。同时，这棵二叉树又是一个完全二叉树。如果一棵二叉树除了最右边位置上一个或者几个叶结点缺少外其它是填满的，那么这样的二叉树就是完全二叉树。严格的定义是：若设二叉树的高度为 h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层从右向左连续缺若干结点，就是完全二叉树。下面这几颗二叉树都是完全二叉树</p>
+<p><img src="/images/image-20180811231451262.png" alt="image-20180811231451262"></p>
+<p>其基本类似于下面这个形状：</p>
+<p><img src="/images/image-20180811222313955.png" alt="image-20180811222313955"></p>
+<p>那如何表示一颗完全二叉树呢？只需要一个数组即可。首先将完全二叉树进行从上到下，从左到右编号：</p>
+<p><img src="/images/image-20180811222554940.png" alt="image-20180811222554940"></p>
+<p>通过上图我们发现如果完全二叉树的一个父结点编号为 k，那么它左儿子的编号就是 2<em>k，右儿子的编号就是 2</em>k+1。如果已知儿子（左儿子或右儿子）的编号是 x，那么它父结点的编号就是 x/2，注意这里只取商的整数部分。在 C 语言中如果除号‘/’两边都是整数的话，那么商也只有整数部分（即自动向下取整），即 4/2 和 5/2 都是 2。另外如果一棵完全二叉树有 N 个结点，那么这个完全二叉树的高度为 log2 N 简写为 log N，即最多有 log N 层结点。</p>
+<p>如果我们现在想添加一个定时器，也就是新增一个节点(例如值为3)，该如何操作呢？只需要直接将新元素插入到末尾，再根据情况判断新元素是否需要上移，直到满足堆的特性为止。如果堆的大小为 N（即有 N 个元素），那么插入一个新元素所需要的时间也是 O(logN)。</p>
+<p><img src="/images/image-20180811223611152.png" alt="image-20180811223611152"></p>
+<p>先将 3 与它的父结点 25 比较，发现比父结点小，为了维护最小堆的特性，需要与父结点的值进行交换。交换之后发现还是要比它此时的父结点 5 小，因此需要再次与父结点交换。至此又重新满足了最小堆的特性。</p>
+<p>向上调整的代码如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">siftup</span><span class="params">(<span class="keyword">int</span> i)</span> <span class="comment">//传入一个需要向上调整的结点编号i</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> flag=<span class="number">0</span>; <span class="comment">//用来标记是否需要继续向上调整</span></span><br><span class="line">    <span class="keyword">if</span>(i==<span class="number">1</span>)  <span class="keyword">return</span>; <span class="comment">//如果是堆顶，就返回，不需要调整了    </span></span><br><span class="line">    <span class="comment">//不在堆顶 并且 当前结点i的值比父结点小的时候继续向上调整 </span></span><br><span class="line">    <span class="keyword">while</span>(i!=<span class="number">1</span> &amp;&amp; flag==<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//判断是否比父结点的小 </span></span><br><span class="line">        <span class="keyword">if</span>(h[i]&lt;h[i/<span class="number">2</span>])</span><br><span class="line">            swap(i,i/<span class="number">2</span>);<span class="comment">//交换他和他爸爸的位置 </span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            flag=<span class="number">1</span>;<span class="comment">//表示已经不需要调整了，当前结点的值比父结点的值要大 </span></span><br><span class="line">        i=i/<span class="number">2</span>; <span class="comment">//这句话很重要，更新编号i为它父结点的编号，从而便于下一次继续向上调整 </span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定时器到期又是如何处理呢？根据最小堆的特性，先到期的就是 root 节点，因此执行定时器函数后，我们将 root 元素删除，同时将堆的最后一个节点移动到 root 位置，然后看是不是需要执行向下调整，以保持最小堆的特性。</p>
+<p>向下调整的代码如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">siftdown</span><span class="params">(<span class="keyword">int</span> i)</span> <span class="comment">//传入一个需要向下调整的结点编号i，这里传入1，即从堆的顶点开始向下调整 </span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> t,flag=<span class="number">0</span>;<span class="comment">//flag用来标记是否需要继续向下调整 </span></span><br><span class="line">    <span class="comment">//当i结点有儿子的时候（其实是至少有左儿子的情况下）并且有需要继续调整的时候循环窒执行</span></span><br><span class="line">    <span class="keyword">while</span>( i*<span class="number">2</span>&lt;=n &amp;&amp; flag==<span class="number">0</span> )</span><br><span class="line">    &#123;        </span><br><span class="line">        <span class="comment">//首先判断他和他左儿子的关系，并用t记录值较小的结点编号 </span></span><br><span class="line">        <span class="keyword">if</span>( h[i] &gt; h[i*<span class="number">2</span>] )</span><br><span class="line">            t=i*<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            t=i; </span><br><span class="line">        <span class="comment">//如果他有右儿子的情况下，再对右儿子进行讨论 </span></span><br><span class="line">        <span class="keyword">if</span>(i*<span class="number">2</span>+<span class="number">1</span> &lt;= n)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//如果右儿子的值更小，更新较小的结点编号  </span></span><br><span class="line">            <span class="keyword">if</span>(h[t] &gt; h[i*<span class="number">2</span>+<span class="number">1</span>])</span><br><span class="line">                t=i*<span class="number">2</span>+<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果发现最小的结点编号不是自己，说明子结点中有比父结点更小的  </span></span><br><span class="line">        <span class="keyword">if</span>(t!=i)</span><br><span class="line">        &#123;</span><br><span class="line">            swap(t,i);<span class="comment">//交换它们，注意swap函数需要自己来写</span></span><br><span class="line">            i=t;<span class="comment">//更新i为刚才与它交换的儿子结点的编号，便于接下来继续向下调整 </span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            flag=<span class="number">1</span>;<span class="comment">//则否说明当前的父结点已经比两个子结点都要小了，不需要在进行调整了 </span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同样的，如果要在定时器到期之前删除它，就类似于删除最小堆的任一节点。方式是将最后一个节点放置到该删除的节点，然后从该节点开始执行向下调整，直到整个堆又满足最小堆的特性，本质上和定时器到期时删除 root 节点的思路是一致的。时间复杂度也是 O(logN)。</p>
+<p>参考资料</p>
+<p><a href="https://www.ibm.com/developerworks/cn/linux/l-cn-timers/index.html" target="_blank" rel="noopener">Linux 下定时器的实现方式分析</a></p>
+<p><a href="https://lwn.net/Articles/156329/" target="_blank" rel="noopener">kernel timer design</a></p>
+<p><a href="http://wiki.jikexueyuan.com/project/easy-learn-algorithm/binary-tree.html" target="_blank" rel="noopener">极客时间：二叉树</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/03/游戏中的加密应用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/03/游戏中的加密应用/" itemprop="url">游戏中的加密应用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-03T22:48:24+08:00">
+                2018-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/03/游戏中的加密应用/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/03/游戏中的加密应用/" class="cy_cmt_count" data-xid="2018/08/03/游戏中的加密应用/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="游戏中加密算法的选择"><a href="#游戏中加密算法的选择" class="headerlink" title="游戏中加密算法的选择"></a>游戏中加密算法的选择</h2><p><a href="http://www.keepmovingbuddy.com/2018/07/28/%E5%AF%86%E7%A0%81%E5%AD%A6%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/" target="_blank" rel="noopener">前面一篇文章</a> 我们已经介绍了对称解密算法和非对称加密算法，那在游戏协议通信中应该如何选择加密方式呢？</p>
+<p>那我们看看下列几个方案</p>
+<ol>
+<li>单独使用对称加密算法。典型的对称加密算法如 AES 安全性已经不错，而且加密效率高，似乎可以直接拿来使用。但问题是客户端和服务器交互时如何交换密钥？如果直接明文传输，肯定会有被嗅探的风险。所以单独使用对称加密算法存在密钥的管理问题，是不可行的。</li>
+<li>单独使用非对称加密算法。非对称加密算法基于未解决的数学难题，因此在破解上几乎不可能。其优点就是安全，但缺点就是不够快，比较耗费cpu，如果在游戏中每一次消息都用其加密，对cpu的损耗还是挺高的。</li>
+</ol>
+<p>一种折中的办法是：<strong>采用密钥交换算法交换对称加密算法的密钥，然后用对称加密算法加密数据</strong>。</p>
+<p>所谓密钥交换，通俗地说，即使有攻击者在偷窥你与服务器的网络传输，客户端（client）依然可以利用“密钥协商机制”与服务器端（server）协商出一个用来加密应用层数据的密钥（也称“会话密钥”）。</p>
+<p>那么如何进行安全的密钥交换呢？</p>
+<ul>
+<li><p>一种方案是使用非对称加密算法。原理是通信一方首先生成密钥对，私钥自己保存，然后将公钥发送给另外一方；另一方拿到公钥后，随机生成一个对称加密的密钥，然后利用公钥加密它；再把加密结果发给对方，对方用私钥解密；于是双方都得到了会话密钥。 后续通信就使用该密钥进行对称加解密。例如早期的 SSLv2只支持一种密钥协商方式，就是 基于RSA 非对称加密算法的密钥协商机制。</p>
+</li>
+<li><p>第二种方案是使用专用的密钥交换算法，如 DH算法及其改进型 ECDH算法。该交换算法比较复杂，我们在后面的内容中进行介绍。</p>
+</li>
+<li><p>还有一种方案就是基于 PSK的密钥协商。PSK 全称Pre-Shared Key，顾名思义，就是预先让通讯双方共享一些密钥（通常是对称加密的密钥）。所谓的预先，就是说，这些密钥在 TLS 连接尚未建立之前，就已经部署在通讯双方的系统内了。其具体步骤是在通讯之前，通讯双方已经预先部署了若干个共享的密钥。为了标识多个密钥，给每一个密钥定义一个唯一的 ID。协商的过程很简单：客户端把自己选好的密钥的 ID 告诉服务端。如果服务端在自己的密钥池子中找到这个 ID，就用对应的密钥与客户端通讯；否则就报错并中断连接。</p>
+</li>
+</ul>
+<p>最后一种方式考虑到所有会话都使用这些固定的密钥，比较少用到。我们只看前两种方式。</p>
+<h2 id="DH-系交换算法"><a href="#DH-系交换算法" class="headerlink" title="DH 系交换算法"></a>DH 系交换算法</h2><h3 id="DH-算法"><a href="#DH-算法" class="headerlink" title="DH 算法"></a>DH 算法</h3><p>DH，全称Diffie–Hellman key exchange，是一种安全协议。它可以让双方在完全没有对方任何预先信息的条件下通过不安全信道创建起一个密钥。这个密钥可以在后续的通讯中作为对称密钥(通过对称加密算法)来加密通讯内容。</p>
+<p>其基本原理如下</p>
+<p><img src="/images/image-20180801200114787.png" alt="image-20180801200114787"></p>
+<p>如果 <em>p</em> 是一个至少 300 位的质数，并且<em>a</em>和<em>b</em>至少有100位长， 那么即使使用全人类所有的计算资源和当今最好的算法也不可能从<em>g</em>, <em>p</em>和<em>ga</em> mod <em>p</em> 中计算出 <em>a</em>。这个问题就是著名的<strong>离散对数问题</strong>。注意<em>g</em>则不需要很大, 并且在一般的实践中通常是2或者5。</p>
+<p>密钥交换的流程主要有2步：</p>
+<ol>
+<li>初始化密钥对，并向对方公布自己的公钥</li>
+<li>构建本地密钥，作为后续加密的密钥</li>
+</ol>
+<p>以消息传递模型为例，甲方为发送者，乙方为接收者，分述甲乙双方如何构建密钥，交换密钥和加密数据。</p>
+<p>首先，甲乙双方需要在收发信息前构建自己的密钥对，如下图：</p>
+<p><img src="/images/image-20180801194410265.png" alt="image-20180801194410265"></p>
+<p>注意，乙方构建自己的密钥对必须使用甲方公钥作为参数，否则无法确保甲乙双方获得同一个私密密钥，消息加密更无从谈起。 其次，假设甲乙双方事先约定好了用于数据加密的对称加密算法（如 AES 算法），并构建本地密钥（即对称加密算法中的密钥）， 甲方需要使用自己的私钥和乙方的公钥才能构建本地密钥，即用于数据加解密操作的对称加密算法密钥。 同样，乙方需要使用自己的私钥和甲方的公钥构建本地密钥。如下图：</p>
+<p><img src="/images/image-20180801194540530.png" alt="image-20180801194540530"></p>
+<p>虽然甲乙双方使用了不同的密钥来构建本地密钥，但得到的密钥是一致的，正因为如此，甲乙双方才能顺利进行加密消息的传递。 最后，甲乙双方构建了本地密钥后，可按基于对称加密算法的消息传递模型完成消息传递，如下图：</p>
+<p><img src="/images/image-20180801201756669.png" alt="image-20180801201756669"></p>
+<h3 id="ECDH算法"><a href="#ECDH算法" class="headerlink" title="ECDH算法"></a>ECDH算法</h3><p>DH 算法有一个变种，称之为 ECDH（全称是“Elliptic Curve Diffie-Hellman”）。</p>
+<p>它与 DH 类似，差别在于： DH 依赖的是——求解“离散对数问题”的难题。 ECDH 依赖的是——求解“椭圆曲线离散对数问题”的难题。其密钥交换过程于 DH 算法基本一致，这里我们不在赘述。</p>
+<h2 id="PFS-特性的保证"><a href="#PFS-特性的保证" class="headerlink" title="PFS 特性的保证"></a>PFS 特性的保证</h2><p>PFS 全称perfect forward secrecy，中文翻译叫『完美前向保密』，是由Christoph G. Günther在EUROCRYPT ’89提出的，其最初用于定义会话密钥交换协议的一种安全性。通俗点解释，就是如果当前会话的密钥协商私钥被破解，只能影响当前会话，不能影响之前历史会话。</p>
+<p>对于 RSA 密钥协商来说，如果服务器维护的的私钥被破解，则之前所有历史会话中的加密密钥都被破解了。当然你也可以说，服务器为每次会话都产出一对用来协商的密钥对，但是这个生成过程往往比较耗费资源。</p>
+<p>而 DH 算法及其衍生 ECDH 算法，每次会话的密钥交换都是临时生成的密钥对，完全满足 PFS 的要求，且其生成过程相对于 RSA 算法要廉价的多。</p>
+<p>综上，我们更倾向于使用 ECDH+AES 的算法组合。</p>
+<p>具体选择时，我们可以考虑</p>
+<ul>
+<li>对称加密我们可以使用 <strong>AES-128</strong> 或者 <strong>XXTea</strong> 算法。</li>
+<li>密钥交换使用<strong>ECDH</strong>算法。</li>
+</ul>
+<h2 id="中间人攻击"><a href="#中间人攻击" class="headerlink" title="中间人攻击"></a>中间人攻击</h2><p><strong>中间人攻击</strong>（英语：Man-in-the-middle attack，简称MITM）是指攻击者与通讯的两端分别创建独立的联系，并交换其所收到的数据，使通讯的两端认为他们正在通过一个私密的连接与对方直接对话，但事实上整个会话都被攻击者完全控制。在中间人攻击中，攻击者可以拦截通讯双方的通话并插入新的内容。在许多情况下这是很简单的（例如，在一个未加密的Wi-Fi的接受范围内的中间人攻击者，可以将自己作为一个中间人插入这个网络）。</p>
+<p>一个中间人攻击能成功的前提条件是攻击者能将自己伪装成每一个参与会话的终端，并且不被其他终端识破。中间人攻击是一个（缺乏）相互认证的攻击。其大致过程如下图所示</p>
+<p><img src="/images/image-20180805200133630.png" alt="image-20180805200133630"></p>
+<p>目前，单纯的 ECDH + AES 算法是无法防止中间人攻击的，为此就需要引入身份认证机制，其中使用最多的就是数字认证机制，也就是 CA 证书，这也是目前广泛使用的 Https 协议（本质上是基于 TLS 加密协议）使用的方式。</p>
+<p>所谓 CA，即Certificate Authority，就是颁发数字证书的权威机构，充当『公证人』的角色。服务器拿到 CA 颁发的证书，就认为是可以被客户端信赖的，客户端确认了服务器的有效身份，后续的密钥协商和加密通信就可以认为是安全的。</p>
+<p>目前常用的数字签名算法有 DSA，RSA，ECDSA(基于 ECC 的 DSA)，其大致原理就是服务器使用私钥对一段信息进行签名(加密)，然后客户端拿到签名时候，使用公钥进行验证(解密)，如果通过，就认为签名有效。</p>
+<p>大致原理如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">第1步</span><br><span class="line">服务器方面首先要花一笔银子，在某个 CA 那里购买一个数字证书。</span><br><span class="line">该证书通常会对应几个文件：其中一个文件包含公钥，还有一个文件包含私钥。必须在服务器上部署这两个文件。</span><br><span class="line"></span><br><span class="line">第2步</span><br><span class="line">当客户端访问时，服务器首先把包含公钥的证书发送给它。</span><br><span class="line"></span><br><span class="line">第3步</span><br><span class="line">客户端验证服务器发过来的证书。如果发现其中有诈，则退出。</span><br><span class="line">由于有了这一步，就大大降低了“中间人攻击”的风险。</span><br><span class="line"></span><br><span class="line">为啥客户端（典型的如 https 协议一方的浏览器）能发现 CA 证书是否有诈？</span><br><span class="line">因为正经的 CA 证书，都是来自某个权威的 CA。如果某个 CA 足够权威，那么主流的操作系统（或浏览器）会内置该 CA 的“根证书”。（比如 Windows 中就内置了几十个权威 CA 的根证书）</span><br><span class="line">因此，客户端就可以利用系统内置的根证书，来判断服务器发过来的 CA 证书是不是某个 CA 颁发的。</span><br><span class="line"></span><br><span class="line">第4步</span><br><span class="line">如果服务器的 CA 证书没有问题，那么客户端就从该 CA 证书中提取出“公钥”。</span><br><span class="line">然后浏览器随机生成一个“对称加密的密钥”（以下称为 k）。用 CA 证书的公钥加密 k，得到密文 k&apos;，然后把 k&apos; 发送给服务器。</span><br><span class="line"></span><br><span class="line">第5步</span><br><span class="line">服务器收到客户端发过来的 k&apos;，用之前保存的私钥进行解密，得到 k。</span><br><span class="line">至此，客户端和服务器都拥有 k，“密钥交换”大功告成啦。</span><br></pre></td></tr></table></figure>
+<p>目前来说，数字签名算法+密钥协商算法+对称加密算法的组合相对来说是一种比较安全的加密通信方式，再加上 HMAC 进行摘要完整性校验，可以说能应付大部分普通攻击了。<br>而通常游戏中返回给客户端进行交互的服务器地址一般是可信赖的服务器 ip 列表，因此目前来说没有使用数字证书来防止中间人攻击的必要。因此此前提到的『密钥协商算法+对称加密算法』组合在游戏通信中得到了普遍应用。</p>
+<p>参考资料</p>
+<p><a href="https://program-think.blogspot.com/2016/09/https-ssl-tls-3.html" target="_blank" rel="noopener">密钥交换（密钥协商）算法及其原理</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html" target="_blank" rel="noopener">图解SSL/TLS协议</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/28/密码学算法简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/28/密码学算法简介/" itemprop="url">密码学算法简介</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-28T15:54:15+08:00">
+                2018-07-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/07/28/密码学算法简介/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/07/28/密码学算法简介/" class="cy_cmt_count" data-xid="2018/07/28/密码学算法简介/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要介绍常用的加解密算法。常用的算法大致分为以下几类：</p>
+<ul>
+<li>哈希算法</li>
+<li>古典加密</li>
+<li>对称密钥加密</li>
+<li>非对称密钥加密</li>
+</ul>
+<h2 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h2><p>常用的哈希算法，可以对任意长度的报文计算出固定长度的摘要，俗称哈希值。哈希值相对于原文来说要简短的多，往往只有十几或者几十个字节，因此也称为摘要算法。这个计算过程理论上是单向不可逆的：从报文可以计算出摘要，但是从摘要无法逆向计算出原始的报文。</p>
+<p>哈希算法的一个重要应用就是加密密码，加密后的密码无法被逆向反推，从而达到受保护的目的。在校验密码时，我们只需要比对哈希后的值即可。</p>
+<p>此外，哈希算法还可以用来校验完整性。例如很长一段信息或者下载获得一份文件，怎么能保证就是原始的信息或者文件呢？我们只需要对比传输前后信息的哈希值或者下载文件和原始文件的哈希值即可确定是否完整。</p>
+<p>哈希算法(信息或文件) = 摘要 或 哈希值</p>
+<h3 id="SHA-1"><a href="#SHA-1" class="headerlink" title="SHA-1"></a>SHA-1</h3><p><strong>SHA-1</strong>（Secure Hash Algorithm 1）是一种密码哈希函数，美国国家安全局设计，并由美国国家标准技术研究所发布为联邦数据处理标准。SHA-1可以生成一个被称为消息摘要的160比特位( <strong>20字节</strong> )散列值，散列值通常的呈现形式为40个十六进制数。</p>
+<p>SHA-1目前已经不够安全，已经有很多有效攻击的手段，因此正在被减少使用。</p>
+<h3 id="SHA-2"><a href="#SHA-2" class="headerlink" title="SHA-2"></a>SHA-2</h3><p><strong>SHA-2</strong> 属于SHA-1算法的后继者。其下又可再分为六个不同的算法标准，包括了：SHA-224、SHA-256、SHA-384、SHA-512、SHA-512/224、SHA-512/256。后面的数字代表了最后摘要值的比特位数。</p>
+<p>SHA-2的密码安全性目前还未得到广泛信任，有待进一步验证。SHA-256( <strong>32字节</strong> )算法目前已经被 TLS1.2标准采用。</p>
+<h3 id="MD5"><a href="#MD5" class="headerlink" title="MD5"></a>MD5</h3><p><strong>MD5消息摘要算法</strong>（Message-Digest Algorithm），一种被广泛使用的密码散列函数，可以产生出一个128位（ <strong>16字节</strong> ）的散列值（hash value）。</p>
+<p>2009年，中国科学院的谢涛和冯登国用了很小的碰撞算法复杂度，破解了MD5的碰撞抵抗，该攻击在普通计算机上运行只需要数秒钟。因此，对于需要高度安全性的数据，专家一般建议改用其他算法，如SHA-2系列算法。</p>
+<h3 id="暴力破解"><a href="#暴力破解" class="headerlink" title="暴力破解"></a>暴力破解</h3><p>使用哈希算法保护的密码目前已经很容易被暴力破解，其中就采用了一种称为 table 的技术。黑客们发现如果能够实现直接建立出一个数据文件，里面事先记录了采用和目标采用同样算法计算后生成的Hash散列数值，在需要破解的时候直接调用这样的文件进行比对，破解效率就可以大幅度地，甚至成百近千近万倍地提高，这样事先构造的Hash散列数据文件在安全界被称之为Table表(文件)。最出名的Tables是Rainbow Tables，即安全界中常提及的彩虹表。正是由于Rainbow Tables的存在，使得普通电脑在5分钟内破解14位长足够复杂的Windows帐户密码成为可能。</p>
+<p>针对彩虹表之类的暴力破解方式，可以采用的方法就是添加多字节随机盐及多次哈希，增加破解建表的难度，从而提升密码相对安全性。例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">saltedhash(password) = hash(password || salt)</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">saltedhash(password) = hash(hash(password) || salt)</span><br></pre></td></tr></table></figure>
+<p>推荐使用 <strong>bcrypt</strong> 或者 <strong>PBKDF2</strong> 加盐哈希算法。</p>
+<h2 id="古典加密"><a href="#古典加密" class="headerlink" title="古典加密"></a>古典加密</h2><p>古典加密是历史上使用过的加密信息的算法，其大部分加密方式都是利用替换式密码或移项式密码，有时则是两者的混合。其于历史中经常使用，但现代已经很少使用，大部分的已经不再使用了。许多密码起源于军事上，相同立场的人常使用来寄送秘密讯息。经典的方法常攻击密码文，有时候甚至不知其密码系统，也可以使用工具，像是频率分析法。有些经典密码是使用先进的机器或是机电密码机器，像是恩尼格玛密码机。</p>
+<p>经典密码通常很容易被破解。许多经典密码可单单经由密文而破解，用暴力破解或者频率分析可以轻而易举的攻破这些加密算法。</p>
+<h3 id="替换式密码"><a href="#替换式密码" class="headerlink" title="替换式密码"></a>替换式密码</h3><p>凯撒密码是广为人知的代换密码。为了用凯撒密码法加密讯息，每个密码字母集中的字母将会被其位置的后3个字母替代。因此字母A将会被字母D替代、字母B将会被字母E替代、字母C将会被字母F替代等，最后，X、Y和Z将分别的被替代成A、B和C。例如，”WIKIPEDIA”将被加密成”ZLNLSHGLD”。凯撒把字母向后移”3”位，但其他数字也可照著作。</p>
+<h3 id="移位式密码"><a href="#移位式密码" class="headerlink" title="移位式密码"></a>移位式密码</h3><p>移位式密码，它们字母本身不变，但它们在讯息中顺序是依照一个定义明确的计划改变。许多移位式密码是基于几何而设计的。一个简单的加密（也易被破解），可以将字母向右移1位。例如，明文”Hello my name is Alice.”将变成”olleH ym eman si ecilA.”</p>
+<h2 id="加解密算法"><a href="#加解密算法" class="headerlink" title="加解密算法"></a>加解密算法</h2><p>加解密的过程和哈希是不同的，它在计算的过程中需要提供一种称为密钥的参数：</p>
+<p>加密算法(报文, 加密密钥) = 密文</p>
+<p>解密算法(密文, 解密密钥) = 报文</p>
+<p>如果加密密钥 == 解密密钥，则称为对称加密算法</p>
+<p>如果加密密钥 != 解密密钥，则称为非对称加密算法</p>
+<p>此外，根据加密计算的规则不同，还可以分为流加密算法和块加密算法 block</p>
+<h2 id="对称加密算法"><a href="#对称加密算法" class="headerlink" title="对称加密算法"></a>对称加密算法</h2><p>对称密钥加密（Symmetric-key algorithm）又称为对称加密、私钥加密、共享密钥加密，是密码学中的一类加密算法。这类算法在加密和解密时使用相同的密钥，或是使用两个可以简单地相互推算的密钥。<br>常见的对称加密算法有XOR、DES、3DES、AES、Blowfish、IDEA、RC4等。</p>
+<p>我们可以看下 openssl 命令下支持的对称加密方式</p>
+<p><img src="/images/image-20180802130404943.png" alt="image-20180802130404943"></p>
+<h3 id="Base64"><a href="#Base64" class="headerlink" title="Base64"></a>Base64</h3><p>Base64编码在 web 编程中比较常用，可以简单的加密和解密，对安全性要求不高的可以使用。该加密算法不需要密钥。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"encoding/base64"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">base64Encode</span><span class="params">(src []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> []<span class="keyword">byte</span>(base64.StdEncoding.EncodeToString(src))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">base64Decode</span><span class="params">(src []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> base64.StdEncoding.DecodeString(<span class="keyword">string</span>(src))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="XOR-异或算法"><a href="#XOR-异或算法" class="headerlink" title="XOR 异或算法"></a>XOR 异或算法</h3><p>异或算法是一种非常简单高效的算法。</p>
+<p><code>XOR</code>运算的定义是：两个值相同时，返回<code>false</code>，否则返回<code>true</code>。也就是说，<code>XOR</code>可以用来判断两个值是否不同。它还有个奇妙的特性：如果对一个值连续做两次 <code>XOR</code>，则会返回该值本身。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 第一次 XOR</span><br><span class="line">1010 ^ 1111 // 0101</span><br><span class="line"></span><br><span class="line">// 第二次 XOR</span><br><span class="line">0101 ^ 1111 // 1010</span><br></pre></td></tr></table></figure>
+<p>这个特性可以用户信息的加解密：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cipherText	= message XOR key     //加密</span><br><span class="line">message 	= cipherText XOR key  //解密</span><br></pre></td></tr></table></figure>
+<p>从上面的公式我们可以看出：</p>
+<ol>
+<li>异或加密使用的加密密钥和解密密钥都是同一个，因此它属于对称加密算法。</li>
+<li>由于异或加密是对信息的每个字节逐个比特进行异或运算，因此它属于流加密算法。</li>
+<li>异或加密是通过比特位一个个的进行异或运算来进行的，对于密钥key 的长度有一定的要求。如果密钥 key 比信息 message 短，则 key 高位需要补齐0，这会导致 message 的高位与0异或后没有发生改变，也就是说多出来的部分没有被加密。因此要保证异或加密的安全性，密钥 key 必须长于要加密的信息，这限制了异或加密的使用场景。</li>
+</ol>
+<h3 id="AES-算法"><a href="#AES-算法" class="headerlink" title="AES 算法"></a>AES 算法</h3><p>AES 高级解密算法，是当年美国联邦政府采用的加密标准，其本质算法名称叫Rijndael加密算法，被 AES 标准采用。这个标准用来替代原先的DES算法，已经被多方分析且广为全世界所使用。</p>
+<p>AES 算法基于排列和置换运算。排列是对数据位置重排，置换是将一个数据单元替换为另一个。AES 使用几种不同的方法来执行排列和置换运算。它可以使用128、192 和 256 位密钥，并且用 128 位（16字节）分组加密和解密数据。迭代加密使用一个循环结构，在该循环中重复置换和替换输入数据。</p>
+<p>下面我们看看 golang 中的 AES 包的使用。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewCipher</span><span class="params">(key []<span class="keyword">byte</span>)</span> <span class="params">(cipher.Block, error)</span></span></span><br></pre></td></tr></table></figure>
+<p>该函数返回称为 Block 的结构(可以看出 AES 是块加密算法)，key 可以是16字节、24字节、32字节，分别对应了 AES-128、AES-192、AES-256。Block 的结构如下</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Block <span class="keyword">interface</span> &#123;</span><br><span class="line">        <span class="comment">// BlockSize returns the cipher's block size.</span></span><br><span class="line">        BlockSize() <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Encrypt encrypts the first block in src into dst.</span></span><br><span class="line">        <span class="comment">// Dst and src must overlap entirely or not at all.</span></span><br><span class="line">        Encrypt(dst, src []<span class="keyword">byte</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Decrypt decrypts the first block in src into dst.</span></span><br><span class="line">        <span class="comment">// Dst and src must overlap entirely or not at all.</span></span><br><span class="line">        Decrypt(dst, src []<span class="keyword">byte</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从注释可以看到，这个结构只能加密或者解密数据的第一个块，因此对于数据长度大于block size 的情况，还需要进一步处理。这里引入密码学中的<strong>块密码的工作模式(mode of operation)</strong>的概念，它是指使用同一个密钥对多于一块的数据进行加密，并保证其安全性；它描述了加密每一数据块的过程，并常常使用基于一个通常称为<strong>初始化向量(IV)</strong>的附加输入值以进行随机化，以保证安全。常见的模式有ECB，CBC，OFB，CFB，CTR和XTS等。</p>
+<p>我们以常见的 CBC 和 CFB 模式为例来看看如何使用。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bytes"</span></span><br><span class="line">	<span class="string">"crypto/cipher"</span></span><br><span class="line">	<span class="string">"crypto/aes"</span></span><br><span class="line">	<span class="string">"crypto/rand"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">//CBC 需要补齐不足的块</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AesCBCEncrypt</span><span class="params">(text, key []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	block, err := aes.NewCipher(key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	text = PKCS5Padding(text, aes.BlockSize)</span><br><span class="line">	<span class="comment">// text = ZeroPadding(text, aes.BlockSize)</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">// The IV needs to be unique, but not secure. Therefore it's common to</span></span><br><span class="line">	<span class="comment">// include it at the beginning of the ciphertext.</span></span><br><span class="line">	ciphertext := <span class="built_in">make</span>([]<span class="keyword">byte</span>, aes.BlockSize + <span class="built_in">len</span>(text))</span><br><span class="line">	iv := ciphertext[:aes.BlockSize]</span><br><span class="line">	<span class="comment">//生成随机 iv 值</span></span><br><span class="line">	<span class="keyword">if</span> _, err := io.ReadFull(rand.Reader, iv); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	mode := cipher.NewCBCEncrypter(block, iv)</span><br><span class="line">	mode.CryptBlocks(ciphertext[aes.BlockSize:], text)</span><br><span class="line">	<span class="comment">//iv 和加密后的密文一起返回</span></span><br><span class="line">	<span class="keyword">return</span> cipherText, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//CBC 需要补齐不足的块</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AesCBCDecrypt</span><span class="params">(cipherText, key []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	block, err := aes.NewCipher(key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(cipherText) &lt; aes.BlockSize &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">"ciphterText too short"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//密文前一部分为初始化向量 iv，无需保密</span></span><br><span class="line">	iv := cipherText[:aes.BlockSize]</span><br><span class="line">	cipherText = cipherText[aes.BlockSize:]</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// CBC mode always works in whole blocks.</span></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(cipherText) % aes.BlockSize != <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"cipherText is not a multiple of the block size"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	mode := cipher.NewCBCDecrypter(block, iv)</span><br><span class="line">	<span class="comment">// CryptBlocks can work in-place if the two arguments are the same.</span></span><br><span class="line">    mode.CryptBlocks(cipherText, cipherText)</span><br><span class="line">	cipherText = PKCS5UnPadding(cipherText)</span><br><span class="line">	<span class="comment">// cipherText = ZeroUnPadding(cipherText)</span></span><br><span class="line">	<span class="keyword">return</span> cipherText, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ZeroPadding</span><span class="params">(ciphertext []<span class="keyword">byte</span>, blockSize <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	padding := blockSize - <span class="built_in">len</span>(ciphertext)%blockSize</span><br><span class="line">	padtext := bytes.Repeat([]<span class="keyword">byte</span>&#123;<span class="number">0</span>&#125;, padding)</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">append</span>(ciphertext, padtext...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ZeroUnPadding</span><span class="params">(origData []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	length := <span class="built_in">len</span>(origData)</span><br><span class="line">	unpadding := <span class="keyword">int</span>(origData[length<span class="number">-1</span>])</span><br><span class="line">	<span class="keyword">return</span> origData[:(length - unpadding)]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PKCS5Padding</span><span class="params">(ciphertext []<span class="keyword">byte</span>, blockSize <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	padding := blockSize - <span class="built_in">len</span>(ciphertext)%blockSize</span><br><span class="line">	padtext := bytes.Repeat([]<span class="keyword">byte</span>&#123;<span class="keyword">byte</span>(padding)&#125;, padding)</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">append</span>(ciphertext, padtext...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PKCS5UnPadding</span><span class="params">(origData []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	length := <span class="built_in">len</span>(origData)</span><br><span class="line">	<span class="comment">// 去掉最后一个字节 unpadding 次</span></span><br><span class="line">	unpadding := <span class="keyword">int</span>(origData[length<span class="number">-1</span>])</span><br><span class="line">	<span class="keyword">return</span> origData[:(length - unpadding)]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bytes"</span></span><br><span class="line">	<span class="string">"crypto/cipher"</span></span><br><span class="line">	<span class="string">"crypto/aes"</span></span><br><span class="line">	<span class="string">"crypto/rand"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AesCFBEncrypt</span><span class="params">(text, key []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	block, err := aes.NewCipher(key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// The IV needs to be unique, but not secure. Therefore it's common to</span></span><br><span class="line">	<span class="comment">// include it at the beginning of the ciphertext.</span></span><br><span class="line">	ciphertext := <span class="built_in">make</span>([]<span class="keyword">byte</span>, aes.BlockSize + <span class="built_in">len</span>(text))</span><br><span class="line">	iv := ciphertext[:aes.BlockSize]</span><br><span class="line">	<span class="comment">//生成随机 iv 值</span></span><br><span class="line">	<span class="keyword">if</span> _, err := io.ReadFull(rand.Reader, iv); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	stream := cipher.NewCFBEncrypter(block, iv)</span><br><span class="line">	stream.XORKeyStream(ciphertext[aes.BlockSize:], text)</span><br><span class="line">	<span class="comment">//iv 和加密后的密文一起返回</span></span><br><span class="line">	<span class="keyword">return</span> ciphertext, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AesCFBDecrypt</span><span class="params">(cipherText, key []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	block, err := aes.NewCipher(key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(cipherText) &lt; aes.BlockSize &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">"ciphterText too short"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//密文前一部分为初始化向量 iv，无需保密</span></span><br><span class="line">	iv := cipherText[:aes.BlockSize]</span><br><span class="line">	cipherText = cipherText[aes.BlockSize:]</span><br><span class="line">	</span><br><span class="line">	stream := cipher.NewCFBDecrypter(block, iv)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// XORKeyStream can work in-place if the two arguments are the same.</span></span><br><span class="line">	stream.XORKeyStream(cipherText, cipherText)</span><br><span class="line">	<span class="keyword">return</span> cipherText, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面代码可知，如果待加密的长度正好被整除，即不需要padding，实际处理时其实是做了全补足，否则是没法去去掉padding内容，因为补的长度被放置在最后一个字节，前面最少补1个字节，最多补blockSize个字节。</p>
+<h3 id="RC4算法"><a href="#RC4算法" class="headerlink" title="RC4算法"></a>RC4算法</h3><p><strong>RC4</strong>（来自Rivest Cipher 4的缩写）是一种流加密<strong>算法</strong>，密钥长度可变。 它加解密使用相同的密钥，因此也属于对称加密<strong>算法</strong>。 <strong>RC4</strong>是有线等效加密（WEP）中采用的加密<strong>算法</strong>，也曾经是TLS可采用的<strong>算法</strong>之一。</p>
+<p>RC4算法的基本原理是先根据 key 和伪随机算法得到辅助加密用的和明文等长的 SBox，然后将 SBox 和明文进行逐字节异或XOR得来。由于RC4算法加密是采用的XOR，所以，一旦子密钥序列出现了重复，密文就有可能被破解。</p>
+<p>目前 RC4算法已经被破解，不再推荐使用。</p>
+<h2 id="非对称加密算法"><a href="#非对称加密算法" class="headerlink" title="非对称加密算法"></a>非对称加密算法</h2><p>非对称加密算法使用两把完全不同但又是完全匹配的一对钥匙：公钥和私钥。在使用不对称加密算法时，只有使用匹配的一对公钥和私钥，才能完成对明文的加密和解密过程。这对于对称加密算法来说，又安全了一步。除了加解密之外，非对称算法还可以用于数字签名，数字签名是一种用于验证对方身份的技术。</p>
+<p>具体使用时，遵循以下规则</p>
+<ul>
+<li>加密应用，使用公钥加密，私钥解密</li>
+<li>签名应用，使用私钥签名，公钥验证</li>
+</ul>
+<p>下面介绍下常用的非对称加密算法。</p>
+<h3 id="RSA-算法"><a href="#RSA-算法" class="headerlink" title="RSA 算法"></a>RSA 算法</h3><p>RSA算法基于<strong>大数因子分解难题</strong>，其核心问题是欧拉定理，是目前唯一被广泛接受并实现的通用公开加密算法。这种算法非常可靠，密钥越长，它就越难破解。根据已经披露的文献，目前被破解的最长RSA密钥是768个二进制位。也就是说，长度超过768位的密钥，还无法破解（至少没人公开宣布）。因此可以认为，1024位的RSA密钥基本安全，2048位的密钥极其安全。</p>
+<p>RSA加密的大致流程是</p>
+<ol>
+<li><p>乙方生成两把密钥（公钥和私钥）。公钥是公开的，任何人都可以获得，私钥则是保密的。</p>
+</li>
+<li><p>甲方获取乙方的公钥，然后用它对信息加密。</p>
+</li>
+<li><p>乙方得到加密后的信息，用私钥解密。</p>
+</li>
+</ol>
+<p>如果公钥加密的信息只有私钥解得开，那么只要私钥不泄漏，通信就是安全的。在实际使用中，一般选择 <strong>1024</strong> 位的密钥即可。</p>
+<h3 id="ECC-算法"><a href="#ECC-算法" class="headerlink" title="ECC 算法"></a>ECC 算法</h3><p>ECC，全称 Elliptic-curve cryptography，基于解决<strong>椭圆曲线离散对数问题</strong>的困难性上。ECC 相对于其他非对称加密方式的主要优势是其密钥更小(最小密钥长度 RSA1024位，ECC 160位)，并且提供更高的安全性，但是其加解密花费的时间相对其他要长。</p>
+<p>下面是基于 golang 官方 elliptic 库封装的 ECC 算法</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> GoECDH <span class="keyword">struct</span> &#123;</span><br><span class="line">    elliptic.Curve</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewGoECDH</span><span class="params">(curve elliptic.Curve)</span> *<span class="title">GoECDH</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> curve == <span class="literal">nil</span> &#123;</span><br><span class="line">        curve = elliptic.P256()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> &amp;GoECDH&#123;</span><br><span class="line">        Curve: curve,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ge *GoECDH)</span> <span class="title">GenerateKeys</span><span class="params">()</span> <span class="params">(pub []<span class="keyword">byte</span>, priv []<span class="keyword">byte</span>, err error)</span></span> &#123;</span><br><span class="line">    p, x, y, e := elliptic.GenerateKey(ge.Curve, rand.Reader)</span><br><span class="line">    <span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</span><br><span class="line">        err = e</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    pub = elliptic.Marshal(ge.Curve, x, y)</span><br><span class="line">    priv = p</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ge *GoECDH)</span> <span class="title">MakeSecret</span><span class="params">(pub []<span class="keyword">byte</span>, priv []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">    x, y := elliptic.Unmarshal(ge.Curve, pub)</span><br><span class="line">    secret, _ := ge.Curve.ScalarMult(x, y, priv)</span><br><span class="line">    <span class="keyword">return</span> secret.Bytes()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h6><p><a href="https://zh.wikipedia.org/wiki/%E7%B6%93%E5%85%B8%E5%AF%86%E7%A2%BC" target="_blank" rel="noopener">维基百科经典密码</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2017/05/xor.html" target="_blank" rel="noopener">XOR 加密简介</a></p>
+<p><a href="https://blog.csdn.net/xiaohu50/article/details/51682849" target="_blank" rel="noopener">golang中 AES 加密详解</a></p>
+<p><a href="https://blog.yumaojun.net/2017/02/19/go-crypto/" target="_blank" rel="noopener">密码学简介与Golang的加密库Crypto的使用</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/27/NAS设置公网访问/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/27/NAS设置公网访问/" itemprop="url">NAS设置公网访问</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-27T12:39:00+08:00">
+                2018-07-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/07/27/NAS设置公网访问/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/07/27/NAS设置公网访问/" class="cy_cmt_count" data-xid="2018/07/27/NAS设置公网访问/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>入手了群晖 NAS 之后，一直使用厂家提供的 quickconnect 来从外网访问家里的 NAS。quickconnect 的原理其实是要通过群晖的服务器进行中转，然后再连接 NAS，由于服务器不在国内，其传输速度可想而知，通常就是几十上百 K的水平。如果只是通过 web 连接 NAS 来管理或者操作FileStation 来下载还是勉强可用的，但是如果要从外网上传文件到 NAS 或者从 NAS 下载，这种速度是不可忍受的。</p>
+<h2 id="直连"><a href="#直连" class="headerlink" title="直连"></a>直连</h2><p>要提高速度的办法，只能是外网直连 NAS 了。但是一般 NAS 都会部署在家里或者公司的内网环境，要能从外网访问，一般需要使用路由器带的端口转发或者 DMZ 功能。具体流程就是</p>
+<ol>
+<li><p>外网通过公网 IP 连接到路由器</p>
+</li>
+<li><p>路由器通过端口转发，将特定端口的包转发给内网同一网段的 NAS，从而实现通信</p>
+</li>
+</ol>
+<p>不过，在开始前，我们还有几个问题需要预先解决</p>
+<ul>
+<li><p>首先，国内大部分网络环境是光猫拨号进行上网，运营商默认会设置光猫为路由(Route)模式，猫自动进行 PPPoE拨号，同时也带有简单的路由功能，于是我们可以直接连接猫的 Lan 口进行上网。但是一般猫的路由功能很鸡肋， 往往没有无线 Wifi 功能，带的 Lan 口也有限，所以一般会在猫后面接一个专用路由器来管理家里的诸多设备及无线上网。所以 NAS 是连接到路由器，再通过光猫连接到公网环境的。这带来一个问题：如果我们能连接到光猫，也没法直接访问内网的 NAS。所幸光猫还提供了一种成为桥接(Bridage)的模式，意思是将外网和光猫后面的设备(也就是我们的路由器)进行直连，由我们的路由器来进行拨号，而光猫本事是透明的，只是用来透传数据。</p>
+<p><img src="/images/route.png" alt="image-20180727133456750"></p>
+</li>
+</ul>
+<ul>
+<li>运营商一般会给用户默认分配内网 IP，这导致我们没法连接到家里的路由器。因此需要联系运营商，让他们分配公网 IP 给我们。</li>
+</ul>
+<p>这些完成之后，我们就可以检查公网是否能访问自己的网络了，使用 ping 来检查是否畅通(如果有路由上设置了禁止 ping，需要关闭该设置)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ping  xxx.xxx.xxx.xxx</span><br></pre></td></tr></table></figure>
+<p> 这里<code>xxx.xxx.xxx.xxx</code>是运营商分配给你的公网 IP，你可以替换为自己的来进行测试。</p>
+<blockquote>
+<p>有时候猫或者路由上设置了防火墙，禁止 ping，所以需要关闭该设置再进行测试。</p>
+</blockquote>
+<p>一般 NAS 服务的访问端口是5000(http)和5001(https)，这个可以在 NAS 里进行设置：</p>
+<p><img src="/images/dsm.png" alt="image-20180727132746453"></p>
+<p>假如 NAS 的内网 ip 是10.0.0.11，那在内网可以通过10.0.0.11:5000来访问。现在如果想在外网访问 NAS，比如说是通过  <a href="http://xxx.xxx.xxx.xxx:5000" target="_blank" rel="noopener">http://xxx.xxx.xxx.xxx:5000</a> ，那么我们就需要在路由器上配置端口转发，将路由器上所有对5000端口的访问都转发到内网 NAS 地址(即10.0.0.11)的5000端口。各个路由器可能不一样，我们这里以 R7000的梅林系统为例：</p>
+<p><img src="/images/forward.png" alt="image-20180727133636531"></p>
+<p>设置完成后，我们测试一下端口是否可以正常访问</p>
+<p><img src="/images/telnet.png" alt="image-20180727134414268"></p>
+<p>至此，通过公网 IP 我们已经顺利访问了 NAS，就如同内网访问一样。</p>
+<h2 id="域名访问"><a href="#域名访问" class="headerlink" title="域名访问"></a>域名访问</h2><p>到目前为止，似乎一切都很美好。但是需要提出的是，运营商分配分配给我们的公网 IP 往往是动态变化的，并不固定，所以如果 IP 不停发生着变化，在访问 NAS 之前我们就必须查询一次自己的 IP。好在有种称为 DDNS 的技术，可以解决这个问题。</p>
+<p>DDNS(Dynamic Domain Name Server) 翻译过来是动态域名服务，也就是不管我们的 IP 怎么动态变化，域名都能准确指向它，因此通过这个动态域名，我们就无需关心实际的 ip 是什么，每次都能访问到 NAS 上。</p>
+<p>很多路由器都带有 DDNS 功能，其工作原理大致是每次 ip 发生变化时，路由器都会将当前的 ip 上报更新到 DDNS 服务提供商，因此域名解析出来的 ip 也会随之得到更新。</p>
+<p>假设我们在路由器上开启 DDNS 时设置的域名是 myddns.asuscomm.com</p>
+<p><img src="/images/ddns.png" alt="image-20180727140519194"></p>
+<p>那么之后我们就可以通过 myddns.asuscomm.comm:5000来访问了。如果你有自己的域名，则可以设置一个 cname 类型的域名来指向  myddns.asuscomm.comm 域名。</p>
+<blockquote>
+<p>如果路由不带 DDNS 功能，可以考虑使用 NAS 的 DDNS 功能(有很多提供商可以选择)，具体请 google 设置方法。国内花生壳也提供了 DDNS 功能。</p>
+</blockquote>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://www.dozer.cc/2016/03/synology-nas-network-setting.html" target="_blank" rel="noopener">将群晖 NAS 安全地暴露到公网中</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/27/macOS安装mysql/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/27/macOS安装mysql/" itemprop="url">macOS安装mysql</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-27T10:18:22+08:00">
+                2018-06-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/06/27/macOS安装mysql/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/06/27/macOS安装mysql/" class="cy_cmt_count" data-xid="2018/06/27/macOS安装mysql/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="安装Mysql"><a href="#安装Mysql" class="headerlink" title="安装Mysql"></a>安装Mysql</h2><p>安装之前，需要查看你的 macOS 的版本，支持哪些版本的 mysql ，来对应安装，否则会出现不兼容的情况。mysql 的文档列出了各个版本支持的平台，对于 macOS，如下</p>
+<p><img src="/images/image-20180627104047807.png" alt="image-20180627104047807"></p>
+<p><img src="/images/image-20180627104126873.png" alt="image-20180627104126873"></p>
+<p>以我的 macOS 10.13 为例，支持64位8.0、5.7、5.6版本，鉴于8.0正式版本刚发布不久(2018.4)，我们这里选择5.7版本来进行安装。</p>
+<p>更多详细的平台支持信息，可以去 <a href="https://www.mysql.com/support/supportedplatforms/database.html" target="_blank" rel="noopener">官网</a> 查询</p>
+<p>选择了版本，下面就可以进行安装了。mac 平台主要有2中方式来安装 mysql</p>
+<ul>
+<li>原生包安装器 (DMG) 来进行安装。这种方式需要拥有 mac 系统的管理员权限。</li>
+<li>使用二进制压缩包来进行安装，安装包格式一般是  <code>mysql-*VERSION*-*OS*.tar.gz</code> 。可以使用 tar 或者 gzip 命令将 mysql 安装在任意目录。注意这种方式可以没有管理员权限。</li>
+<li>源码编译安装，需要预先安装 cmake，make，boost c++库等，比较繁琐。</li>
+</ul>
+<p>简单起见，我们选择第一种方式（如果你没有管理员权限，则只能选第二种方式）</p>
+<ol>
+<li><p>下载 .dmg 格式的安装包，一般我们使用社区版本，例如  <code>mysql-5.7.22-macos10.13-x86_64.dmg</code>，下载地址为 <a href="https://dev.mysql.com/downloads/mysql/5.7.html#downloads" target="_blank" rel="noopener">mysql5.7下载</a></p>
+</li>
+<li><p>下载完成后双击执行安装，如下</p>
+<p><img src="/images/image-20180627110750323.png" alt="image-20180627110750323"></p>
+</li>
+<li><p>安装过程中，会为 root 账户生成一个随机的密码，注意记住该密码，后面会用到。</p>
+</li>
+<li><p>安装完成后，我们需要为 root 修改密码，这是因为之前安装时生成的密码自动过期，只能用来登录，而不能进行操作，因此需要使用者再手动修改密码，这样就保障了安全性。</p>
+</li>
+</ol>
+<h2 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h2><p>修改密码之前，先手动启动 mysql 服务</p>
+<p>mysql 被安装在/usr/local/mysql 目录，我们将 bin 目录添加到 PATH 环境变量以方便执行 mysql 命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH=/usr/local/mysql/bin:$PATH'</span> &gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
+<p>然后就可以使用mysqld_safe 命令手动启动 mysql 进程了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mysqld_safe --user=mysql &amp;</span><br></pre></td></tr></table></figure>
+<p>使用生成的随机密码登录到 mysql</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p</span><br></pre></td></tr></table></figure>
+<p>为 root 账户设置新的密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; ALTER USER <span class="string">'root'</span>@<span class="string">'localhost'</span> IDENTIFIED BY <span class="string">'new_password'</span>;</span><br></pre></td></tr></table></figure>
+<p>退出后重新使用新密码登录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p</span><br></pre></td></tr></table></figure>
+<p>这样我们就能执行 mysql 的操作了</p>
+<p>另外，我们还要将刚才手动启动的 mysql 关闭，然后使用正式方式启动mysql 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mysqladmin -u root -p shutdown</span><br></pre></td></tr></table></figure>
+<p>我们使用 macOS 下的服务面板来启动 mysql，依次点击系统左上角的 <strong>苹果</strong> 图标 -&gt;系统偏好设置-&gt;MySQL-&gt;Start MySQL Server</p>
+<p><img src="/images/image-20180627141058962.png" alt="image-20180627141058962"></p>
+<h2 id="新建-user"><a href="#新建-user" class="headerlink" title="新建 user"></a>新建 user</h2><p>先使用修改后的 root 密码登录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p</span><br></pre></td></tr></table></figure>
+<p>为 root 赋予所有权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT all ON *.* to root@localhost IDENTIFIED BY <span class="string">'root_passwd'</span>;</span><br></pre></td></tr></table></figure>
+<p>新建 philip 用户并赋予 以 db_ 开头命名的库的查询修改等权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT LOCK TABLES,select,insert,update,delete,create,drop,index,alter ON `db\_%`.* to philip@<span class="string">"10.%.%.%"</span> IDENTIFIED BY <span class="string">'tmpP001'</span>;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<p>新建 query 用户并赋予以 db_oss_开头命名的库的只读权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT select ON `db\_oss\_%`.* to query@<span class="string">"localhost"</span> IDENTIFIED BY <span class="string">'123'</span>;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<h2 id="编码配置"><a href="#编码配置" class="headerlink" title="编码配置"></a>编码配置</h2><h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>在 windows 平台，如果使用安装程序安装，则安装程序会在 mysql 安装目录自动创建一个名为 my.ini 的文件作为mysql 服务的配置文件；如果是使用 zip 压缩包安装，则需要拷贝my-default.ini为 my.ini 作为配置文件（注意，MySQL 5.7.18版本之后的 mysql 压缩包不包括 my-default.ini）</p>
+<p>在非 windows 平台，没有默认的配置文件，mysql 启动时会使用缺省的参数。因此我们需要手动创建 my.cnf 。</p>
+<p>以下命令可以查看 mysql 的参数列表以及server 启动时会读取哪些配置文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqld --verbose --<span class="built_in">help</span> | less</span><br></pre></td></tr></table></figure></p>
+<p>搜索 my.cnf 可以看到，配置文件读取顺序为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Default options are read from the following files in the given order:</span><br><span class="line">/etc/my.cnf /etc/mysql/my.cnf /usr/local/mysql/etc/my.cnf ~/.my.cnf</span><br></pre></td></tr></table></figure>
+<p>我们选择其中一个目录新建 my.cnf 即可。</p>
+<h3 id="存储编码"><a href="#存储编码" class="headerlink" title="存储编码"></a>存储编码</h3><p>字符集不仅影响 mysql 的数据存储，也影响 client 程序和 mysql server 的连接交互，因此在考虑设置编码的时候，这两方面都需要考虑。</p>
+<p>mysql 5.7 版本默认的存储字符集和字符比较规则为 <code>latin1</code>, <code>latin1_swedish_ci</code>，这与通用的 <code>utf8</code> 标准不兼容，因此我们需要修改 mysql 的默认 character set 和 collation。字符集设置按照层级分为四个：server, database, table, and column。</p>
+<p>首先查看现有的设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show VARIABLES like &apos;%character%&apos;;</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">| Variable_name            | Value                                                     |</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">| character_set_client     | utf8                                                      |</span><br><span class="line">| character_set_connection | utf8                                                      |</span><br><span class="line">| character_set_database   | latin1                                                    |</span><br><span class="line">| character_set_filesystem | binary                                                    |</span><br><span class="line">| character_set_results    | utf8                                                      |</span><br><span class="line">| character_set_server     | latin1                                                    |</span><br><span class="line">| character_set_system     | utf8                                                      |</span><br><span class="line">| character_sets_dir       | /usr/local/mysql-5.7.22-macos10.13-x86_64/share/charsets/ |</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">8 rows in set (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; show VARIABLES like &apos;%collation%&apos;;</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">| Variable_name        | Value             |</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">| collation_connection | utf8_general_ci   |</span><br><span class="line">| collation_database   | latin1_swedish_ci |</span><br><span class="line">| collation_server     | latin1_swedish_ci |</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">3 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>可以看到 character_set_database、character_set_server、collation_database、 collation_server 几个选项的值都为 latin1，需要修改为 utf8。</p>
+<p>在 HOME 目录创建 my.cnf 文件作为配置文件，添加以下内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">character-set-server=utf8</span><br><span class="line">collation-server=utf8_general_ci</span><br></pre></td></tr></table></figure>
+<p>完成后使用 mac 偏好设置里 的 mysql launch daemon panel来重新启动 mysql 即可。 </p>
+<p><img src="/images/image-20180704104726142.png" alt="image-20180704104726142"></p>
+<p><strong>注意</strong> 这里在配置 my.cnf 的时候需要特别注意两点</p>
+<ul>
+<li><p>假如新建 /etc/my.cnf 作为配置文件，需要将文件 mode 设置为644，否则启动会不成功或者配置被忽略</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo chmod 644 /etc/my.cnf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>只需要设置 character-set-server 和 collation-server 两个选项，并不存在 character_set_database 和 collation_database 选项。原因是 server 级别的选项已经涵盖了 database 级别的设置。如果你需要单独设置某个 database 的编码，在输入 create table SQL语句时单独指定即可，详见 <a href="https://dev.mysql.com/doc/refman/5.7/en/charset-applications.html" target="_blank" rel="noopener">这里</a></p>
+</li>
+</ul>
+<h3 id="连接编码"><a href="#连接编码" class="headerlink" title="连接编码"></a>连接编码</h3><p>除了存储编码，我们每次通过 client 连接到 MySQL server（如 mysql client 或者PHP 脚本等）时，还需要设置该连接的交互字符集为 utf8，执行以下语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET NAMES &apos;utf8&apos;;</span><br></pre></td></tr></table></figure>
+<p>参考文档</p>
+<p><a href="https://dev.mysql.com/doc/refman/8.0/en/" target="_blank" rel="noopener">MySQL 官网</a></p>
+<p><a href="https://dev.mysql.com/doc/refman/5.7/en/charset-applications.html" target="_blank" rel="noopener">Configuring Application Character Set and Collation</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/19/服务器断电后自启动/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/19/服务器断电后自启动/" itemprop="url">服务器断电后自启动</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-19T10:15:57+08:00">
+                2018-06-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/06/19/服务器断电后自启动/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/06/19/服务器断电后自启动/" class="cy_cmt_count" data-xid="2018/06/19/服务器断电后自启动/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>创业公司的生产资料主要集中在自己搭建的服务器上，由于一些客观因素（没钱，环境差）导致服务器经常断电，一般周末经常性的『技术性』断电重启，导致坑爹的一早来就要手动开机、手动启动虚拟机、手动启动后台进程，不知不觉中一上午就没有了，一次两次可以，次数多了之后难免烦躁，打算一劳永逸解决这件事情。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>解决这个问题其实就是分别解决下面几个问题：</p>
+<ul>
+<li>自动开机</li>
+<li>自动开启虚拟机</li>
+<li>自动开启进程</li>
+</ul>
+<h3 id="通电自动开机"><a href="#通电自动开机" class="headerlink" title="通电自动开机"></a>通电自动开机</h3><p>关于自动开机的原理及方式有很多，比如来电自动、鼠标键盘启动、局域网自动唤醒等等，我们这里打算用来电自动的方式。</p>
+<p>通电自动开机依赖于服务器的<strong>主板支持该功能</strong>；对于支持该功能的主板，其BIOS设置里这个功能是一般默认关闭，我们需要在 BIOS 设置里开启该功能。至于具体的设置，由于不同主板设置选项各不相同，本文暂时不做论述，大家可以自行 google 或者在各厂家的产品页面寻求帮助。</p>
+<h3 id="虚拟机自启动"><a href="#虚拟机自启动" class="headerlink" title="虚拟机自启动"></a>虚拟机自启动</h3><p>为了方便服务器的管理，一般需要在物理机上安装特定的虚拟机管理软件，比较知名的如 citrix 公司的 <a href="https://xenserver.org/" target="_blank" rel="noopener">XenServer</a>、vmware的 <a href="https://www.vmware.com/products/vsphere.html" target="_blank" rel="noopener">vSphere</a> 等。自动开启虚拟机依赖具体的虚拟机管理软件。我们使用开源的XenServer，6.0之后的版本已经支持虚拟机随server启动而启动。XenServer 以 ISO 的形式提供，包含服务端、GUI客户端 XenCenter及命令行工具 xe-cli 等。详细的下载和安装可以参考 <a href="https://xenserver.org/open-source-virtualization-download.html" target="_blank" rel="noopener">官网</a> </p>
+<p>通过命令行 xe-cli 可以设置虚拟机在物理机启动后自启动，xe-cli 在 ISO 镜像文件里，以 rpm 的形式提供。以 Centos6 环境为例，安装 xe-cli：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rpm -ivh xe-cli-7.1.0-137263c.x86_64.rpm</span><br></pre></td></tr></table></figure>
+<p>注意，这里的 xe-cli 可以安装在和服务器连接的内网机器上，可以是任意一台虚拟机系统里，其本质和 GUI 形式的客户端管理工具 XenCenter 类似，只不过是命令行形式而已。</p>
+<p>我们设置需要连接的服务器物理机 ip (例如10.1.164.37)以及登录用户密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat ~/.xe </span><br><span class="line">server=10.1.164.37</span><br><span class="line">username=root</span><br><span class="line">password=123456</span><br></pre></td></tr></table></figure>
+<p>然后设置资源池 (vm-pool) 允许自动重启，先列出所有 pool 的 uuid，然后设置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ xe pool-list</span><br><span class="line">uuid ( RO) : 8f05704a-09be-d56a-0b08-f6f2e8a10d46</span><br><span class="line">name-label ( RW): </span><br><span class="line">name-description ( RW): </span><br><span class="line">master ( RO): b33b36ba-6f9d-43e3-90c9-bb62e27193bf</span><br><span class="line">default-SR ( RW): &lt;not <span class="keyword">in</span> database&gt;</span><br><span class="line"></span><br><span class="line">$ xe pool-param-set uuid=8f05704a-09be-d56a-0b08-f6f2e8a10d46 other-config:auto_poweron=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>最后选择需要自动重启的虚拟机，然后设置为自动重启(同样使用 uuid 来设置)：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ xe vm-list</span><br><span class="line">uuid ( RO) : 2548c2b1-103d-8d6a-433d-77cbc8cabfb8</span><br><span class="line">name-label ( RW): Base</span><br><span class="line">power-state ( RO): halted</span><br><span class="line">uuid ( RO) : 756d3025-d365-8de3-6f54-755464534e84</span><br><span class="line">name-label ( RW): svr.test.164.43</span><br><span class="line">power-state ( RO): halted</span><br><span class="line">uuid ( RO) : 68d76d60-9b5b-40fe-b88f-edf0cd8906da</span><br><span class="line">name-label ( RW): Control domain on host: xenserver-fbilcznb</span><br><span class="line">power-state ( RO): running</span><br><span class="line"></span><br><span class="line">$ xe vm-param-set uuid=756d3025-d365-8de3-6f54-755464534e84 other-config:auto_poweron:<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">$ xe vm-param-set uuid=68d76d60-9b5b-40fe-b88f-edf0cd8906da other-config:auto_poweron:<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>详细可以参看 <a href="https://support.citrix.com/article/CTX133910" target="_blank" rel="noopener">这里</a></p>
+<h3 id="自动启动进程"><a href="#自动启动进程" class="headerlink" title="自动启动进程"></a>自动启动进程</h3><p>自动启动进程就比较简单了，通过 chkconfig 命令或者修改 /etc/rc.local 文件就可以在系统启动时候做任何你想做的事情了，我们在这里添加一些启动数据库和服务器进程的操作。</p>
+<h4 id="使用-chkconfig"><a href="#使用-chkconfig" class="headerlink" title="使用 chkconfig"></a>使用 chkconfig</h4><p>chkconfig 使用说明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">用法：    chkconfig [--list] [--type &lt;type&gt;] [name]</span><br><span class="line">         chkconfig --add &lt;name&gt;</span><br><span class="line">         chkconfig --del &lt;name&gt;</span><br><span class="line">         chkconfig --override &lt;name&gt;</span><br><span class="line">         chkconfig [--level &lt;levels&gt;] [--type &lt;type&gt;] &lt;name&gt; &lt;on|off|reset|resetpriorities&gt;</span><br></pre></td></tr></table></figure>
+<p>以设置 mysqld 进程自动启动为例</p>
+<p><img src="/images/chkconfig2.png" alt="mysqld 自启动"></p>
+<p>或者 </p>
+<h4 id="使用-rc-local"><a href="#使用-rc-local" class="headerlink" title="使用 rc.local"></a>使用 rc.local</h4><p>修改 <code>/etc/rc.local</code></p>
+<p>添加 </p>
+<p><code>/etc/init.d/mysqld start</code></p>
+<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>至此，我们终于一劳永逸解决这些烦人的问题了，是时候泡杯咖啡好好享受生活了。。。。</p>
+<p>参考资料</p>
+<p><a href="https://www.cnblogs.com/voiphudong/p/3934596.html" target="_blank" rel="noopener">如何设置BIOS使服务器断电后再来电能自动开机</a></p>
+<p><a href="https://support.citrix.com/article/CTX133910" target="_blank" rel="noopener">How to Setup XenServer 6.x to Auto-Start Virtual Machines</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/24/Github SSH 传输研究/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -517,17 +1771,19 @@
 <p>修改 /etc/sudoers 文件，为 user00 添加 sudo 权限，默认该文件是只读的，我们打开编辑权限</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 740 /etc/sudoers</span><br><span class="line">$ vim /etc/sudoers</span><br></pre></td></tr></table></figure>
 <p>在文件最后添加下面的内容</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user00 ALL=(ALL) ALL</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user00 ALL=(ALL) NOPASSWD: ALL</span><br></pre></td></tr></table></figure>
 <p>保存退出后改回只读状态</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
 <p>后面的操作我们就可以避免不安全的 root 账户，使用 user00 账户来操作了。</p>
 <h3 id="安装-nginx"><a href="#安装-nginx" class="headerlink" title="安装 nginx"></a>安装 nginx</h3><p>以vps 安装了 Centos 为例，直接执行命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ su - user00</span><br><span class="line">$ sudo yum install -y nginx</span><br></pre></td></tr></table></figure>
-<p>安装完成后，启动 nginx 服务</p>
+<p>安装完成后，启动 nginx 服务 (这里以centos6为例，其他系统请自行google)</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /etc/init.d/nginx start</span><br></pre></td></tr></table></figure>
-<p>浏览器打开<code>http://your-wan-ip/</code> 可以看到 nginx 已经可以使用了</p>
+<p>浏览器打开<code>http://your-wan-ip/</code> 可以看到 nginx 的欢迎页面</p>
+<p><img src="/images/image-2018121916491698111.png" alt="image-20181219164916981"></p>
 <blockquote>
 <p>your-wan-ip 填写你的 vps 外网 ip</p>
+<p>一般云主机默认的安全组会禁止所有端口访问，所以需要在安全组配置80端口的访问权限</p>
 </blockquote>
 <h3 id="自动上传"><a href="#自动上传" class="headerlink" title="自动上传"></a>自动上传</h3><p>在上文<strong>本地搭建</strong>中我们已经可以渲染出可用的博客网页文件了（通过 hexo generate 命令），下面就需要将这些博客文件上传到我们的远程环境，即云 vps 上。</p>
 <p>Hexo提供了非常方便的上传方式，支持一键自动部署，在本地运行命令</p>
@@ -565,11 +1821,11 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span></span><br><span class="line">$ mkdir -p .ssh</span><br><span class="line">$ vim .ssh/authorized_keys</span><br></pre></td></tr></table></figure>
 <p>粘贴刚刚复制的公钥内容，保存退出</p>
 <p>完成之后修改该文件权限，只允许 git 账户访问</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 600 /home/git/.ssh/authorzied_keys</span><br><span class="line">$ chmod 700 /home/git/.ssh</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 600 /home/git/.ssh/authorized_keys </span><br><span class="line">$ chmod 700 /home/git/.ssh</span><br></pre></td></tr></table></figure>
 <p>现在就可以测试是否可以通过 ssh 方式从本地环境免密码登录远程 vps 了</p>
 <p>本地环境运行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -v git@server-ip</span><br></pre></td></tr></table></figure>
-<p>这里的 server-ip 填写你 vps 的外网 ip(wanip)，运行后显示连接成功</p>
+<p>这里的 server-ip 填写你 vps 的外网 ip(wanip)，运行后显示连接成功。然后 <code>ctrl-D</code> 退出 ssh 登录，回到本地环境。</p>
 <p>接下来，我们需要新建一个 repository 目录 (例如 blog.git)来存放博客文件</p>
 <h5 id="新建-repository"><a href="#新建-repository" class="headerlink" title="新建 repository"></a>新建 repository</h5><p>在远程 vps 上，运行命令创建 git 裸库</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span></span><br><span class="line">$ mkdir -p blog.git</span><br><span class="line">$ <span class="built_in">cd</span> blog.git</span><br><span class="line">$ git init --bare</span><br></pre></td></tr></table></figure>
@@ -893,7 +2149,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -906,7 +2162,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>

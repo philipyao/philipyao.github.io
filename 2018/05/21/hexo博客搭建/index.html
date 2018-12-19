@@ -87,7 +87,8 @@
 <meta property="og:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/image-20180530193646729.png">
-<meta property="og:updated_time" content="2018-05-30T11:55:50.442Z">
+<meta property="og:image" content="http://yoursite.com/images/image-2018121916491698111.png">
+<meta property="og:updated_time" content="2018-12-19T09:05:27.926Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hexo 博客搭建">
 <meta name="twitter:description" content="Hexo 是一种快速、简单、强大的博客框架，可以很方便的用来维护个人博客；框架代码开源，使用 Node.js 编写，目前在Github 的 star 数有22000+，可以说十分受欢迎。根据官网的介绍，有下面一些特性：  可以使用 Markdown 格式编写博客源文件，支持 GitHub Flavored Markdown 扩展格式从 Markdown 源文件到静态网页的渲染速度很快，几百个文件渲">
@@ -388,17 +389,19 @@
 <p>修改 /etc/sudoers 文件，为 user00 添加 sudo 权限，默认该文件是只读的，我们打开编辑权限</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 740 /etc/sudoers</span><br><span class="line">$ vim /etc/sudoers</span><br></pre></td></tr></table></figure>
 <p>在文件最后添加下面的内容</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user00 ALL=(ALL) ALL</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user00 ALL=(ALL) NOPASSWD: ALL</span><br></pre></td></tr></table></figure>
 <p>保存退出后改回只读状态</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
 <p>后面的操作我们就可以避免不安全的 root 账户，使用 user00 账户来操作了。</p>
 <h3 id="安装-nginx"><a href="#安装-nginx" class="headerlink" title="安装 nginx"></a>安装 nginx</h3><p>以vps 安装了 Centos 为例，直接执行命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ su - user00</span><br><span class="line">$ sudo yum install -y nginx</span><br></pre></td></tr></table></figure>
-<p>安装完成后，启动 nginx 服务</p>
+<p>安装完成后，启动 nginx 服务 (这里以centos6为例，其他系统请自行google)</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /etc/init.d/nginx start</span><br></pre></td></tr></table></figure>
-<p>浏览器打开<code>http://your-wan-ip/</code> 可以看到 nginx 已经可以使用了</p>
+<p>浏览器打开<code>http://your-wan-ip/</code> 可以看到 nginx 的欢迎页面</p>
+<p><img src="/images/image-2018121916491698111.png" alt="image-20181219164916981"></p>
 <blockquote>
 <p>your-wan-ip 填写你的 vps 外网 ip</p>
+<p>一般云主机默认的安全组会禁止所有端口访问，所以需要在安全组配置80端口的访问权限</p>
 </blockquote>
 <h3 id="自动上传"><a href="#自动上传" class="headerlink" title="自动上传"></a>自动上传</h3><p>在上文<strong>本地搭建</strong>中我们已经可以渲染出可用的博客网页文件了（通过 hexo generate 命令），下面就需要将这些博客文件上传到我们的远程环境，即云 vps 上。</p>
 <p>Hexo提供了非常方便的上传方式，支持一键自动部署，在本地运行命令</p>
@@ -436,11 +439,11 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span></span><br><span class="line">$ mkdir -p .ssh</span><br><span class="line">$ vim .ssh/authorized_keys</span><br></pre></td></tr></table></figure>
 <p>粘贴刚刚复制的公钥内容，保存退出</p>
 <p>完成之后修改该文件权限，只允许 git 账户访问</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 600 /home/git/.ssh/authorzied_keys</span><br><span class="line">$ chmod 700 /home/git/.ssh</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 600 /home/git/.ssh/authorized_keys </span><br><span class="line">$ chmod 700 /home/git/.ssh</span><br></pre></td></tr></table></figure>
 <p>现在就可以测试是否可以通过 ssh 方式从本地环境免密码登录远程 vps 了</p>
 <p>本地环境运行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -v git@server-ip</span><br></pre></td></tr></table></figure>
-<p>这里的 server-ip 填写你 vps 的外网 ip(wanip)，运行后显示连接成功</p>
+<p>这里的 server-ip 填写你 vps 的外网 ip(wanip)，运行后显示连接成功。然后 <code>ctrl-D</code> 退出 ssh 登录，回到本地环境。</p>
 <p>接下来，我们需要新建一个 repository 目录 (例如 blog.git)来存放博客文件</p>
 <h5 id="新建-repository"><a href="#新建-repository" class="headerlink" title="新建 repository"></a>新建 repository</h5><p>在远程 vps 上，运行命令创建 git 裸库</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span></span><br><span class="line">$ mkdir -p blog.git</span><br><span class="line">$ <span class="built_in">cd</span> blog.git</span><br><span class="line">$ git init --bare</span><br></pre></td></tr></table></figure>
@@ -616,7 +619,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -629,7 +632,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>

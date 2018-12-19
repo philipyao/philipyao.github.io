@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="PHILIP x BLOG">
 <meta property="og:description" content="本文主要是 &amp;lt;深入浅出 MySQL&amp;gt; 一书中对于 MySQL 优化相关内容的读书笔记，另外参考了一些其他资料得出的总结性内容。 引擎选择查看本 MySQL server 支持的引擎 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-29T07:30:05.631Z">
+<meta property="og:updated_time" content="2018-11-11T13:52:49.672Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="&lt;深入浅出MySQL&gt;笔记之优化">
 <meta name="twitter:description" content="本文主要是 &amp;lt;深入浅出 MySQL&amp;gt; 一书中对于 MySQL 优化相关内容的读书笔记，另外参考了一些其他资料得出的总结性内容。 引擎选择查看本 MySQL server 支持的引擎 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556">
@@ -328,7 +328,7 @@
 <p>开启后测试一下是否起效</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT SLEEP(2);</span><br></pre></td></tr></table></figure>
 <p>此时到 mysql 数据目录，我这里是 /data/mysql，查看 mysqld-slow.log</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sudo cat mysqld-slow.log </span><br><span class="line">/usr/libexec/mysqld, Version: 5.1.73-log (Source distribution). started with:</span><br><span class="line">Tcp port: 0  Unix socket: /data/mysql/mysql.sock</span><br><span class="line">Time                 Id Command    Argument</span><br><span class="line"><span class="comment"># Time: 180913 10:28:34</span></span><br><span class="line"><span class="comment"># User@Host: ltzz[ltzz] @  [172.31.0.22]</span></span><br><span class="line"><span class="comment"># Query_time: 2.000476  Lock_time: 0.000000 Rows_sent: 1  Rows_examined: 0</span></span><br><span class="line">SET timestamp=1536805714;</span><br><span class="line">SELECT SLEEP(2);</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ sudo cat mysqld-slow.log </span><br><span class="line">/usr/libexec/mysqld, Version: 5.1.73-log (Source distribution). started with:</span><br><span class="line">Tcp port: 0  Unix socket: /data/mysql/mysql.sock</span><br><span class="line">Time                 Id Command    Argument</span><br><span class="line"><span class="comment"># Time: 180913 10:28:34</span></span><br><span class="line"><span class="comment"># Query_time: 2.000476  Lock_time: 0.000000 Rows_sent: 1  Rows_examined: 0</span></span><br><span class="line">SET timestamp=1536805714;</span><br><span class="line">SELECT SLEEP(2);</span><br></pre></td></tr></table></figure>
 <p>可见，慢查询的 SQL 语句以及执行情况已经被记录下来。可以利用 explain 来具体分析慢查询语句的问题所在。</p>
 <h5 id="Explain慢查询"><a href="#Explain慢查询" class="headerlink" title="Explain慢查询"></a>Explain慢查询</h5><p>下面是一个典型的慢查询的语句 Expain 分析结果</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">*************************** 1. row *************************** </span><br><span class="line">id: 1</span><br><span class="line">select_type: SIMPLE </span><br><span class="line">table: a</span><br><span class="line">type: ALL </span><br><span class="line">possible_keys: NULL </span><br><span class="line">key: NULL </span><br><span class="line">key_len: NULL </span><br><span class="line">ref: NULL </span><br><span class="line">rows: 1000</span><br><span class="line">Extra: Using where</span><br></pre></td></tr></table></figure>
@@ -518,7 +518,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -531,7 +531,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
