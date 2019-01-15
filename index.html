@@ -229,6 +229,479 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/30/Go研究之内存管理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/30/Go研究之内存管理/" itemprop="url">Go研究之内存管理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-30T22:05:15+08:00">
+                2018-12-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/12/30/Go研究之内存管理/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/12/30/Go研究之内存管理/" class="cy_cmt_count" data-xid="2018/12/30/Go研究之内存管理/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>参考资料</p>
+<p><a href="https://povilasv.me/go-memory-management/" target="_blank" rel="noopener">Go Memory Management</a></p>
+<p><a href="https://andrestc.com/post/go-memory-allocation-pt1/" target="_blank" rel="noopener">Go’s Memory Allocator - Overview</a></p>
+<p><a href="https://juejin.im/post/5c137f35f265da616f6fda3a" target="_blank" rel="noopener">技术分享：内存管理</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/21/818虚拟内存/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/21/818虚拟内存/" itemprop="url">818虚拟内存</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-21T10:16:58+08:00">
+                2018-12-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/12/21/818虚拟内存/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/12/21/818虚拟内存/" class="cy_cmt_count" data-xid="2018/12/21/818虚拟内存/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>说明：本文大部分内容参考了 &lt;深入理解计算机系统&gt; 一书中关于虚拟内存的讲解，综合了自己的一些理解及其他资料，可以认为是一篇读书笔记。</p>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>现代处理器为了更加有效的管理物理内存并减少出错，提出了 “虚拟内存” 的概念，英文是 Virual Memory (VM)。虚拟内存是对内存空间的一种抽象表示，为每个进程提供一个大的、一致的和私有的地址表示。它有以下特性：</p>
+<ul>
+<li>将物理内存看成一个存储在磁盘上的地址空间的高速缓存，该缓存只保存进程内的活动区域，并根据需要在磁盘和内存之间来回交换数据。</li>
+<li>每个进程有自己私有的独立的虚拟内存空间，对内存的操作都是通过虚拟内存间接进行的，保证了每个进程的内存不被其他进程破坏。</li>
+<li>虚拟内存空间和物理内存空间有特有的映射关系，访问内存时，会将虚拟地址翻译为物理地址。</li>
+</ul>
+<h2 id="虚拟内存的工作机制"><a href="#虚拟内存的工作机制" class="headerlink" title="虚拟内存的工作机制"></a>虚拟内存的工作机制</h2><h3 id="物理寻址和虚拟寻址"><a href="#物理寻址和虚拟寻址" class="headerlink" title="物理寻址和虚拟寻址"></a>物理寻址和虚拟寻址</h3><p>计算机的内存被组织成一个由 M 个连续的字节大小的单元组成的数组，每个字节都有唯一的物理地址 (Physical Address, PA)。早期的 CPU 在寻址时采用直接访问物理地址的方式，称为物理寻址。现代CPU都普遍采用一种称为虚拟寻址的方式来寻址，如下图所示：</p>
+<p><img src="/images/image-20181221175910154.png" alt="image-20181221175910154"></p>
+<p>使用虚拟寻址，CPU 通过虚拟地址 (Virtual Address, VA) 来访问内存，这个虚拟地址在被送到内存之前先转换成物理地址，这个转换过程是通过 CPU 芯片上的内存管理单元 (Memory Management Unit, MMU) 来完成的。</p>
+<h3 id="地址空间与虚拟内存状态"><a href="#地址空间与虚拟内存状态" class="headerlink" title="地址空间与虚拟内存状态"></a>地址空间与虚拟内存状态</h3><h5 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h5><p>不管是物理内存还是虚拟内存，都是有大小限制的，也因此对应了一段特定大小的地址空间。</p>
+<p>现代系统通常支持 32 位 或 64 位 地址空间，也就是可以表示的最大地址为 <code>1 &lt;&lt; 32 (即4G)</code> 或者 <code>1 &lt;&lt; 64</code> 。 对于 64 位的情况，目前实际可支持的空间还没有这么大。例如 <code>Intel Core i7</code> 处理器，支持 48 位 (256T) 虚拟地址空间和 52 位 (4PB) 物理地址空间，还有一个兼容模式，支持 32 位 (4GB) 的虚拟和物理地址空间。</p>
+<h5 id="页面-Page"><a href="#页面-Page" class="headerlink" title="页面 Page"></a>页面 Page</h5><p>概念上，虚拟内存被组织为一个由存放在磁盘上的 N 个连续字节组成的数组。每个字节都有一个唯一的地址，作为数组的索引。但实际工作时，并不是直接通过这个索引来定位内存。VM 系统通过将虚拟内存分割为虚拟页 (Virtual Page, VP) ，这是一种大小固定的内存块，在 X86 上，这个页的大小通常为 4K 个字节；类似的，物理内存也被同样大小的物理页 (Physical Page, PP)。在定位一个具体的内存地址时，是通过页号加页内偏移量来进行的。如果是一个 4G 大小的内存，就可能被分为 <code>4G / 4K = 1024</code> 个页面。</p>
+<h5 id="虚拟页状态"><a href="#虚拟页状态" class="headerlink" title="虚拟页状态"></a>虚拟页状态</h5><p>任意时刻，虚拟内存的页面 (VP, Virtual Page) 都是下面三种状态中的一种</p>
+<ul>
+<li>还未被分配</li>
+<li>已分配，缓存在物理内存中</li>
+<li>已分配，未缓存，在磁盘中</li>
+</ul>
+<p>虚拟内存在生成时，默认就是未分配的状态；当程序运行时第一次访问到该地址时，才会去实际分配内存。分配时，如果物理内存足够，则直接将地址内容缓存在物理内存中；而当物理内存不足时，则需要将物理内存中暂时不用的部分给交换出去，写在磁盘上。空出来的部分就可以被分配了。如果要访问的虚拟内存页面已经被分配，但是未缓存在物理内存上，则同样会触发内存和磁盘之间的交换，将暂时不同的内容换出到磁盘，而将要访问的内容从磁盘上换入到物理内存中。</p>
+<p>下图是一个这三种状态的简单展示</p>
+<p><img src="/images/image-20181221180023209.png" alt="image-20181221180023209"></p>
+<h5 id="页表"><a href="#页表" class="headerlink" title="页表"></a>页表</h5><p>同任何缓存系统一样，虚拟内存系统必须有某种方法来判定一个虚拟页是否缓存在物理内存的某个地方。如果是，系统还必须确定这个虚拟页存放在物理内存的哪个物理页中。如果不命中，系统必须判断这个虚拟页存放在磁盘的哪个位置，在物理内存中选择一个暂时不用的页，并将虚拟页的内容从磁盘复制到物理内存中，替换掉该暂时不用的页。</p>
+<p>这些功能是由软硬件联合提供的，包括系统内核、CPU芯片中MMU中的地址翻译硬件和一个存放在物理内存中叫做页表 (Page Table) 的数据结构，页表将虚拟页映射到物理页。每次地址翻译硬件需要将虚拟地址转换为物理地址时，都会读取页表。系统内核负责维护页表的内容，以及在磁盘和物理内存之间交换页。下图展示了一个页表的基本组织结构：</p>
+<p><img src="/images/image-20181221180104513.png" alt="image-20181221180104513"></p>
+<p>页表是由一个个页表条目 (Page Table Entry, PTE) 组成的数组。虚拟地址空间中的每个页通过一定的换算规则，在页表中一个固定偏移量处都对应一个 PTE。可以假设 PTE 由一个有效位和一个 n 位的地址字段组成。有效位表明了该虚拟页当前是否被缓存在物理内存中。如果设置了有效位，那地址字段就表示物理内存中相应物理页的起始位置，这个物理页中缓存了该虚拟页。如果未设置有效位，那么一个空地址表示虚拟页还未分配。否则对于非空地址，地址字段就指向虚拟页在磁盘上的起始位置。</p>
+<h5 id="寻址情形"><a href="#寻址情形" class="headerlink" title="寻址情形"></a>寻址情形</h5><p>下面根据上文提到的页表，我们来分析一下寻址时涉及的几种情形。</p>
+<h6 id="页分配"><a href="#页分配" class="headerlink" title="页分配"></a>页分配</h6><p>虚拟内存页的分配过程，是在磁盘上创建空间并且更新页表中的对应 PTE 条目。下图中 VP5 的分配就是创建磁盘空间后将 PTE5 的地址指向该空间地址。注意，这里并不立即在物理内存里缓存该页，而是等分配好的页被实际访问时才会实际分配物理内存。</p>
+<p><img src="/images/image-20181222195635912.png" alt="image-20181222195635912"></p>
+<h6 id="页命中"><a href="#页命中" class="headerlink" title="页命中"></a>页命中</h6><p>当 CPU 需要访问一个虚拟地址时，地址翻译硬件会将根据虚拟地址计算出一个索引，根据索引定位到页表上的某个 PTE。页命中就是指该 PTE 的有效位为1，表示要访问的内容已经缓存在物理内存中了，因此直接命中。根据 PTE 中地址字段中保存的物理内存的位置，直接去物理内存中找到内容。</p>
+<p>例如下图中，根据虚拟地址定位出 PTE 在 PTE2 的位置，其地址字段保存的内容指向了物理内存的 PP1，直接命中。</p>
+<p><img src="/images/image-20181222200529760.png" alt="image-20181222200529760"></p>
+<h6 id="缺页"><a href="#缺页" class="headerlink" title="缺页"></a>缺页</h6><p>缺页 (Page Fault) 简单说就是未命中。当 CPU 需要访问一个虚拟地址时，地址翻译硬件会将根据虚拟地址计算出一个索引，根据索引定位到页表上的某个 PTE。缺页就是指该 PTE 的有效位为0，表示未缓存在物理内存中，此时 PTE 中地址字段中保存的是虚拟页对应的磁盘位置。缺页时会触发一个缺页异常，缺页异常会调用内核中的缺页异常处理程序，该程序会在物理内存中选择一个暂时不用的页，准备将其交换出去。如果该页已经被修改多，则会被复制到磁盘。该选中的页会被待访问的磁盘页覆盖，从而实现了换入换出。</p>
+<p>下图描述了缺页的大致处理流程图。页表由内核维护在内存中。</p>
+<p><img src="/images/image-20181223135120553.png" alt="image-20181223135120553"></p>
+<p>下图的例子中，由于 PTE3 对应的是磁盘中 VP3 地址，而此时物理内存不足，我们选择将 PP3 中的 VP4 换出，而将 VP3 存入其中，并更新 PTE3，最后返回给 CPU。</p>
+<p><img src="/images/image-20181222202459967.png" alt="image-20181222202459967"></p>
+<h5 id="交换区"><a href="#交换区" class="headerlink" title="交换区"></a>交换区</h5><p>前面我们说了，一个进程的虚拟空间的页面，可能缓存在物理内存中，也可能被换出到磁盘中。这部分磁盘空间就称为交换分区。在 Linux 上安装系统时往往需要指定 swap 分区，就是交换区，Windows 上也有类似概念，不过不用手动指定。</p>
+<h5 id="TLB"><a href="#TLB" class="headerlink" title="TLB"></a>TLB</h5><p>每次 CPU 访问虚拟地址，MMU就必须去内存中的页表查询一个 PTE，以便将虚拟地址翻译为物理地址。查询一次内存的开销是几十到几百个 CPU 周期。为了消除这样的开销，在 MMU 中设计了一个关于 PTE 的小的缓存，称为<strong>翻译后备缓冲器</strong> (Translation Lookaside Buffer, TLB)。TLB 中的每一行都保存着一个由单个 PTE 组成的块。</p>
+<h2 id="CPU寻址流程"><a href="#CPU寻址流程" class="headerlink" title="CPU寻址流程"></a>CPU寻址流程</h2><p>CPU 寻址的大致的流程如下：</p>
+<ul>
+<li>CPU 拿到虚拟地址后，将其传给 MMU </li>
+<li>MMU 查询自己维护的 TLB 缓存，看能否直接找到对应的 PTE。如果找到，则直接获取到物理地址并将其发送到内存，内存将数据返回给 CPU 从而完成寻址流程</li>
+<li>TLB 未命中时，则会去查询内存中页表，找到 PTE。(注意，在查询页表前，也可能会去查询内存的高速缓存)。一般都会使用具有层次结构的多级页表，以节省页表空间大小。</li>
+<li>根据 PTE 中的有效位字段，如果为 1，则页命中，根据 PTE 地址字段中的物理地址信息构造出物理地址，然后将其发送到内存，内存将数据返回给 CPU 完成寻址流程</li>
+<li>如果 PTE 中表明未缓存，即缺页，则触发缺页异常，磁盘页和物理内存页进行交换。完成后更新 PTE 中的内容，并继续访问内存，获取数据之后完成 CPU 寻址</li>
+</ul>
+<p><img src="/images/image-20181223153246985.png" alt="image-20181223153246985"></p>
+<h3 id="TLB-查询"><a href="#TLB-查询" class="headerlink" title="TLB 查询"></a>TLB 查询</h3><p>下图是 TLB 查询的过程。</p>
+<p><img src="/images/image-20181223150834055.png" alt="image-20181223150834055"></p>
+<p>上图可见，查询 TLB 是通过虚拟地址的高位部分：虚拟页 VPN 来进行的。查询时，VPN 被分解为 TLB 标记和 TBL 索引。</p>
+<p><img src="/images/image-20181223151736508.png" alt="image-20181223151736508"></p>
+<h3 id="地址翻译"><a href="#地址翻译" class="headerlink" title="地址翻译"></a>地址翻译</h3><p>CPU 寻址时，在 MMU 中的 TLB 未命中的情况下，需要根据页表找到物理地址，这个过程称为地址翻译。一个虚拟地址，分为虚拟页号 (VPN) 和 虚拟页偏移量 (VPO) 。类似的，物理地址也可以分为物理页号 (PPN) 和 物理页偏移量 (PPO)。由于虚拟页和物理页大小一般是一致的 (Linux 中是 4K)，因此在做地址翻译时，可以保持偏移量不变，只翻译页号。VPN 作为页表索引找到页表中的 PTE，如果命中，PTE 中的地址字段就是物理页号 PPN。最终的物理地址就是由 PPN 和偏移量组合而成。</p>
+<p>下面的图很形象的表示了这个过程：</p>
+<p><img src="/images/image-20181222205519279.png" alt="image-20181222205519279"></p>
+<p>对于多级页表，VPN 实际是被拆分成多个，以对应多级页表项。情况如下：</p>
+<p><img src="/images/image-20181223150037292.png" alt="image-20181223150037292"></p>
+<p>下面是 <code>Intel Core i7</code> CPU 的寻址示意图：</p>
+<p><img src="/images/259AC393-20C2-41C0-8A27-0E2910A3503E.png" alt="259AC393-20C2-41C0-8A27-0E2910A3503E"></p>
+<h2 id="多进程内存管理"><a href="#多进程内存管理" class="headerlink" title="多进程内存管理"></a>多进程内存管理</h2><p>虚拟内存的设计，给了内存管理极大的灵活性和便利性。由于每个进程都有自己独立的虚拟地址和页表映射，这保证了各进程之间内存的独立，也有利于多进程之间的内存共享和保护。</p>
+<h3 id="内存隔离与共享"><a href="#内存隔离与共享" class="headerlink" title="内存隔离与共享"></a>内存隔离与共享</h3><p>每个进程都有自己独立的虚拟内存，和自己的页表(由系统内核代码维护)，也就是每个进程都有自己的虚拟内存空间，这保证了各进程之间的寻址互不影响。由系统维护的寻址过程能杜绝各进程之间内存的非法访问。如果进程之间想共享内存，也是可以利用进程共享机制来实现（例如 Linux 的 mmap 系统调用）。下图中进程 i 和进程 j 就共享了同一物理页面 <code>PP7</code>，而虚拟页面不同：进程 i 的<code>VP2</code> 和进程 j 的 <code>VP1</code>。</p>
+<p><img src="/images/image-20181221162312505.png" alt="image-20181221162312505"></p>
+<p>独立的地址空间允许每个进程的内存映像使用相同的基本格式，而不用管代码和数据实际存放在物理内存的何处。</p>
+<ul>
+<li><p>相同的内存排布。 对于 64 位地址空间的 Linux 进程，虚拟地址总是从 0x400000 开始，分成多个段来存放不同部分，且增长方向一样。这样的一致性，极大简化了链接器的设计和实现，允许链接器生成完全链接的可执行文件，这些可执行文件独立于物理内存中代码和数据的最终位置。</p>
+</li>
+<li><p>程序的加载。对于程序的加载，使用虚拟内存也很方便。可执行文件中的 <code>.text</code> 代码段和 <code>.data</code> 数据段，在被 load 进进程内存时，会被分配虚拟内存页，然后在页表中把他们标记为 <strong>已分配未缓存</strong> 状态，页表中的地址则指向可执行文件中的磁盘位置。只有当程序实际运行时，对应的虚拟地址被访问，才触发缺页，执行换入换出，将实际内容页面从磁盘加载到内存中并引用。</p>
+</li>
+<li>物理内存共享。进程之间经常要共享代码和数据，这能显著节约内存使用。例如，进程需要调用相同的操作系统内核代码，调用相同的库函数 (例如 C 库函数 printf )，我们不用每个进程都维护一份副本，共享就可以了。</li>
+<li>简化内存分配。如果进程需要分配一段连续的内存，可能包含了 N 个虚拟页，由于虚拟内存的映射是各个页分别映射的，所以分配出来的物理内存就可以不是连续的，因此分配操作起来更灵活，这可以显著提高物理内存利用率和分配效率。</li>
+</ul>
+<h3 id="内存保护"><a href="#内存保护" class="headerlink" title="内存保护"></a>内存保护</h3><p>利用页表中的控制选项，可以控制对特定内存的保护，杜绝非法访问。哪些访问属于非法访问呢？例如程序不能修改只读的代码指令，否则问题就大了；此外，用户进程也不能直接读或者修改内核段的代码和数据，用户空间对内核空间的操作唯一的入口应该是系统调用。</p>
+<p><img src="/images/image-20181221162414432.png" alt="image-20181221162414432"></p>
+<h2 id="Linux的虚拟内存"><a href="#Linux的虚拟内存" class="headerlink" title="Linux的虚拟内存"></a>Linux的虚拟内存</h2><h3 id="进程内存排布"><a href="#进程内存排布" class="headerlink" title="进程内存排布"></a>进程内存排布</h3><p>基本所有使用虚拟内存的系统，会为每个进程维护了一个单独的虚拟地址空间。整个空间大致分为了内核地址空间和用户地址空间。</p>
+<p>下图是 Linux 和 Windows 平台的空间划分示意：</p>
+<p><img src="/images/image-20181226212413439.png" alt="image-20181226212413439"></p>
+<p>简单起见，我们主要介绍 Linux的虚拟内存。</p>
+<p>内核虚拟内存包含内核中的代码和数据结构。内核虚拟内存中的某些区域被映射到所有共享进程的物理页面。内核虚拟内存的其他区域包含每个进程都不相同的数据。比如说，页表、内核在进程的上下文中执行代码时使用的栈，以及记录虚拟地址空间当前组织的各种数据结构。</p>
+<p>用户地址空间被组织成一些区域 (也叫做段) 的集合。例如，代码段、数据段、堆、共享库段以及用户栈。</p>
+<p><img src="/images/image-20181221163637036.png" alt="image-20181221163637036"></p>
+<p>下图记录了一个进程中虚拟内存区域的内核数据结构。内核为系统中的每个进程维护一个单独的结构 (task_struct)   。</p>
+<p><img src="/images/image-20181223160605710.png" alt="image-20181223160605710"></p>
+<p>一个段的结构就如下：</p>
+<ul>
+<li><p>vm_start: 指向这个段的起始处</p>
+</li>
+<li><p>vm_end: 指向这个段的结束处</p>
+</li>
+<li><p>vm_prot: 描述这个段内包含的所有页的读写许可权限</p>
+</li>
+<li><p>vm_flags: 描述这个段内的页面是与其他进程共享的，还是这个进程私有的</p>
+</li>
+<li><p>vm_next: 指向链表中下一个段结构</p>
+</li>
+</ul>
+<h3 id="Linux-缺页异常处理"><a href="#Linux-缺页异常处理" class="headerlink" title="Linux 缺页异常处理"></a>Linux 缺页异常处理</h3><p>前面我们讲过，页表中发生缺页时，会触发缺页异常，调用系统内核的异常调度程序来处理。那 Linux 的缺页是如何调度的呢？</p>
+<p>1）首先，检查虚拟地址是否合法？是落入某个段的区域中吗？为了回答这个问题，缺页处理程序依次搜索段结构的链表，检查其 vm_start 和 vm_end。如果地址非法，则触发段错误，并终止程序。</p>
+<p>2）其次，试图进行的内存访问是否合法？即进程是否有读、写或者执行这个段内页面的权限？例如，试图对代码段中的只读页面进行写操作？或者是用户进程的代码试图访问内核空间的代码或数据？如果是，则触发异常，并终止程序。</p>
+<p>3）如果是正常缺页，则选择一个牺牲页，如果这个牺牲页面被修改过，那么就将它交换出去，换入新的页面并更新页表。</p>
+<p><img src="/images/image-20181223162633760.png" alt="image-20181223162633760"></p>
+<h2 id="虚拟内存使用"><a href="#虚拟内存使用" class="headerlink" title="虚拟内存使用"></a>虚拟内存使用</h2><h3 id="内存映射"><a href="#内存映射" class="headerlink" title="内存映射"></a>内存映射</h3><p>内核将虚拟内存和一个磁盘上的对象关联起来，以初始化这个虚拟内存的内容，这个过程称为内存映射 (<code>memory mapping</code>)。文件的内容直接映射到内存中，操作内存相当于直接直接操作文件。映射时文件被分成页大小的片，每一片包含一个虚拟页的初始内容。由于按需页面调度的策略，这些虚拟页面没有实际交换进入物理内存，直到CPU开始访问这些虚拟地址时才触发缺页，从而将页面内容从磁盘文件中换入物理内存。</p>
+<p>被映射的文件可以是</p>
+<ul>
+<li><p>磁盘普通文件。程序可执行文件就是一个典型例子。程序开始执行时，系统会将可执行文件的 <code>.text</code> 和 <code>.data</code> 部分直接映射到进程虚拟内存的 <code>Text</code> 段和 <code>Data</code> 段；程序链接的动态链接库，如常用的标准 C 库 <code>libc.so</code> 在加载时是映射到进程的虚拟内存内，由于动态链接库没有必要每个进程都维护一份私有的，所以会将其映射到共享区域内；</p>
+</li>
+<li><p>匿名文件。匿名文件是由内核创建，全部设置为二进制零，然后映射到虚拟内存中。进程的 <code>BSS</code> 段、堆、栈段就是映射到匿名文件的；</p>
+</li>
+</ul>
+<p>下面是上述各种映射的示意图：</p>
+<p><img src="/images/image-20181227171515705.png" alt="image-20181227171515705"></p>
+<p>除了以上的系统的自动映射，用户程序还可以调用系统 API 来进行手动的内存映射。例如，Linux 上的 <code>mmap()</code> 系统调用，Windows 上的API <code>CreateFileMapping()/MapViewOfFile()</code> 都可以操作映射文件。类似的，可以指定映射的是普通文件还是匿名文件。如果是普通文件，就相当于通过内存来读写文件，效率很高；如果是匿名文件，相当于申请一块全部清零的内存空间。C 语言的库函数 malloc 在申请内存的时候通常会在堆区分配，当申请的内存较大 (缺省的大于128K) 时，会转而使用 <code>mmap</code> 在内存映射区分配内存。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Linux</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">mmap</span><span class="params">(<span class="keyword">void</span> *addr, <span class="keyword">size_t</span> length, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags,</span></span></span><br><span class="line"><span class="function"><span class="params">           <span class="keyword">int</span> fd, <span class="keyword">off_t</span> offset)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Windows</span></span><br><span class="line"><span class="function">HANDLE <span class="title">CreateFileMappingA</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  HANDLE                hFile,</span></span></span><br><span class="line"><span class="function"><span class="params">  LPSECURITY_ATTRIBUTES lpFileMappingAttributes,</span></span></span><br><span class="line"><span class="function"><span class="params">  DWORD                 flProtect,</span></span></span><br><span class="line"><span class="function"><span class="params">  DWORD                 dwMaximumSizeHigh,</span></span></span><br><span class="line"><span class="function"><span class="params">  DWORD                 dwMaximumSizeLow,</span></span></span><br><span class="line"><span class="function"><span class="params">  LPCSTR                lpName</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br><span class="line"><span class="function">HANDLE <span class="title">OpenFileMappingA</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  DWORD  dwDesiredAccess,</span></span></span><br><span class="line"><span class="function"><span class="params">  BOOL   bInheritHandle,</span></span></span><br><span class="line"><span class="function"><span class="params">  LPCSTR lpName</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>内存映射根据文件可以分为匿名和非匿名的；而根据映射方式，又可以分为私有映射和共享映射。上面系统自动映射时，我们也说了，动态链接库是通过共享方式映射的，其他都是各进程的私有映射。Linux 上使用 <code>mmap</code> 时，可以设置 flags 参数为 <code>MAP_SHARED</code> 或 <code>MAP_PRIVATE</code> 来指定映射是私有的还是共享的；在 Windows 上 <code>CreateFileMappingA</code> 可以创建映射，而 <code>OpenFileMappingA</code> 则根据映射的名字来实现共享。</p>
+<p>如果一个进程将一个共享对象映射到它的虚拟地址空间的一个区域内，那么这个进程对这个区域的任何写操作，对于那些也把这个共享对象映射到它们虚拟内存的其他进程而言，也是可见的。相对的，对一个映射到私有对象的区域的任何写操作，对于其他进程来说是不可见的。一个映射到共享对象的虚拟内存区域叫做共享区域，类似地，也有私有区域。</p>
+<p>下图显示了进程间共享内存映射一个文件的情况</p>
+<p><img src="/images/image-20181228104507208.png" alt="image-20181228104507208"></p>
+<p>如果对于一个文件，有多个进程映射，且是私有的，在 Linux 上通常会使用一种称为写时复制 (<code>Copy-On-Write, COW</code>) 的技术来实现（这是一种未写时共享，有写时才分开的懒拷贝模式）。为了节约内存，私有对象开始的生命周期与共享对象基本上是一致的（在物理内存中只保存私有对象的一份副本），并使用写时复制的技术来应对多个进程的写冲突。如下图所示</p>
+<p><img src="/images/image-20181229100438749.png" alt="image-20181229100438749"></p>
+<p>还有一个典型的例子就是<code>fork()</code>函数，该函数用于创建子进程。当<code>fork()</code>函数被当前进程调用时，内核会为新进程创建各种必要的数据结构，并分配给它一个唯一的PID。为了给新进程创建虚拟内存，它复制了当前进程的<code>mm_struct</code>、<code>vm_area_struct</code>和页表的原样副本。并将两个进程的每个页面都标为只读，两个进程中的每个区域都标记为私有区域（写时复制）。这样，父进程和子进程的虚拟内存空间完全一致，只有当这两个进程中的任一个进行写操作时，再使用写时复制来保证每个进程的虚拟地址空间私有的抽象概念。</p>
+<p>此外，Linux 平台的 <code>glibc</code> 库在实现线程时，会使用 <code>mmap</code> (设置参数 flags 为 <code>MAP_STACK</code>) 匿名映射来创建线程栈，从而实现线程栈的独立。</p>
+<h3 id="内存分配类型"><a href="#内存分配类型" class="headerlink" title="内存分配类型"></a>内存分配类型</h3><p>从程序角度看，我们的内存分配分为以下几种</p>
+<ul>
+<li>静态分配。是指程序中的全局变量和静态变量。这种内存大小往往在编译期就可以确定，大小是固定的。内存只分配一次，就是在程序开始时，在程序结束时由系统回收。</li>
+<li>自动变量分配。这是指由栈内存管理的变量，程序运行时自动分配和释放。</li>
+<li>动态内存分配。指程序运行时动态分配的内存，主要在堆上。一些程序如 C/C++ 中由程序员用 malloc 或者 new 显示的分配；在 Go 中，编译器通过逃逸分析，也可能在堆上维护内存变量。</li>
+</ul>
+<p>下面几小结分别讲解这些内存管理的机制。</p>
+<h3 id="栈内存管理"><a href="#栈内存管理" class="headerlink" title="栈内存管理"></a>栈内存管理</h3><p>程序开始执行，完成内存映射后，栈内存和堆内存就会使用各自独有的机制来实行管理了。我们先看栈内存的管理。</p>
+<p>栈内存如下图 (Linux 平台下) 所示，处于用户空间的一端，向下增长</p>
+<p><img src="/images/image-20181228150319032.png" alt="image-20181228150319032"></p>
+<p>栈空间主要用来存储程序运行过程中函数调用的信息。这些信息数据在分配和回收时，遵循 <code>last-in-first-out(LIFO)</code> 的后进先出方式。</p>
+<p>当一个函数被调用时，它的状态数据就被添加到栈顶；而当函数退出时，这些状态数据就又从栈上被移除。需要存入栈空间的状态数据包括：函数参数、对象实例指针(如 C++ 中的 this 指针)、返回地址、函数内局部变量。每一次的函数调用，状态数据形成的结构叫做栈帧 (<code>stack frame</code>)，多个栈帧通过 LIFO 的方式入栈出栈，就构成了栈空间管理的基本机制。</p>
+<p>这个基于栈的内存分配和回收操作通常很快，往往只需要移动栈顶指针即可，效率很高。在大部分高级语言中，栈内存的分配和回收都是透明的、自动完成的，不需要程序员参与，很多处理器的指令集提供了栈操作的特殊指令。</p>
+<blockquote>
+<p>在函数调用中，函数参数除了使用栈内存空间传输，有时候也会通过 CPU 寄存器存储。通常是在参数较少的时候。</p>
+</blockquote>
+<p>例如，<code>DrawSquare</code> 调用了 <code>DrawLine</code> , 则其可能的栈结构 (该例子是栈顶在上，向上增长) 如下：</p>
+<p><img src="/images/image-20181226111249595.png" alt="image-20181226111249595"></p>
+<p>注意栈顶可能在上，也可能在下，要看栈的增长方向 。从前面Linux进程段排布的图我们看到，Linux上栈空间是从高地址往低地址增长的，其他系统未必如此。但不管如何，当前正在执行的函数是位于栈顶的位置。</p>
+<p>如果函数调用的层次很多，即使用的栈帧很多，栈空间就会很快被消耗。栈空间大小一般是在程序执行时候就分配好，当分配的栈空间被消耗完毕后，则经典的 <strong><code>stack overflow</code></strong> 错误将出现，往往会导致程序崩溃。常见的错误就是函数的无限递归或者分配了很大的局部变量，导致栈溢出。这里提一下在 Linux 中栈大小初始值由操作系统设定(ulimit)，且有动态增长的机制，只要其大小不大于 <code>RLIMIT_STACK</code>，则空间不足时会自动增长，不会出现栈溢出的错误。但如果栈已经到达最大值 <code>RLIMIT_STACK</code>，则栈溢出就会出现。而 Windows的栈大小通常是固定的，没有动态增长的机制。其大小可以由编译器 (如 Visual Studio) 设置，并被记录在可执行文件中。</p>
+<p>栈的结构，可以用来调试程序。如 GDB 调试的时候，就可以看到程序执行的完整栈结构，打印栈帧数据等；另外，对于很多程序性能 profile 工具，往往通过定时采样程序执行的栈帧结构，从而统计程序执行的各种信息，定位哪些函数是性能热点。</p>
+<p>最后，</p>
+<ul>
+<li>程序中的每个 task 对应一个栈</li>
+<li>一个进程本身只有一个栈 (进程是一个task)，称为进程栈</li>
+<li>对于在进程中开启的线程，其栈空间和进程栈是分开的，每个线程 (也是一个task) 在创建时，线程栈通过操作系统来分配</li>
+<li>Golang 的每个协程拥有自己的栈</li>
+</ul>
+<h3 id="堆内存管理"><a href="#堆内存管理" class="headerlink" title="堆内存管理"></a>堆内存管理</h3><p>堆内存，也称为动态内存。程序需要用到动态内存分配的原因，是经常直到程序实际执行时，才知道某些数据结构的大小，不能提前分配内存。堆区域紧接在未初始化的数据段后开始，并向特定方向增长 (下图还是 Linux 系统上的情况，不代表所有)。对于每个进程，内核维护着一个变量 <strong>break</strong>，它指向堆的顶部。</p>
+<p><img src="/images/image-20181228151912039.png" alt="image-20181228151912039"></p>
+<p>那如何管理这部分的堆内存呢？很多语言维护了 <strong>动态内存分配器</strong> 来进行管理。动态分配器将堆视为一组不同大小的块 (block) 的集合来维护。每个块就是一个连续的虚拟内存片 (chunk)，要么是已分配的，要么是空闲的。最开始的时候，没有空闲块，我们的内存申请是要向内核直接申请内存 (在 Linux 上是移动<a href="http://man7.org/linux/man-pages/man2/brk.2.html" target="_blank" rel="noopener"> <code>brk</code></a> 指针，Windows 上 调用 <a href="https://docs.microsoft.com/en-us/windows/desktop/api/HeapApi/nf-heapapi-heapalloc" target="_blank" rel="noopener"><code>HeapAlloc</code></a> )。释放的时候，没有必要立即将内存归还给系统，而是作为空闲块维护起来，下次分配的时候就可以优先利用被释放的空闲块了。如下图：</p>
+<p><img src="/images/image-20181229102552027.png" alt="image-20181229102552027"></p>
+<p>维护这些分配块和空闲块的算法需要精心设计，以满足分配效率及内存利用率的最大化。在很多编程语言中，都提供了动态分配内存的方法，例如 C/C++ 中 malloc 库函数就是在堆中分配内存；Go 中 new 一个对象也可能由于逃逸分析，导致变量被分配在堆区中。</p>
+<p>常用的分配器有两种风格。这两种风格都需要应用显示的分配内存块。它们不同的地方在于由谁来负责释放已分配的块。</p>
+<ul>
+<li>显式分配器，要求应用自身显式的释放任何已分配的块。例如，C 标准库提供 malloc 来分配内存块，并通过free 来显式释放该内存块。C++ 中的 new 和 delete 也是类似。C++ 类的析构函数本质上提供了内存释放的机会 (delete 操作符触发)。智能指针也是一种自动内存管理的机制。</li>
+<li>隐式分配器，要求分配器检测不被程序继续使用的内存块，并释放这些它们。这个过程常称为 <strong>垃圾收集(Garbage Collection, GC)</strong> ，高级语言如 Java、Go、JavaScript 等拥有自己的垃圾收集机制，程序员无需自己释放申请的内存。</li>
+</ul>
+<h5 id="显式分配器的机制"><a href="#显式分配器的机制" class="headerlink" title="显式分配器的机制"></a>显式分配器的机制</h5><p>显式分配器的机制，典型的如如何实现 <code>malloc</code> 和 <code>free</code> 。我们考虑以下几点：</p>
+<ul>
+<li><p>使用堆内存</p>
+</li>
+<li><p>分配时指定内存 size，返回内存地址</p>
+</li>
+<li>显式释放时只需要指定内存地址，分配器本身需要记录该内存对应的大小</li>
+<li>分配的内存要做对齐，最大化访问效率</li>
+</ul>
+<p>一种方式是使用块维护内存。各个内存块，不管是已分配还是空闲的，一起连接起来</p>
+<p><img src="/images/image-20181228172930734.png" alt="image-20181228172930734"></p>
+<p>单个内存块的数据格式如下</p>
+<p><img src="/images/image-20181228173029000.png" alt="image-20181228173029000"></p>
+<p>这里不详细展开显示分配的具体细节 (例如类似 malloc 的实现原理)，有兴趣的可以查看 <a href="https://medium.com/@andrestc/implementing-malloc-and-free-ba7e7704a473" target="_blank" rel="noopener">Implementing malloc and free</a> 和 <a href="http://blog.codinglabs.org/articles/a-malloc-tutorial.html" target="_blank" rel="noopener">如何实现一个malloc</a></p>
+<h5 id="垃圾收集的机制"><a href="#垃圾收集的机制" class="headerlink" title="垃圾收集的机制"></a>垃圾收集的机制</h5><ul>
+<li><p>追踪。这是最常用的垃圾收集机制，主要思想是从根节点进行追踪，所有未被引用的对象就被认为是垃圾，可以进行收集。它主要研究的是引用对象的可达性。如下图的引用关系</p>
+<p><img src="/images/image-20181224115827314.png" alt="image-20181224115827314"></p>
+<p>从 root set 追踪不可达，则会被垃圾收集器认为是垃圾，可以回收。那具体的，对象的可达性是怎么样呢？主要分两种：</p>
+<ul>
+<li><p>根元素。这包括程序的所有全局变量、当前调用栈对象 (如所有栈内局部变量、当前调用的函数参数)</p>
+</li>
+<li><p>引用元素。所有根元素引用链上的对象</p>
+</li>
+</ul>
+<p>追踪的主要机制是如何维护对象之间的引用关系。对于 Java、Go 这些有标记内存变量类型的语言来说比较简单：有变量类型信息从而很简单的知道是否包含其他对象；而对于 C/C++ 语言，不会用类型信息来标记内存位置。因此，像 int、float 这类变量和对象的指针变量没有可区分的手段，很难说一个结构体的某个内存到底是引用其他结构体的指针还是一个 int/float 变量。如果 C/C++ 要设计垃圾收集器，必须保守的将所有 <strong>像指针</strong> 的内存视为可达的，尽管事实上它可能是不可达的。C/C++ 垃圾收集库的一个实现是 <a href="https://en.wikipedia.org/wiki/Boehm_garbage_collector" target="_blank" rel="noopener">Boehm GC</a></p>
+<p>比较知名的追踪算法有 标记-清扫算法、三色标记算法等。详细的这里不展开，有兴趣的可以查看 <a href="https://en.wikipedia.org/wiki/Tracing_garbage_collection" target="_blank" rel="noopener">这里</a></p>
+</li>
+</ul>
+<ul>
+<li><p>引用计数</p>
+<p>引用计数机制，简单说就是为每个变量维护一个计数，有引用时累加计数，删除引用时则减计数。如果计数归零，则可以立即回收。但是因为引用计数有一些缺点，如</p>
+<ul>
+<li>环形引用。如果有两个变量互相引用，但是和其他变量没有引用关系，则是环形引用，因为引用计数不为0，得不到回收</li>
+<li>空间和时间消耗。每个变量维护一个计数，空间消耗不小。另外，对计数的增减，对程序执行效率也有影响</li>
+<li>要保证原子性。如果涉及并发，计数的修改需要保证原子性</li>
+</ul>
+<p>这些缺点让引用计数机制逊于追踪机制，在垃圾收集实现方面没有得到广泛应用。</p>
+</li>
+</ul>
+<h3 id="Bss-段、Data-段-与-Text-段"><a href="#Bss-段、Data-段-与-Text-段" class="headerlink" title="Bss 段、Data 段 与 Text 段"></a>Bss 段、Data 段 与 Text 段</h3><p>Bss 段和 Data 都是用来存储程序的全局变量和静态变量的。不同的是，Bss 段是匿名映射的全零区域，用来存储代码中没有初始化的全局变量和静态变量 (包括文件内静态变量，函数内静态局部变量，类静态成员变量)，如 <code>static int cntActiveUsers</code>；Data 段是通过可执行文件的 <code>.data</code> 映射来的，里面存储的是已经初始化 (且非0) 的 <strong>全局变量或静态变量的值</strong>，例如 <code>static int cntWorkerBees = 10</code> 会将将静态变量的值 <code>10</code> 存储到 Data 段。需要注意，Data 段的映射是私有映射，运行时对变量的修改并不会反馈到可执行文件里，否则可执行文件都被修改了，那是不合理的。</p>
+<p>Text 段就是代码段，是从可执行文件的 <code>.text</code> 部分映射过来。除了代码指令，还存储了常量字符串。这部分内存是可读可执行的，但是不能写，因此无论是修改代码指令，还是修改常量字符串，都会导致程序 crash。</p>
+<p><code>static const char* gonzo = &quot;God&#39;s own prototype&quot;;</code> 已初始化的静态变量 <code>gonzo</code> 是个指针，存储在 Data 段，其内容是一个地址 <code>0x080484f0</code>，指向字符串的地址，而字符串在 Text 段。</p>
+<p><img src="/images/image-20181229105756277.png" alt="image-20181229105756277"></p>
+<p>参考资料</p>
+<p>&lt;深入理解计算机系统V3&gt;</p>
+<p><a href="https://en.wikipedia.org/wiki/Garbage_collection_(computer_science" target="_blank" rel="noopener">GarbageCollection WiKi</a>)</p>
+<p><a href="https://en.wikipedia.org/wiki/Call_stack" target="_blank" rel="noopener">CallStack WiKI</a></p>
+<p><a href="https://manybutfinite.com/post/anatomy-of-a-program-in-memory/" target="_blank" rel="noopener">Anatomy of a Program in Memory</a></p>
+<p><a href="https://sylvanassun.github.io/2017/10/29/2017-10-29-virtual_memory/" target="_blank" rel="noopener">虚拟内存的那点事儿</a></p>
+<p><a href="https://docs.microsoft.com/zh-cn/windows/desktop/Memory/virtual-address-space" target="_blank" rel="noopener">Windows Virtual Address Space</a></p>
+<p><a href="https://povilasv.me/go-memory-management/" target="_blank" rel="noopener">Go Memory Management</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/13/Go研究之channel/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1555,476 +2028,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/29/服务器性能优化备忘/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/29/服务器性能优化备忘/" itemprop="url">服务器性能优化备忘</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-29T15:33:15+08:00">
-                2018-09-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/09/29/服务器性能优化备忘/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/09/29/服务器性能优化备忘/" class="cy_cmt_count" data-xid="2018/09/29/服务器性能优化备忘/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近对服务器进行了一次性能优化，这里记录一下要点以供备忘。</p>
-<h2 id="Go-Profile"><a href="#Go-Profile" class="headerlink" title="Go Profile"></a>Go Profile</h2><p>golang 官方提供了一个称为 pprof 的性能调优工具。我们可以利用该工具来进行诊断。pprof 的原理是每秒钟暂停100次，然后对当前正在运行的 goroutine 堆栈进行采样并记录次数。</p>
-<h5 id="pprof-开启"><a href="#pprof-开启" class="headerlink" title="pprof 开启"></a>pprof 开启</h5><p>对于服务器，一般通过 http 方式来启用 pprof，例如</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> _ <span class="string">"net/http/pprof"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">	log.Println(http.ListenAndServe(<span class="string">"0.0.0.0:6060"</span>, <span class="literal">nil</span>))</span><br><span class="line">&#125;()</span><br></pre></td></tr></table></figure>
-<h5 id="pprof-诊断热点函数"><a href="#pprof-诊断热点函数" class="headerlink" title="pprof 诊断热点函数"></a>pprof 诊断热点函数</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go tool pprof bin/sessionsvr http://your-ip:port/debug/pprof/profile?seconds=30</span><br></pre></td></tr></table></figure>
-<p>30秒后，数据采集完成，top20 可以列出 CPU 占用最高的20项，结果如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">(pprof) top20</span><br><span class="line">6300ms of 8360ms total (75.36%)</span><br><span class="line">Dropped 236 nodes (cum &lt;= 41.80ms)</span><br><span class="line">Showing top 20 nodes out of 137 (cum &gt;= 430ms)</span><br><span class="line">      flat  flat%   sum%        cum   cum%</span><br><span class="line">    1200ms 14.35% 14.35%     3070ms 36.72%  runtime.mapassign1</span><br><span class="line">    1000ms 11.96% 26.32%     1010ms 12.08%  runtime.mapiternext</span><br><span class="line">     750ms  8.97% 35.29%      750ms  8.97%  runtime.aeshashbody</span><br><span class="line">     430ms  5.14% 40.43%      690ms  8.25%  runtime.scanobject</span><br><span class="line">     320ms  3.83% 44.26%     4980ms 59.57%  hgame/sessionsvr/logic/territory.(*territoryMap).moveSight</span><br><span class="line">     280ms  3.35% 47.61%      430ms  5.14%  runtime.evacuate</span><br><span class="line">     260ms  3.11% 50.72%      260ms  3.11%  runtime.usleep</span><br><span class="line">     250ms  2.99% 53.71%      310ms  3.71%  syscall.Syscall</span><br><span class="line">     240ms  2.87% 56.58%      240ms  2.87%  runtime.memmove</span><br><span class="line">     210ms  2.51% 59.09%      210ms  2.51%  runtime.futex</span><br><span class="line">     190ms  2.27% 61.36%      190ms  2.27%  runtime.memclr</span><br><span class="line">     180ms  2.15% 63.52%      290ms  3.47%  runtime.mapiterinit</span><br><span class="line">     180ms  2.15% 65.67%      380ms  4.55%  runtime.typedmemmove</span><br><span class="line">     160ms  1.91% 67.58%      160ms  1.91%  sync/atomic.AddUint32</span><br><span class="line">     140ms  1.67% 69.26%      140ms  1.67%  runtime.heapBitsForObject</span><br><span class="line">     140ms  1.67% 70.93%      200ms  2.39%  runtime.strequal</span><br><span class="line">     110ms  1.32% 72.25%      450ms  5.38%  runtime.mallocgc</span><br><span class="line">     110ms  1.32% 73.56%      180ms  2.15%  runtime.mapaccess2_faststr</span><br><span class="line">      90ms  1.08% 74.64%       90ms  1.08%  runtime.heapBitsSetType</span><br><span class="line">      60ms  0.72% 75.36%      430ms  5.14%  github.com/ugorji/go/codec.encFnInfo.kStruct</span><br></pre></td></tr></table></figure>
-<p>其中前两列 flat 表示该函数调用的时间和百分比，后两列 cum 表示该函数处于堆栈中的时间和百分比，包含正在被调用或者等待其他子函数返回的情况。 sum 表示前面 N 行到当前行函数累计的时间百分比。</p>
-<p>从上面的结果可以知道 cum% 为 59.57% 的 moveSight 函数长时间处于栈列表中，是正在运行或者等待该函数里面其他函数调用返回。而其很可能主要等待前面几个 map 的操作完成。</p>
-<p>运行下面的命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">(pprof) top mapassign1</span><br><span class="line">2590ms of 7720ms total (33.55%)</span><br><span class="line">Dropped 9 nodes (cum &lt;= 38.60ms)</span><br><span class="line">Showing top 10 nodes out of 42 (cum &gt;= 30ms)</span><br><span class="line">      flat  flat%   sum%        cum   cum%</span><br><span class="line">    1020ms 13.21% 13.21%     2710ms 35.10%  runtime.mapassign1</span><br><span class="line">     550ms  7.12% 20.34%      550ms  7.12%  runtime.aeshashbody</span><br><span class="line">     240ms  3.11% 23.45%      240ms  3.11%  runtime.memmove</span><br><span class="line">     240ms  3.11% 26.55%      540ms  6.99%  runtime.typedmemmove</span><br><span class="line">     210ms  2.72% 29.27%      240ms  3.11%  runtime.strequal</span><br><span class="line">     130ms  1.68% 30.96%      370ms  4.79%  runtime.evacuate</span><br><span class="line">     100ms  1.30% 32.25%      100ms  1.30%  runtime.memclr</span><br><span class="line">      40ms  0.52% 32.77%       60ms  0.78%  runtime.heapBitsBulkBarrier</span><br><span class="line">      30ms  0.39% 33.16%       30ms  0.39%  runtime.aeshash32</span><br><span class="line">      30ms  0.39% 33.55%       30ms  0.39%  runtime.aeshashstr</span><br><span class="line">      </span><br><span class="line">(pprof) svg mapassign1</span><br><span class="line">Generating report in cpu.svg</span><br></pre></td></tr></table></figure>
-<p>用浏览器打开 生成的结果 <code>cpu.svg</code> 可以看到</p>
-<p><img src="/images/image-20180930144018771.png" alt="image-20180930144018771"></p>
-<p>从图中可以证实，确实是 moveSight 导致的 map 操作占用 CPU 时间较多。</p>
-<p>利用 list 命令查看具体是那一行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(pprof) list moveSight</span><br></pre></td></tr></table></figure>
-<p>找到具体数据结构后，就可以有针对性的修改。一般来说 map 的优化主要是 key 要使用比较简单的类型，这样计算 hash 的时候也比较快。通常来说 int 类型 key 比 string 类型的 key 要快。此外由于 map 的内存增长是指数级的，新插入的时候如果发现空间不足，需要重新分配空间 hashGrow 和进行内存 typedmemmove，很耗性能，所以如果能预估 map 的大小，最好一开始就分配足够大的空间，以空间换时间。</p>
-<h2 id="机器人策略"><a href="#机器人策略" class="headerlink" title="机器人策略"></a>机器人策略</h2><h2 id="Lua-Profile"><a href="#Lua-Profile" class="headerlink" title="Lua Profile"></a>Lua Profile</h2><ul>
-<li>数据库数据的分批拉取、存储。Mysql 一次 update 多条记录会比多次 update 快。(有网络开销，获取锁开销等)</li>
-<li>配置数据的加载，预处理。</li>
-<li>map 或者 slice 预分配空间大小，减少频繁扩容及数据拷贝代价。</li>
-<li>注意共享资源锁的粒度。</li>
-<li>数据更新量。大且频繁的数据使用版本号做增量通知。</li>
-<li>算法优化：KDtree 查找距离最近，KNN 算法；模糊查找算法。</li>
-<li>广播裁剪</li>
-<li>包大小优化，序列化方法，压缩</li>
-<li>登录模块，预分配 user 池</li>
-<li>增加 metrics 统计项，及早发现问题</li>
-<li>snap 快照对比，找出 lua 内存泄露</li>
-<li>lua 有性能问题的地方改用 c 或者 go 实现（加解密、time、socket、json 等序列化、随机数发生器、位操作）</li>
-<li>gettimeofday</li>
-<li>避免密集操作，如避免定点发放物品，分批发放</li>
-<li>利用 goroutine 多核并行执行</li>
-<li>空间换时间</li>
-<li>消峰：均摊思想。例如哈希表的扩容时候，不是一次做完数据迁移。</li>
-<li>用 SSD 硬盘。</li>
-<li>数据库分表分库，读写分离</li>
-</ul>
-<h5 id="算法调优"><a href="#算法调优" class="headerlink" title="算法调优"></a>算法调优</h5><h5 id="代码调优"><a href="#代码调优" class="headerlink" title="代码调优"></a>代码调优</h5><ul>
-<li>尽量用整形取代字符串（例如用整形 flags 来表示多个状态，利用位操作来查询设置状态；数据库用整形做 key）</li>
-<li>单线程中，不要用带锁相关的数据结构，很多 stl 的线程安全的容器或者智能指针 AutoPtr 都是加锁的，很耗性能；多线程环境下，尽量用无锁编程，乐观锁，读写锁等来替代互斥锁、悲观锁；最后，尽量用单线程</li>
-<li>池化技术：内存池、对象池、连接池、线程池</li>
-<li>缓存技术：LRU 缓存</li>
-<li>将同步操作转换为异步操作，提高 throughout</li>
-</ul>
-<h5 id="网络调优"><a href="#网络调优" class="headerlink" title="网络调优"></a>网络调优</h5><ul>
-<li>及时关闭空闲连接，避免资源耗尽。客户端服务器心跳 keepalive 机制。</li>
-<li>TIMEWAIT 状态的处理。</li>
-<li>TCP buff 的选择。理论上的RWIN应该设置成：吞吐量  * 回路时间。Sender端的buffer应该和RWIN有一样的大小，因为Sender端发送完数据后要等Receiver端确认，如果网络延时很大，buffer过小了，确认的次数就会多，于是性能就不高，对网络的利用率也就不高了。也就是说，对于延迟大的网络，我们需要大的buffer，这样可以少一点ack，多一些数据，对于响应快一点的网络，可以少一些buffer。因为，如果有丢包（没有收到ack），buffer过大可能会有问题，因为这会让TCP重传所有的数据，反而影响网络性能。</li>
-<li>对于一个UDP的包，我们要尽量地让他大到MTU的最大尺寸再往网络上传，这样可以最大化带宽利用率。对于这个MTU，以太网是1500字节，光纤是4352字节，802.11无线网是7981。</li>
-<li>Epoll 的使用。</li>
-<li>DNS lookup。gethostbyaddr/gethostbyname 这个函数可能会相当的费时，因为其要到网络上去找域名，因为DNS的递归查询，会导致严重超时，而又不能通过设置什么参数来设置time out，对此你可以通过配置hosts文件来加快速度，或是自己在内存中管理对应表，在程序启动时查好，而不要在运行时每次都查。</li>
-</ul>
-<h5 id="数据库调优"><a href="#数据库调优" class="headerlink" title="数据库调优"></a>数据库调优</h5><ul>
-<li>选对引擎</li>
-<li>索引</li>
-<li>数据类型选择</li>
-<li>分表分库</li>
-<li>读写分离</li>
-</ul>
-<ul>
-<li><p>实现层优化：vtune 等工具查找热点，针对性优化。</p>
-</li>
-<li><p>实现层优化：空间换时间，为高频不善变计算建立缓存。</p>
-</li>
-<li>业务层优化：柔性可用，设立资源消耗配额(定时重置)，每次请求消费一个配额，控制总体。</li>
-<li>业务层优化：有损服务，对业务需求进行必要裁剪。</li>
-</ul>
-<p>参考资料</p>
-<p><a href="https://blog.golang.org/profiling-go-programs" target="_blank" rel="noopener">Profiling Go Programs</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/13/MySQL-Cheat-Sheet/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/13/MySQL-Cheat-Sheet/" itemprop="url">MySQL Cheat Sheet</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-13T09:33:08+08:00">
-                2018-09-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/09/13/MySQL-Cheat-Sheet/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/09/13/MySQL-Cheat-Sheet/" class="cy_cmt_count" data-xid="2018/09/13/MySQL-Cheat-Sheet/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h5 id="版本选择"><a href="#版本选择" class="headerlink" title="版本选择"></a>版本选择</h5><p>关于 mysql 的版本选择，可以参考 <a href="http://dev.mysql.com/downloads/repo/yum/" target="_blank" rel="noopener">如何选择 MySQL 版本</a> 这篇文章。我们选择社区版的 5.6 版本。</p>
-<h5 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h5><p>为了方便用户安装，MySQl 官方提供了单独的 repository，对于Linux 发行版，有专门的 yum 源和 apt 源。将源添加好后，就可以很方便的通过 linux 的 yum 或者 apt 工具进行安装。这里我们以 yum 为例来讲述 MySQL 社区版本的安装过程。</p>
-<ul>
-<li>首先下载  MySQL yum 源，页面位于 <a href="https://dev.mysql.com/downloads/repo/yum/" target="_blank" rel="noopener">Download MySQL Yum Repository</a> </li>
-</ul>
-<blockquote>
-<p>注意下载的文件名虽然统一叫做 <code>mysql80-community-release-&lt;platform-and-version&gt;.noarch.rpm</code>，但是里面包含了 8.0，5.7，5.6，5.5 等各个版本以及工具。</p>
-</blockquote>
-<ul>
-<li><p>本地安装下载的源，我们以 centos7为例，下载的文件为 <code>mysql80-community-release-el7-1.noarch.rpm</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo rpm -Uvh mysql80-community-release-el7-1.noarch.rpm</span><br><span class="line">$ rpm -qa | grep mysql</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查看启用的版本，默认是启用 8.0 版本</p>
-</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ yum repolist enabled | grep mysql</span><br><span class="line">mysql-connectors-community/x86_64 MySQL Connectors Community                  65</span><br><span class="line">mysql-tools-community/x86_64      MySQL Tools Community                       69</span><br><span class="line">mysql80-community/x86_64          MySQL 8.0 Community Server                 412</span><br></pre></td></tr></table></figure>
-<ul>
-<li>修改启用版本为 5.6</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum-config-manager --<span class="built_in">disable</span> mysql80-community</span><br><span class="line">$ sudo yum-config-manager --<span class="built_in">enable</span> mysql56-community</span><br></pre></td></tr></table></figure>
-<ul>
-<li>安装</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install mysql-community-server</span><br><span class="line">$ mysql --version</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>如果安装时下载有问题，可以考虑修改 /etc/yum.conf 里的 proxy 代理配置为你的 http 代理地址 <a href="http://your_proxy_ip:port" target="_blank" rel="noopener">http://your_proxy_ip:port</a></p>
-</blockquote>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>默认安装路径是 <code>/var/lib/mysql</code>, 可以自定义数据文件路径。一般来说云主机的 data 盘较大，可以将数据库的数据存放于此</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">datadir=/data/mysql</span><br><span class="line">socket=/data/mysql/mysql.sock</span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">socket=/data/mysql/mysql.sock   # 供 mysql client 连接用</span><br></pre></td></tr></table></figure>
-<p>这里自定义的<code>/data/mysql</code> 路径需要设置为 mysql 用户拥有</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo chown -R mysql:mysql /data/mysql</span><br></pre></td></tr></table></figure>
-<p>开启慢查询</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">slow_query_log=1</span><br><span class="line">long_query_time=1 # 1s</span><br><span class="line">slow_query_log_file=/data/mysql/mysqld-slow.log</span><br></pre></td></tr></table></figure>
-<p>开启 binlog</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line"><span class="built_in">log</span>-bin=mysql-bin</span><br></pre></td></tr></table></figure>
-<p>设置字符集(character)及校对规则(collation，字符串比较规则)，字符集默认是 latin1，我们设置为 utf8</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">character-set-server=utf8</span><br><span class="line">collation-server=utf8_general_ci</span><br></pre></td></tr></table></figure>
-<p>配置完成后，启动 mysqld 服务器进程</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo service mysqld start</span><br></pre></td></tr></table></figure>
-<h2 id="安全性控制"><a href="#安全性控制" class="headerlink" title="安全性控制"></a>安全性控制</h2><p>运行 <code>mysql_secure_installation</code> 命令，来对新安装的 mysql 进行安全性设置，这包括 root 密码设置、限制 root 只能本机登录、删除 test 库、删除匿名用户等。对于生产环境，强烈建议设置一下。</p>
-<blockquote>
-<p>注意 5.7 及以上版本已经不需要运行该命令</p>
-</blockquote>
-<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><p>使用 sysbench 工具来对 MySQL 进行测试(这里我们只测试 select primary key)</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ sysbench /usr/share/sysbench/oltp_read_only.lua <span class="built_in">help</span></span><br><span class="line">sysbench 1.0.9 (using system LuaJIT 2.0.4)</span><br><span class="line"></span><br><span class="line">oltp_read_only.lua options:</span><br><span class="line">  --distinct_ranges=N           Number of SELECT DISTINCT queries per transaction [1]</span><br><span class="line">  --sum_ranges=N                Number of SELECT SUM() queries per transaction [1]</span><br><span class="line">  --skip_trx[=on|off]           Don<span class="string">'t start explicit transactions and execute all queries in the AUTOCOMMIT mode [off]</span></span><br><span class="line"><span class="string">  --secondary[=on|off]          Use a secondary index in place of the PRIMARY KEY [off]</span></span><br><span class="line"><span class="string">  --create_secondary[=on|off]   Create a secondary index in addition to the PRIMARY KEY [on]</span></span><br><span class="line"><span class="string">  --index_updates=N             Number of UPDATE index queries per transaction [1]</span></span><br><span class="line"><span class="string">  --range_size=N                Range size for range SELECT queries [100]</span></span><br><span class="line"><span class="string">  --auto_inc[=on|off]           Use AUTO_INCREMENT column as Primary Key (for MySQL), or its alternatives in other DBMS. When disabled, use client-generated IDs [on]</span></span><br><span class="line"><span class="string">  --delete_inserts=N            Number of DELETE/INSERT combination per transaction [1]</span></span><br><span class="line"><span class="string">  --tables=N                    Number of tables [1]</span></span><br><span class="line"><span class="string">  --mysql_storage_engine=STRING Storage engine, if MySQL is used [innodb]</span></span><br><span class="line"><span class="string">  --non_index_updates=N         Number of UPDATE non-index queries per transaction [1]</span></span><br><span class="line"><span class="string">  --table_size=N                Number of rows per table [10000]</span></span><br><span class="line"><span class="string">  --pgsql_variant=STRING        Use this PostgreSQL variant when running with the PostgreSQL driver. The only currently supported variant is '</span>redshift<span class="string">'. When enabled, create_secondary is automatically disabled, and delete_inserts is set to 0</span></span><br><span class="line"><span class="string">  --simple_ranges=N             Number of simple range SELECT queries per transaction [1]</span></span><br><span class="line"><span class="string">  --order_ranges=N              Number of SELECT ORDER BY queries per transaction [1]</span></span><br><span class="line"><span class="string">  --range_selects[=on|off]      Enable/disable all range SELECT queries [on]</span></span><br><span class="line"><span class="string">  --point_selects=N             Number of point SELECT queries per transaction [10]</span></span><br></pre></td></tr></table></figure>
-<p>准备数据</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">$ sysbench /usr/share/sysbench/oltp_read_only.lua --threads=4  --mysql-user=root --mysql-password=xxxxx --mysql-db=db_test --db-driver=mysql --tables=10 --table_size=1000000 prepare</span><br><span class="line"></span><br><span class="line">sysbench 1.0.9 (using system LuaJIT 2.0.4)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Creating table <span class="string">'sbtest3'</span>...</span><br><span class="line">Creating table <span class="string">'sbtest4'</span>...</span><br><span class="line">Creating table <span class="string">'sbtest1'</span>...</span><br><span class="line">Creating table <span class="string">'sbtest2'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest3'</span></span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest2'</span></span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest4'</span></span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest1'</span></span><br><span class="line">Creating a secondary index on <span class="string">'sbtest4'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest2'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest1'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest3'</span>...</span><br><span class="line">Creating table <span class="string">'sbtest8'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest8'</span></span><br><span class="line">Creating table <span class="string">'sbtest6'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest6'</span></span><br><span class="line">Creating table <span class="string">'sbtest5'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest5'</span></span><br><span class="line">Creating table <span class="string">'sbtest7'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest7'</span></span><br><span class="line">Creating a secondary index on <span class="string">'sbtest8'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest6'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest5'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest7'</span>...</span><br><span class="line">Creating table <span class="string">'sbtest10'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest10'</span></span><br><span class="line">Creating table <span class="string">'sbtest9'</span>...</span><br><span class="line">Inserting 1000000 records into <span class="string">'sbtest9'</span></span><br><span class="line">Creating a secondary index on <span class="string">'sbtest10'</span>...</span><br><span class="line">Creating a secondary index on <span class="string">'sbtest9'</span>...</span><br></pre></td></tr></table></figure>
-<p>数据准备好之后，开始运行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">$ sysbench /usr/share/sysbench/oltp_read_only.lua --threads=16 --events=0 --time=300 --mysql-db=db_test --mysql-user=root --mysql-password=xxxxx --db-driver=mysql --table_size=1000000 --range_selects=off --db-ps-mode=<span class="built_in">disable</span> --report-interval=1 --histogram run</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">[ 298s ] thds: 16 tps: 4907.59 qps: 58910.03 (r/w/o: 49095.86/0.00/9814.17) lat (ms,95%): 4.03 err/s: 0.00 reconn/s: 0.00</span><br><span class="line">[ 299s ] thds: 16 tps: 4915.22 qps: 58992.64 (r/w/o: 49161.20/0.00/9831.44) lat (ms,95%): 4.03 err/s: 0.00 reconn/s: 0.00</span><br><span class="line">[ 300s ] thds: 16 tps: 4909.87 qps: 58891.44 (r/w/o: 49070.70/0.00/9820.74) lat (ms,95%): 4.03 err/s: 0.00 reconn/s: 0.00</span><br><span class="line"></span><br><span class="line">SQL statistics:</span><br><span class="line">    queries performed:</span><br><span class="line">        <span class="built_in">read</span>:                            14678040</span><br><span class="line">        write:                           0</span><br><span class="line">        other:                           2935608</span><br><span class="line">        total:                           17613648</span><br><span class="line">    transactions:                        1467804 (4892.54 per sec.)</span><br><span class="line">    queries:                             17613648 (58710.46 per sec.)</span><br><span class="line">    ignored errors:                      0      (0.00 per sec.)</span><br><span class="line">    reconnects:                          0      (0.00 per sec.)</span><br><span class="line"></span><br><span class="line">General statistics:</span><br><span class="line">    total time:                          300.0070s</span><br><span class="line">    total number of events:              1467804</span><br><span class="line"></span><br><span class="line">Latency (ms):</span><br><span class="line">         min:                                  0.80</span><br><span class="line">         avg:                                  3.27</span><br><span class="line">         max:                                114.77</span><br><span class="line">         95th percentile:                      3.96</span><br><span class="line">         sum:                            4797566.33</span><br><span class="line"></span><br><span class="line">Threads fairness:</span><br><span class="line">    events (avg/stddev):           91737.7500/481.98</span><br><span class="line">    execution time (avg/stddev):   299.8479/0.00</span><br></pre></td></tr></table></figure>
-<h2 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h2><p>通过 <code>mysql_secure_installation</code> 脚本设置好 root 密码后，就可以登录了</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -h [host] -u [user] -p</span><br><span class="line">Enter password: ********</span><br></pre></td></tr></table></figure>
-<p>登录并使用某一数据库(例子中密码前面不能有空格)</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -h [host] -u [user] -p[passwd] [DB_NAME]</span><br></pre></td></tr></table></figure>
-<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><p>创建用户</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE USER &apos;user&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;</span><br></pre></td></tr></table></figure>
-<p>删除用户</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; DROP USER &apos;user&apos;@&apos;host&apos;;</span><br></pre></td></tr></table></figure>
-<p>赋权限</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT SELECT, INSERT, DELETE ON base.* TO &apos;user&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;</span><br><span class="line">mysql&gt; GRANT SELECT ON `db\_oss\_%`.* TO &apos;query&apos;@&apos;172.31.%&apos; IDENTIFIED BY &apos;123&apos;;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
-<p>更新密码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET PASSWORD FOR &apos;user&apos;@&apos;host&apos; = PASSWORD(&apos;new_pass&apos;);</span><br></pre></td></tr></table></figure>
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><p>查看当前正在 use 的库</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt; select database();</span><br><span class="line">+------------+</span><br><span class="line">| database() |</span><br><span class="line">+------------+</span><br><span class="line">| mysql      |</span><br><span class="line">+------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p>查看建表语句</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show create table t_xxx;</span><br></pre></td></tr></table></figure>
-<p>查看索引</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show index from table t_xxx;</span><br></pre></td></tr></table></figure>
-<p>查看字符集</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &apos;character_set_%&apos;;</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| Variable_name            | Value                      |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| character_set_client     | utf8                       |</span><br><span class="line">| character_set_connection | utf8                       |</span><br><span class="line">| character_set_database   | utf8                       |</span><br><span class="line">| character_set_filesystem | binary                     |</span><br><span class="line">| character_set_results    | utf8                       |</span><br><span class="line">| character_set_server     | utf8                       |</span><br><span class="line">| character_set_system     | utf8                       |</span><br><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">8 rows in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; show variables like &apos;collation%&apos;;</span><br><span class="line">+----------------------+-----------------+</span><br><span class="line">| Variable_name        | Value           |</span><br><span class="line">+----------------------+-----------------+</span><br><span class="line">| collation_connection | utf8_general_ci |</span><br><span class="line">| collation_database   | utf8_general_ci |</span><br><span class="line">| collation_server     | utf8_general_ci |</span><br><span class="line">+----------------------+-----------------+</span><br><span class="line">3 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p>查看连接</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show processlist;</span><br></pre></td></tr></table></figure>
-<p>设置连接编码为 utf8</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET NAMES &apos;utf8&apos;;</span><br></pre></td></tr></table></figure>
-<p>修改表结构</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; ALTER TABLE [table] ADD COLUMN [column] VARCHAR(120);</span><br><span class="line">mysql&gt; ALTER TABLE [table] DROP COLUMN [column];</span><br></pre></td></tr></table></figure>
-<p>插入一条记录</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; INSERT INTO [table] ([column], [column]) VALUES (&apos;[value]&apos;, &apos;[value]&apos;);</span><br></pre></td></tr></table></figure>
-<p>解释执行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT * FROM [table] WHERE [column] LIKE &apos;%[value]%&apos;;</span><br></pre></td></tr></table></figure>
-<p>更新数据</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; UPDATE [table] SET [column] = &apos;[updated-value]&apos; WHERE [column] = [value];</span><br></pre></td></tr></table></figure>
-<p>为一列或者多列添加命名索引</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; ALTER TABLE table ADD INDEX [index_name](column, ...);</span><br><span class="line">mysql&gt; CREATE [UNIQUE|FULLTEXT] INDEX index_name ON table (column,...);</span><br></pre></td></tr></table></figure>
-<p>删除索引</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; DROP INDEX index_name;</span><br></pre></td></tr></table></figure>
-<p>使用 group by 和 having 来获取特定组数据</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM table GROUP BY column_1 HAVING condition;</span><br></pre></td></tr></table></figure>
-<p>设置所有 row 的某一列</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; UPDATE table SET column_1 = value_1, ...;</span><br></pre></td></tr></table></figure>
-<h2 id="备份和恢复"><a href="#备份和恢复" class="headerlink" title="备份和恢复"></a>备份和恢复</h2><h5 id="物理备份"><a href="#物理备份" class="headerlink" title="物理备份"></a>物理备份</h5><p>物理备份是拷贝数据库的文件，比较快，适用于数据迁移等场景。</p>
-<h5 id="逻辑备份"><a href="#逻辑备份" class="headerlink" title="逻辑备份"></a>逻辑备份</h5><p>逻辑备份可以无视版本和架构对数据进行备份，比如进行 mysql 升级就可以使用逻辑备份来备份数据。逻辑备份通常结合全量备份和增量备份。</p>
-<p>在 mysql 服务器本地，使用 mysqldump 进行全量备份</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump --single-transaction --all-databases --flush-logs -u [username] -p &gt; db_backup.sql</span><br></pre></td></tr></table></figure>
-<p>如果要备份特定的库和表，可以这样</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump --single-transaction --flush-logs -u [username] -p [db_name] &lt;table_name&gt; &gt; db_backup.sql</span><br></pre></td></tr></table></figure>
-<p>如果不需要导出建库，使用–no-create–db选项，不需要建表语句，使用 –no-create-info 选项；导出特定条件的行，使用 –where 选项。例如</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump -h 10.137.213.82 -udbuser -ppassword --no-create-info db_hgame_1020 t_user --<span class="built_in">where</span>=<span class="string">"accid=776085"</span> &gt; /tmp/776085.sql</span><br></pre></td></tr></table></figure>
-<p>导入备份的 sql 语句</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -hhostname -uusername -ppassword databasename &lt; backupfile.sql</span><br></pre></td></tr></table></figure>
-<p>或者使用 mysql 的 source 命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; source backup.sql;</span><br></pre></td></tr></table></figure>
-<p>如果备份的数据比较大，可以压缩一下</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump -u [username] -p --default-character-set=utf8 [db_name] | gzip &gt; backup.sql.gz</span><br><span class="line">$ gunzip -c backup.sql.gz | mysql -u [username] -p [db_name] 1&gt; load.log 2&gt;err.log</span><br></pre></td></tr></table></figure>
-<p>如果想将一台服务器的数据直接导入另外一台机器，可以</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump -u root -p database_name | mysql -h other-host database_name</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>mysqldump 需要 SELECT 权限，对于没有指定 –single-transaction 选项的还需要 LOCK TABLES 权限。</p>
-</blockquote>
-<p>对于增量备份，可以使用 binlog。</p>
-<p>查看所有的 binlog</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show binary logs;</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| Log_name         | File_size |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">| mysql-bin.000001 |       120 |</span><br><span class="line">+------------------+-----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p>查看当前正在写的 binlog</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show master status;</span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |</span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">| mysql-bin.000001 |      120 |              |                  |                   |</span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p>导出特定时间的 binlog 以便根据 pos 来进行具体恢复(binlog 是二进制格式，利用 mysqlbinlog 工具导出成 sql)</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqlbinlog --start-datetime=<span class="string">"2018-05-20 9:58:00"</span> --stop-datetime=<span class="string">"2018-05-20 10:01:00"</span> /data/mysql/mysql-bin.000001 &gt; /tmp/mysql_restore.sql</span><br></pre></td></tr></table></figure>
-<p>通过 mysql_restore.sql 我们发现只需要恢复到 log_pos 为368312 的位置，则执行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqlbinlog --stop-position=368312 /data/mysql/mysql-bin.000001 | mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<h2 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h2><p>先查询安装了哪些 mysql 的文件，例如</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ rpm -qa | grep mysql</span><br><span class="line">mysql-community-libs-5.7.21-1.el7.x86_64</span><br><span class="line">mysql-community-devel-5.7.21-1.el7.x86_64</span><br><span class="line">mysql-community-client-5.7.21-1.el7.x86_64</span><br><span class="line">mysql-community-server-5.7.21-1.el7.x86_64</span><br><span class="line">mysql-community-common-5.7.21-1.el7.x86_64</span><br><span class="line">mysql-community-libs-compat-5.7.21-1.el7.x86_64</span><br></pre></td></tr></table></figure>
-<p>然后使用 <code>yum remove</code> 命令卸载</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum remove mysql</span><br><span class="line">$ sudo yum remove mysql-community-common</span><br><span class="line">$ sudo yum -y remove mysql-libs</span><br></pre></td></tr></table></figure>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>如果已知旧密码，需要修改 root 密码为新密码，可以这样</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">which</span> mysqladmin</span><br><span class="line">/usr/bin/mysqladmin</span><br><span class="line">$ /usr/bin/mysqladmin -u root -p password <span class="string">'new-password'</span></span><br><span class="line">Enter password:</span><br></pre></td></tr></table></figure>
-<p>如果忘记密码，在 my.cnf [mysqld] 部分最后添加  skip-grant-tables 选项</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">skip-grant-tables</span><br></pre></td></tr></table></figure>
-<p>重启 mysqld</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo service mysqld restart</span><br></pre></td></tr></table></figure>
-<p>使用 root 无需密码登录</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot</span><br></pre></td></tr></table></figure>
-<p>更新密码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt; UPDATE user SET password=password(&apos;new-password&apos;) WHERE user = &apos;root&apos; ;</span><br><span class="line">mysql&gt; flush privileges ;</span><br></pre></td></tr></table></figure>
-<p>退出，删除 skip-grant-tables 选项并重启 mysqld 即可</p>
-<p>参考资料</p>
-<p><a href="http://www.ywnds.com/?p=9806" target="_blank" rel="noopener">如何选择 MySQL 版本</a></p>
-<p><a href="https://severalnines.com/blog/how-benchmark-performance-mysql-mariadb-using-sysbench" target="_blank" rel="noopener">How to Benchmark Performance of MySQL &amp; MariaDB using SysBench</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2070,7 +2078,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">32</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2083,7 +2091,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
@@ -2136,7 +2144,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
