@@ -229,6 +229,168 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/21/vue-router中的hash和history/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/21/vue-router中的hash和history/" itemprop="url">vue-router中的hash和history</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-21T20:03:05+08:00">
+                2019-09-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2019/09/21/vue-router中的hash和history/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2019/09/21/vue-router中的hash和history/" class="cy_cmt_count" data-xid="2019/09/21/vue-router中的hash和history/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h3><p>这几天同事在实现内部的页面时，用到了基于 vue 框架的 iview-admin 解决方案，在实际使用时遇到了以下一个问题：</p>
+<ul>
+<li>在正常操作页面时，浏览器地址栏里会显示当前页面的路由信息，比如 <a href="http://example.com/xxx/yyy" target="_blank" rel="noopener">http://example.com/xxx/yyy</a>; 但是在按 F5 刷新该页面的时候，会收到web服务器返回的 <code>invalid method or path</code> 提示。这是为什么？</li>
+</ul>
+<p>针对该问题，我好好研究了一番。</p>
+<h3 id="问题研究"><a href="#问题研究" class="headerlink" title="问题研究"></a>问题研究</h3><p>通过查看 chrome 浏览器的 <code>检查</code> 选项，我们发现刷新时浏览器向服务器发送了路径为 <code>xxx/yyy</code> 的GET 请求，但是服务器并没有对改路由注册处理方法，因此返回了错误。</p>
+<p>按照我的理解，<code>xxx/yyy</code> 应该是前端的路由，发往服务器处理是太不合理了；但是浏览器里刷新之后，重新发送 GET 请求似乎也合情合理。经过一番 google，我发现似乎和 vue-router 的一个称为 history 模式的东西有关。</p>
+<h3 id="单页面应用SPA"><a href="#单页面应用SPA" class="headerlink" title="单页面应用SPA"></a>单页面应用SPA</h3><h4 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h4><p>维基百科对SPA的定义：</p>
+<p>单页应用（英语：single-page application，缩写SPA）是一种网络应用程序或网站的模型，它通过动态重写当前页面来与用户交互，而非传统的从服务器重新加载整个新页面。这种方法避免了页面之间切换打断用户体验，使应用程序更像一个桌面应用程序。</p>
+<p>在单页应用中，所有必要的代码（HTML、JavaScript和CSS）都通过单个页面的加载而检索，或者根据需要（通常是为响应用户操作）动态装载适当的资源并添加到页面。页面在过程中的任何时间点都不会重新加载，也不会将控制转移到其他页面。</p>
+<p>现在很多 Javascript 框架都是基于单页面的，如 AngularJS、React、Vue.js 等。</p>
+<h4 id="SPA与服务端渲染"><a href="#SPA与服务端渲染" class="headerlink" title="SPA与服务端渲染"></a>SPA与服务端渲染</h4><p>SPA技术将逻辑从服务器转移到了客户端。这导致Web服务器发展为一个纯数据API或Web服务。这种架构的转变在一些圈子中被称为“瘦服务器架构”，以强调复杂性已从服务端转移到客户端，并认为这最终降低了系统的整体复杂性。</p>
+<p>另外一种方式称为服务端渲染，这种设计是服务器在内存中保存必要的客户端所处状态。这种模式下，当任何请求到达服务器（通常因用户操作）时，服务器发送适当的HTML和/或JavaScript，以及具体的更改，以使客户端达到新的期望状态（如添加、删除或更新部分客户端的DOM）。与此同时更新服务器中的状态。这种设计下的大部分逻辑都在服务器上运行，HTML通常也在服务器上呈现。在某些方面，服务器是模拟Web浏览器，接收事件并执行服务器状态下的增量更改，将这些更改自动传播到客户端。</p>
+<p>这种方法需要更多的服务器内存和处理能力，但优点是简化的开发模型，因为：1、应用程序通常完全在服务器中编写；2、服务器中的数据和UI状态在相同的内存空间中共享，不需要自定义客户端/服务器通信隧道。</p>
+<h4 id="SPA的问题"><a href="#SPA的问题" class="headerlink" title="SPA的问题"></a>SPA的问题</h4><ul>
+<li>很多搜索引擎爬虫缺乏执行 javascript 的能力，SEO（搜索引擎最优化）成为SPA的问题，由于只有一个index.html的页面，爬虫往往爬不到很多内容</li>
+<li>根据单页应用（SPA）模型的定义，它只有“单个页面”，因此这打破了浏览器为页面历史记录导航所设计的“前进/后退”功能。当用户按下后退按钮时，可能会遇到可用性障碍，页面可能返回真正的上一个页面，而非用户所期望的上一个页面</li>
+<li>SPA应用需要在一开始就加载所有的页面，因此加载速度往往不快。为了加快加载速度，可以采用一些方法比如多项缓存措施、需要时再加载某些模块（懒加载）</li>
+</ul>
+<h3 id="前端路由"><a href="#前端路由" class="headerlink" title="前端路由"></a>前端路由</h3><p>路由这个概念最先是后端出现的。在以前用模板引擎开发页面时，经常会看到这样 <a href="http://hometown.xxx.edu.cn/bbs/forum.php" target="_blank" rel="noopener">http://hometown.xxx.edu.cn/bbs/forum.php</a> ，有时还会有带<code>.asp</code>或<code>.html</code>的路径，这就是所谓的SSR (Server Side Render)，通过服务端渲染，直接返回页面。</p>
+<p>简单来说路由就是用来跟后端服务器进行交互的一种方式，通过不同的路径，来请求不同的资源，请求不同的页面是路由的其中一种功能。</p>
+<p>前端路由的出现要从 ajax 开始。Ajax，全称 Asynchronous JavaScript And XML，是浏览器用来实现异步加载的一种技术方案。在 90s 年代初，大多数的网页都是通过直接返回 HTML 的，用户的每次更新操作都需要重新刷新页面。及其影响交互体验，随着网络的发展，迫切需要一种方案来改善这种情况。有了 Ajax 后，用户交互就不用每次都刷新页面，体验带来了极大的提升，为后来异步交互体验方式的繁荣发展带来了根基。</p>
+<p>而异步交互体验的更高级版本就是 SPA，单页应用不仅仅是在页面交互是无刷新的，连页面跳转都是无刷新的，为了实现单页应用，所以就有了前端路由。</p>
+<p>vue中为了构建SPA，需要引入前端路由系统，这也就是 Vue-Router 存在的意义。前端路由的核心，就在于 —— 改变视图的同时不会向后端发出请求。</p>
+<h3 id="hash模式和history模式"><a href="#hash模式和history模式" class="headerlink" title="hash模式和history模式"></a>hash模式和history模式</h3><p>为了达到不自动发送请求给后端，浏览器当前提供了以下两种模式支持：</p>
+<p><strong>hash</strong>: 即地址栏 URL 中的 # hash 符号（此 hash 不是密码学里的散列运算）2014年之前广泛应用。<br>比如这个 URL：<a href="http://www.abc.com/#/hello，hash" target="_blank" rel="noopener">http://www.abc.com/#/hello，hash</a> 的值为 #/hello。它的特点在于：hash 虽然出现在 URL 中，但不会被包括在 HTTP 请求中，对后端完全没有影响，因此改变 hash 不会重新加载页面。每次 hash 值的变化，还会触发 <code>hashchange</code> 这个事件，通过这个事件我们就可以知道 hash 值发生了哪些变化。</p>
+<p><strong>history</strong> : 14年后，因为HTML5标准发布，多了两个 API，<code>pushState</code> 和 <code>replaceState</code>，通过这两个 API 可以改变 url 地址且不会发送请求。同时还有 <code>onpopstate</code> 事件。通过这些就能用另一种方式来实现前端路由了，但原理都是跟 hash 实现相同的。用了 HTML5 的实现，单页路由的 url 就不会多出一个<code>#</code>，变得更加美观。</p>
+<p>但因为没有 <code>#</code> 号，所以当用户刷新页面之类的操作时，浏览器还是会给服务器发送请求。为了避免出现这种情况，所以这个实现需要服务器的支持，需要把所有路由都重定向到根页面。</p>
+<h3 id="VUE的history模式"><a href="#VUE的history模式" class="headerlink" title="VUE的history模式"></a>VUE的history模式</h3><p>vue中对history模式的支持可以参考 <a href="https://router.vuejs.org/zh/guide/essentials/history-mode.html" target="_blank" rel="noopener">vue中HTML5 history模式</a>，需要后端配置做一些处理，即服务端在匹配路由时，如果发现找不到，则不能返回404或者其他错误信息了，而需要特殊处理一下：直接返回/对应的index.html，这相当于重新加载了一次单页面应用，前端收到返回后再根据自己的路由导航到对应的页面。</p>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://zh.wikipedia.org/wiki/%E5%8D%95%E9%A1%B5%E5%BA%94%E7%94%A8" target="_blank" rel="noopener">维基-单页应用</a></p>
+<p><a href="https://www.zhihu.com/question/53064386" target="_blank" rel="noopener">知乎-前端路由是什么</a></p>
+<p><a href="https://blog.csdn.net/lyn1772671980/article/details/80804419" target="_blank" rel="noopener">vue中mode hash和history的区别</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/30/Go研究之内存管理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1877,157 +2039,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/17/Go泛型/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/17/Go泛型/" itemprop="url">Go泛型</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-17T16:06:45+08:00">
-                2018-10-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/10/17/Go泛型/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/10/17/Go泛型/" class="cy_cmt_count" data-xid="2018/10/17/Go泛型/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Go 语言本身不支持泛型 generics。我们这里主要看下怎么处理泛型的需求。</p>
-<h2 id="泛型数据"><a href="#泛型数据" class="headerlink" title="泛型数据"></a>泛型数据</h2><p>如果要存储泛型数据，Go 提供了空接口 interface{}。可以将任意的数据结构存储到 interface{} 中，然后使用的时候需要做一下 cast 转换。</p>
-<h2 id="泛型函数"><a href="#泛型函数" class="headerlink" title="泛型函数"></a>泛型函数</h2><p>这种使用比较常用，意思是针对不同的数据类型，需要运行同样的一套函数化的流程或者算法。</p>
-<p>目前 Go 并不支持这种传统意义上的泛型编程。<code>Jon Bodner</code> 在他的 <a href="https://medium.com/capital-one-tech/closures-are-the-generics-for-go-cb32021fb5b5" target="_blank" rel="noopener">Closures are the Generics for Go</a> 这篇文章中提供了一种间接实现泛型函数需求的做法，就是利用回调形式的闭包。</p>
-<p>简单来说，就是将需要泛型抽象的一套流程和算法封装成一个公共接口，并且提供一个回调，可以在回调时候利用闭包的特性来读取或者修改变量 T，而 T 在通常的泛型编程中是需要传给泛型函数的。</p>
-<p>下面是一个C++ 中的泛型函数的使用，compare 就是一套函数化的流程或者算法。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">compare</span><span class="params">(<span class="keyword">const</span> T &amp;lhs, <span class="keyword">const</span> T &amp;rhs)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (lhs &lt; rhs) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (rhs &lt; lhs) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在 Go 中如果实现类似的效果呢？方法就是回调闭包函数。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">compare</span><span class="params">(fnCmp <span class="keyword">func</span>()</span> <span class="title">int</span>) <span class="title">bool</span></span> &#123;</span><br><span class="line">    ret := fnCmp()</span><br><span class="line">    <span class="keyword">return</span> ret &gt;= <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">var</span> b <span class="keyword">int</span> = <span class="number">2</span>;</span><br><span class="line">    result := compare(<span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (a &lt; b) &#123;<span class="keyword">return</span> <span class="number">-1</span>&#125;</span><br><span class="line">        <span class="keyword">if</span> (a &gt; b) &#123;<span class="keyword">return</span> <span class="number">1</span>&#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;)</span><br><span class="line">    fmt.Println(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>通过闭包的特性，可以不需要传之前需要的泛型参数 T，就可以对变量进行读取和修改。</p>
-<p>我们只需要将相同的流程抽象成一个公共接口，这里是<code>compare</code>，然后将不同的部分通过回调闭包的形式作为参数让公共接口调用即可，这里是 <code>fnCmp func() int</code> 参数。</p>
-<p>另一个比较恰当的例子是数据库的批量分页拉取。针对每个业务的数据库表，都可能会需要分页拉取 table 里的所有数据，就有必要将分页拉取的操作封装成一个公共接口，拉取后通过闭包参数来让调用方自定义后续操作。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> records []*DBTerritoryRespawn</span><br><span class="line">batchGet(dbtbl, fields, wheres, <span class="function"><span class="keyword">func</span><span class="params">(rows [][]hqdb.TbField)</span></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> _, row := <span class="keyword">range</span> rows &#123;</span><br><span class="line">        record := do_something_with(row)</span><br><span class="line">        records = <span class="built_in">append</span>(records, record)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>每次拉取一页（batchGet 内部调用一次闭包函数），都可以修改最终的结果 <code>records</code>。</p>
-<p>利用闭包，我们可以方便的抽象出一个通用的排序接口</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span>(</span><br><span class="line">    <span class="string">"sort"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> sorter <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="built_in">len</span> <span class="keyword">int</span></span><br><span class="line">    fnSwap <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="function">    <span class="title">fnLess</span> <span class="title">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="params">(s sorter)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> s.<span class="built_in">len</span> &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s sorter)</span> <span class="title">Swap</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    s.fnSwap(i, j)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s sorter)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> s.fnLess(i, j)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//slice排序</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Sort</span><span class="params">(<span class="built_in">len</span> <span class="keyword">int</span>, fnSwap <span class="keyword">func</span>(i, j <span class="keyword">int</span>)</span>, <span class="title">fnLess</span> <span class="title">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span>)</span> &#123;</span><br><span class="line">    sort.Sort(sorter&#123;<span class="built_in">len</span>, fnSwap, fnLess&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    data := []<span class="keyword">int</span>&#123;<span class="number">2</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">    Sort(<span class="built_in">len</span>(data), <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">        data[i], data[j] = data[j], data[i]</span><br><span class="line">    &#125;, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">        <span class="keyword">return</span> data[i] &lt; data[j]</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>只不过这里用了2个闭包函数 fnSwap 和 fnLess。</p>
-<p>以上通过 closure 闭包提供的解决方式实质上使用了软件理论中的<code>side-effects</code>来实现的，意思是函数调用会影响调用方的数据。现代编程理论认为这是一种不好的方式，和其相对的是函数化编程。</p>
-<p>这里仅仅是提供一个泛型的一种 <code>work around</code>，所以还是期待未来 Go 能支持真正意义上的泛型。</p>
-<p>参考资料</p>
-<p><a href="https://medium.com/capital-one-tech/closures-are-the-generics-for-go-cb32021fb5b5" target="_blank" rel="noopener">Closures are the Generics for Go</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2078,7 +2089,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2091,7 +2102,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>

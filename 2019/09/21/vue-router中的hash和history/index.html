@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="vue router history," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="引子这几天同事在实现内部的页面时，用到了基于 vue 框架的 iview-admin 解决方案，在实际使用时遇到了以下一个问题：  在正常操作页面时，浏览器地址栏里会显示当前页面的路由信息，比如 http://example.com/xxx/yyy; 但是在按 F5 刷新该页面的时候，会收到web服务器返回的 invalid method or path 提示。这是为什么？  针对该问题，我好好研">
+<meta name="keywords" content="vue router history">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vue-router中的hash和history">
+<meta property="og:url" content="http://yoursite.com/2019/09/21/vue-router中的hash和history/index.html">
+<meta property="og:site_name" content="PHILIP x BLOG">
+<meta property="og:description" content="引子这几天同事在实现内部的页面时，用到了基于 vue 框架的 iview-admin 解决方案，在实际使用时遇到了以下一个问题：  在正常操作页面时，浏览器地址栏里会显示当前页面的路由信息，比如 http://example.com/xxx/yyy; 但是在按 F5 刷新该页面的时候，会收到web服务器返回的 invalid method or path 提示。这是为什么？  针对该问题，我好好研">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-21T13:49:28.162Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="vue-router中的hash和history">
+<meta name="twitter:description" content="引子这几天同事在实现内部的页面时，用到了基于 vue 框架的 iview-admin 解决方案，在实际使用时遇到了以下一个问题：  在正常操作页面时，浏览器地址栏里会显示当前页面的路由信息，比如 http://example.com/xxx/yyy; 但是在按 F5 刷新该页面的时候，会收到web服务器返回的 invalid method or path 提示。这是为什么？  针对该问题，我好好研">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/21/vue-router中的hash和history/"/>
+
+
+
+
+
+  <title>vue-router中的hash和history | PHILIP x BLOG</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">PHILIP x BLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">心有猛虎，细嗅蔷薇</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/21/vue-router中的hash和history/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">vue-router中的hash和history</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-21T20:03:05+08:00">
+                2019-09-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2019/09/21/vue-router中的hash和history/#SOHUCS" itemprop="discussionUrl">
+                  <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2019/09/21/vue-router中的hash和history/" itemprop="commentsCount"></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h3><p>这几天同事在实现内部的页面时，用到了基于 vue 框架的 iview-admin 解决方案，在实际使用时遇到了以下一个问题：</p>
+<ul>
+<li>在正常操作页面时，浏览器地址栏里会显示当前页面的路由信息，比如 <a href="http://example.com/xxx/yyy" target="_blank" rel="noopener">http://example.com/xxx/yyy</a>; 但是在按 F5 刷新该页面的时候，会收到web服务器返回的 <code>invalid method or path</code> 提示。这是为什么？</li>
+</ul>
+<p>针对该问题，我好好研究了一番。</p>
+<h3 id="问题研究"><a href="#问题研究" class="headerlink" title="问题研究"></a>问题研究</h3><p>通过查看 chrome 浏览器的 <code>检查</code> 选项，我们发现刷新时浏览器向服务器发送了路径为 <code>xxx/yyy</code> 的GET 请求，但是服务器并没有对改路由注册处理方法，因此返回了错误。</p>
+<p>按照我的理解，<code>xxx/yyy</code> 应该是前端的路由，发往服务器处理是太不合理了；但是浏览器里刷新之后，重新发送 GET 请求似乎也合情合理。经过一番 google，我发现似乎和 vue-router 的一个称为 history 模式的东西有关。</p>
+<h3 id="单页面应用SPA"><a href="#单页面应用SPA" class="headerlink" title="单页面应用SPA"></a>单页面应用SPA</h3><h4 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h4><p>维基百科对SPA的定义：</p>
+<p>单页应用（英语：single-page application，缩写SPA）是一种网络应用程序或网站的模型，它通过动态重写当前页面来与用户交互，而非传统的从服务器重新加载整个新页面。这种方法避免了页面之间切换打断用户体验，使应用程序更像一个桌面应用程序。</p>
+<p>在单页应用中，所有必要的代码（HTML、JavaScript和CSS）都通过单个页面的加载而检索，或者根据需要（通常是为响应用户操作）动态装载适当的资源并添加到页面。页面在过程中的任何时间点都不会重新加载，也不会将控制转移到其他页面。</p>
+<p>现在很多 Javascript 框架都是基于单页面的，如 AngularJS、React、Vue.js 等。</p>
+<h4 id="SPA与服务端渲染"><a href="#SPA与服务端渲染" class="headerlink" title="SPA与服务端渲染"></a>SPA与服务端渲染</h4><p>SPA技术将逻辑从服务器转移到了客户端。这导致Web服务器发展为一个纯数据API或Web服务。这种架构的转变在一些圈子中被称为“瘦服务器架构”，以强调复杂性已从服务端转移到客户端，并认为这最终降低了系统的整体复杂性。</p>
+<p>另外一种方式称为服务端渲染，这种设计是服务器在内存中保存必要的客户端所处状态。这种模式下，当任何请求到达服务器（通常因用户操作）时，服务器发送适当的HTML和/或JavaScript，以及具体的更改，以使客户端达到新的期望状态（如添加、删除或更新部分客户端的DOM）。与此同时更新服务器中的状态。这种设计下的大部分逻辑都在服务器上运行，HTML通常也在服务器上呈现。在某些方面，服务器是模拟Web浏览器，接收事件并执行服务器状态下的增量更改，将这些更改自动传播到客户端。</p>
+<p>这种方法需要更多的服务器内存和处理能力，但优点是简化的开发模型，因为：1、应用程序通常完全在服务器中编写；2、服务器中的数据和UI状态在相同的内存空间中共享，不需要自定义客户端/服务器通信隧道。</p>
+<h4 id="SPA的问题"><a href="#SPA的问题" class="headerlink" title="SPA的问题"></a>SPA的问题</h4><ul>
+<li>很多搜索引擎爬虫缺乏执行 javascript 的能力，SEO（搜索引擎最优化）成为SPA的问题，由于只有一个index.html的页面，爬虫往往爬不到很多内容</li>
+<li>根据单页应用（SPA）模型的定义，它只有“单个页面”，因此这打破了浏览器为页面历史记录导航所设计的“前进/后退”功能。当用户按下后退按钮时，可能会遇到可用性障碍，页面可能返回真正的上一个页面，而非用户所期望的上一个页面</li>
+<li>SPA应用需要在一开始就加载所有的页面，因此加载速度往往不快。为了加快加载速度，可以采用一些方法比如多项缓存措施、需要时再加载某些模块（懒加载）</li>
+</ul>
+<h3 id="前端路由"><a href="#前端路由" class="headerlink" title="前端路由"></a>前端路由</h3><p>路由这个概念最先是后端出现的。在以前用模板引擎开发页面时，经常会看到这样 <a href="http://hometown.xxx.edu.cn/bbs/forum.php" target="_blank" rel="noopener">http://hometown.xxx.edu.cn/bbs/forum.php</a> ，有时还会有带<code>.asp</code>或<code>.html</code>的路径，这就是所谓的SSR (Server Side Render)，通过服务端渲染，直接返回页面。</p>
+<p>简单来说路由就是用来跟后端服务器进行交互的一种方式，通过不同的路径，来请求不同的资源，请求不同的页面是路由的其中一种功能。</p>
+<p>前端路由的出现要从 ajax 开始。Ajax，全称 Asynchronous JavaScript And XML，是浏览器用来实现异步加载的一种技术方案。在 90s 年代初，大多数的网页都是通过直接返回 HTML 的，用户的每次更新操作都需要重新刷新页面。及其影响交互体验，随着网络的发展，迫切需要一种方案来改善这种情况。有了 Ajax 后，用户交互就不用每次都刷新页面，体验带来了极大的提升，为后来异步交互体验方式的繁荣发展带来了根基。</p>
+<p>而异步交互体验的更高级版本就是 SPA，单页应用不仅仅是在页面交互是无刷新的，连页面跳转都是无刷新的，为了实现单页应用，所以就有了前端路由。</p>
+<p>vue中为了构建SPA，需要引入前端路由系统，这也就是 Vue-Router 存在的意义。前端路由的核心，就在于 —— 改变视图的同时不会向后端发出请求。</p>
+<h3 id="hash模式和history模式"><a href="#hash模式和history模式" class="headerlink" title="hash模式和history模式"></a>hash模式和history模式</h3><p>为了达到不自动发送请求给后端，浏览器当前提供了以下两种模式支持：</p>
+<p><strong>hash</strong>: 即地址栏 URL 中的 # hash 符号（此 hash 不是密码学里的散列运算）2014年之前广泛应用。<br>比如这个 URL：<a href="http://www.abc.com/#/hello，hash" target="_blank" rel="noopener">http://www.abc.com/#/hello，hash</a> 的值为 #/hello。它的特点在于：hash 虽然出现在 URL 中，但不会被包括在 HTTP 请求中，对后端完全没有影响，因此改变 hash 不会重新加载页面。每次 hash 值的变化，还会触发 <code>hashchange</code> 这个事件，通过这个事件我们就可以知道 hash 值发生了哪些变化。</p>
+<p><strong>history</strong> : 14年后，因为HTML5标准发布，多了两个 API，<code>pushState</code> 和 <code>replaceState</code>，通过这两个 API 可以改变 url 地址且不会发送请求。同时还有 <code>onpopstate</code> 事件。通过这些就能用另一种方式来实现前端路由了，但原理都是跟 hash 实现相同的。用了 HTML5 的实现，单页路由的 url 就不会多出一个<code>#</code>，变得更加美观。</p>
+<p>但因为没有 <code>#</code> 号，所以当用户刷新页面之类的操作时，浏览器还是会给服务器发送请求。为了避免出现这种情况，所以这个实现需要服务器的支持，需要把所有路由都重定向到根页面。</p>
+<h3 id="VUE的history模式"><a href="#VUE的history模式" class="headerlink" title="VUE的history模式"></a>VUE的history模式</h3><p>vue中对history模式的支持可以参考 <a href="https://router.vuejs.org/zh/guide/essentials/history-mode.html" target="_blank" rel="noopener">vue中HTML5 history模式</a>，需要后端配置做一些处理，即服务端在匹配路由时，如果发现找不到，则不能返回404或者其他错误信息了，而需要特殊处理一下：直接返回/对应的index.html，这相当于重新加载了一次单页面应用，前端收到返回后再根据自己的路由导航到对应的页面。</p>
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><p><a href="https://zh.wikipedia.org/wiki/%E5%8D%95%E9%A1%B5%E5%BA%94%E7%94%A8" target="_blank" rel="noopener">维基-单页应用</a></p>
+<p><a href="https://www.zhihu.com/question/53064386" target="_blank" rel="noopener">知乎-前端路由是什么</a></p>
+<p><a href="https://blog.csdn.net/lyn1772671980/article/details/80804419" target="_blank" rel="noopener">vue中mode hash和history的区别</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/vue-router-history/" rel="tag"># vue router history</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/30/Go研究之内存管理/" rel="next" title="Go研究之内存管理">
+                <i class="fa fa-chevron-left"></i> Go研究之内存管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">philipyao</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/philipyao" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:sjtutrume@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#引子"><span class="nav-number">1.</span> <span class="nav-text">引子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题研究"><span class="nav-number">2.</span> <span class="nav-text">问题研究</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单页面应用SPA"><span class="nav-number">3.</span> <span class="nav-text">单页面应用SPA</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#定义"><span class="nav-number">3.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SPA与服务端渲染"><span class="nav-number">3.2.</span> <span class="nav-text">SPA与服务端渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SPA的问题"><span class="nav-number">3.3.</span> <span class="nav-text">SPA的问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前端路由"><span class="nav-number">4.</span> <span class="nav-text">前端路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hash模式和history模式"><span class="nav-number">5.</span> <span class="nav-text">hash模式和history模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VUE的history模式"><span class="nav-number">6.</span> <span class="nav-text">VUE的history模式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#参考资料"><span class="nav-number">6.0.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">philipyao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+<div style="text-align:center;width:100%;height:50">
+   备案号：沪ICP备17048801号
+<div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+    <script type="text/javascript">
+    (function(){
+      var appid = 'cytDLaiT8';
+      var conf = 'b538eee17c601ce84536734d50d0b035';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){
+        window.changyan.api.config({appid:appid,conf:conf})});
+      }
+    })();
+    </script>
+    <script type="text/javascript" src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
