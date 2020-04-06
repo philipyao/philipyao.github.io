@@ -229,6 +229,172 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/20/GCC分支预测/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/20/GCC分支预测/" itemprop="url">分支预测</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-20T18:01:28+08:00">
+                2018-08-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/08/20/GCC分支预测/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/08/20/GCC分支预测/" class="cy_cmt_count" data-xid="2018/08/20/GCC分支预测/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="GCC-扩展-builtin-expect"><a href="#GCC-扩展-builtin-expect" class="headerlink" title="GCC 扩展 __builtin_expect"></a>GCC 扩展 __builtin_expect</h2><p>C 语言的标准从最开始的 K&amp;R C演变到目前的 ANSI C，在各操作系统平台已经有很多编译器支持了，如 MSVC、GCC、CLANG 等。而 linux 平台的 GCC 除了支持ANSI C 标准之外，还有自己的编译器扩展特性。</p>
+<p>其中一个特性就是GCC 支持的编译器分支预测 __builtin_expect 宏，作为编译分支时候的暗示。这个特性在 linux 的内核代码中很常用，用来提升代码执行速度。</p>
+<p>具体的，是有 likely 和 unlikely 这两个宏定义</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> likely(x) __builtin_expect(!!(x), 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlikely(x) __builtin_expect(!!(x), 0)</span></span><br></pre></td></tr></table></figure>
+<p>实际使用时，我们可以在很大可能执行的分支前面加上 likely。例如下例中</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> likely(x) __builtin_expect(!!(x), 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlikely(x) __builtin_expect(!!(x), 0)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;a);</span><br><span class="line">    <span class="keyword">if</span> (likely(a))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"Hula!\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"Woo~\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样，如果 likely 所在的分支如果有非常大可能执行，则程序运行效率要比普通的分支判断高。具体原因是什么呢？这就涉及到 CPU 流水线作业的相关知识。</p>
+<h2 id="CPU-流水线"><a href="#CPU-流水线" class="headerlink" title="CPU 流水线"></a>CPU 流水线</h2><p>这里我们以 Intel 发明的 X86结构的 CPU 为例来大致讲述下 CPU 流水线技术的演进。</p>
+<p>CPU 在执行程序的时候依赖于很多寄存器，例如通用寄存器、段寄存器、索引寄存器等。此外还有一个很重要的寄存器：指令指针(IP)。指令指针寄存器是一个拥有特殊功能的指针。指令指针的功能是指向将要运行的下一条指令。</p>
+<p>所有的X86处理器都按照相同的模式运行。首先，根据指令指针指向的地址取得下一条即将运行的指令并解析该指令（译码）。在译码完成后，会有一个指令的执行阶段。有些指令用来从内存读取数据或者向内存写数据，有些指令用来执行计算或者比较等工作。当指令执行完成后，这条指令会通过退出(retire)阶段并将指令指针修改为下一条指令。</p>
+<p>译码，执行和退出的分阶段模式组成了X86处理器指令执行的基本模式。从最初的8086处理器到新的酷睿i7处理器都基本遵循了这样的过程。</p>
+<p>1989年 i486引入了五级流水线模式，分别是：取指(Fetch)，译码(D1, main decode)，转址(D2, translate)，执行(EX, execute)，写回(WB)。之前的三级模式，并不是流水线，每一条指令必须等待前一条指令执行完退出之后才能继续执行。而这种新引入的五级流水线模式，可以同时运行多条指令，每一级流水线在同一时刻都运行着不同的指令。这个设计使得i486比同频率的386处理器性能提升了不止一倍。五级流水线中的取指阶段(F)将指令从指令缓存中取出；第二级为译码阶段(D1)，将取出的指令翻译为具体的功能操作；第三级为转址阶段(D2)，用来将内存地址和偏移进行转换；第四级为执行阶段(EX)，指令在该阶段真正执行运算；第五级为退出阶段(WB)，运算的结果被写回寄存器或者内存。由于处理器同时运行了多条指令，大大提升了程序运行的性能。 </p>
+<p><img src="/images/image-20180820190943347.png" alt="image-20180820190943347"></p>
+<p>流水线化通过同时执行一系列操作增加了吞吐量(throughput)，但是她并没有减少延迟，即并没有减少一条指令从执行开始到执行结束的时间，仍要等到这一系列指令完成。实际上,流水线化由于将一条指令拆分成了几个步骤从而可能会增加延迟。</p>
+<h2 id="CPU-分支猜测"><a href="#CPU-分支猜测" class="headerlink" title="CPU 分支猜测"></a>CPU 分支猜测</h2><p>流水线技术的主要目的就是通过重叠连续指令的步骤来提高吞吐量从而获得性能，要做到这一点，就必须能够实现确定要执行指令的序列和先后顺序，这样才能使流水线中充满了待执行的指令。当处理器遇到分支条件跳转时，通常不能确定执行那个分支，因此处理器采用分支预测器来猜测每条跳转指令是否会执行。如果猜测比较可靠，那么流水线中就会充满指令。但是，如果对跳转的指令猜测错误，那么就要要求处理器丢掉它这个跳转指令后的所有已做的操作，然后再开始用从正确位置处起始的指令去填充流水线，可以看到这种预测错误会导致很严重的性能惩罚，会导致大约20-40个时钟周期的浪费，从而导致性能的严重下降。</p>
+<p>一个很直观的说明 CPU 的分支预测器的例子是 stackoverflow 上的提问： <a href="http://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-an-unsorted-array" target="_blank" rel="noopener">Why is processing a sorted array faster than an unsorted array?</a> </p>
+<p>一段排序和未排序过的代码执行速度差别很大，具体代码如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// generate data</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">unsigned</span> arraySize = <span class="number">32768</span>;</span><br><span class="line">    <span class="keyword">int</span> data[arraySize];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> c = <span class="number">0</span>; c &lt; arraySize; ++c)</span><br><span class="line">        data[c] = <span class="built_in">std</span>::rand() % <span class="number">256</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//排序这行不注释掉下面的for循环会快得多</span></span><br><span class="line">    <span class="built_in">std</span>::sort(data, data + arraySize); </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// test</span></span><br><span class="line">    <span class="keyword">clock_t</span> start = clock();</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; ++i) &#123;</span><br><span class="line">        <span class="comment">// primary loop</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">unsigned</span> c = <span class="number">0</span>; c &lt; arraySize; ++c) &#123;</span><br><span class="line">            <span class="keyword">if</span> (data[c] &gt;= <span class="number">128</span>)</span><br><span class="line">                sum += data[c];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">double</span> elapsedTime = <span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt;(clock() - start) / CLOCKS_PER_SEC;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; elapsedTime &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"sum = "</span> &lt;&lt; sum &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我在我的 Mac 上运行的结果分别是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 未排序</span><br><span class="line">21.3109</span><br><span class="line">sum = 312426300000</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 排序后</span><br><span class="line">6.30532</span><br><span class="line">sum = 312426300000</span><br></pre></td></tr></table></figure>
+<p>这里影响代码执行的主要片段是</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (data[c] &gt;= <span class="number">128</span>)</span><br><span class="line">    sum += data[c];</span><br></pre></td></tr></table></figure>
+<p>对于这段分支代码的执行，CPU 会启用分支预测(branch prediction)，排序和未排序的不同正是分支预测是否有大概率命中。对于命中的情况，CPU 指令可以一路顺畅的执行；而对于预测失败的情况，处理器要flush掉pipelines，回滚到之前的分支，然后重新热启动，选择另一条路径，这里的性能损失非常大。</p>
+<p>那么一般怎么做分支预测呢？答案就是根据历史结果来做决定。对于排序的情况，很容易根据历史结果做出决策:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">T = branch taken</span><br><span class="line">N = branch not taken</span><br><span class="line"></span><br><span class="line">data[] = 0, 1, 2, 3, 4, ... 126, 127, 128, 129, 130, ... 250, 251, 252, ...</span><br><span class="line">branch = N  N  N  N  N  ...   N    N    T    T    T  ...   T    T    T  ...</span><br><span class="line"></span><br><span class="line">       = NNNNNNNNNNNN ... NNNNNNNTTTTTTTTT ... TTTTTTTTTT  (easy to predict)</span><br></pre></td></tr></table></figure>
+<p>而如果未排序的数组，则其取到的结果完全随机，分支预测基本无效</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">data[] = 226, 185, 125, 158, 198, 144, 217, 79, 202, 118,  14, 150, 177, 182, 133, ...</span><br><span class="line">branch =   T,   T,   N,   T,   T,   T,   T,  N,   T,   N,   N,   T,   T,   T,   N  ...</span><br><span class="line"></span><br><span class="line">       = TTNTTTTNTNNTTTN ...   (completely random - hard to predict)</span><br></pre></td></tr></table></figure>
+<h2 id="代码优化"><a href="#代码优化" class="headerlink" title="代码优化"></a>代码优化</h2><p>上面说的 CPU 分支预测是属于硬件层面，其实从上层的软件或者程序员角度也是可以协助做好分支预测的。还是回到我们最开始提到的__builtin_expect 宏，示例代码反汇编得到的代码如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">.LC1:</span><br><span class="line">    .string &quot;Hula!&quot;</span><br><span class="line">.LC2:</span><br><span class="line">    .string &quot;Woo~&quot;</span><br><span class="line"> </span><br><span class="line">    call    __isoc99_scanf</span><br><span class="line">    movl    28(%esp), %eax</span><br><span class="line">    testl   %eax, %eax</span><br><span class="line">    je  .L2</span><br><span class="line">    movl    $.LC1, (%esp)</span><br><span class="line">    call    puts</span><br><span class="line">.L3:</span><br><span class="line">    xorl    %eax, %eax</span><br><span class="line">    leave</span><br><span class="line">    ret</span><br><span class="line">.L2:</span><br><span class="line">    movl    $.LC2, (%esp)</span><br><span class="line">    call    puts</span><br><span class="line">    jmp .L3</span><br></pre></td></tr></table></figure>
+<p>对于使用了 likely 的分支，其指令将更靠近 <code>testl</code> 分支判断，CPU 在执行分支判断指令的同时，将预先取出后续指令进行执行，而另一个分支指令则需要进行跳转(<code>je .L2</code>)。其本质是优化 CPU 的指令顺序，提高流水线的执行效率。</p>
+<p>此外，编写代码时，我们也要注意分支的先后顺序，尽量将概率大的分支放在前面，尽量合并分支，尽量使用排序后的数据来判断，适当使用 goto 和 do while 来优化代码组织等。</p>
+<p>参考资料</p>
+<p><a href="http://blog.jobbole.com/40844/" target="_blank" rel="noopener">CPU流水线的探秘之旅</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/22469702" target="_blank" rel="noopener">深入理解CPU的分支预测(Branch Prediction)模型</a></p>
+<p><a href="https://www.zhihu.com/question/27650017" target="_blank" rel="noopener">如何在 C++ 代码中提示编译器某个分支的执行概率高？</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/14/无锁队列/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1733,211 +1899,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/27/macOS安装mysql/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/27/macOS安装mysql/" itemprop="url">macOS安装mysql</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-27T10:18:22+08:00">
-                2018-06-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/06/27/macOS安装mysql/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/06/27/macOS安装mysql/" class="cy_cmt_count" data-xid="2018/06/27/macOS安装mysql/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="安装Mysql"><a href="#安装Mysql" class="headerlink" title="安装Mysql"></a>安装Mysql</h2><p>安装之前，需要查看你的 macOS 的版本，支持哪些版本的 mysql ，来对应安装，否则会出现不兼容的情况。mysql 的文档列出了各个版本支持的平台，对于 macOS，如下</p>
-<p><img src="/images/image-20180627104047807.png" alt="image-20180627104047807"></p>
-<p><img src="/images/image-20180627104126873.png" alt="image-20180627104126873"></p>
-<p>以我的 macOS 10.13 为例，支持64位8.0、5.7、5.6版本，鉴于8.0正式版本刚发布不久(2018.4)，我们这里选择5.7版本来进行安装。</p>
-<p>更多详细的平台支持信息，可以去 <a href="https://www.mysql.com/support/supportedplatforms/database.html" target="_blank" rel="noopener">官网</a> 查询</p>
-<p>选择了版本，下面就可以进行安装了。mac 平台主要有2中方式来安装 mysql</p>
-<ul>
-<li>原生包安装器 (DMG) 来进行安装。这种方式需要拥有 mac 系统的管理员权限。</li>
-<li>使用二进制压缩包来进行安装，安装包格式一般是  <code>mysql-*VERSION*-*OS*.tar.gz</code> 。可以使用 tar 或者 gzip 命令将 mysql 安装在任意目录。注意这种方式可以没有管理员权限。</li>
-<li>源码编译安装，需要预先安装 cmake，make，boost c++库等，比较繁琐。</li>
-</ul>
-<p>简单起见，我们选择第一种方式（如果你没有管理员权限，则只能选第二种方式）</p>
-<ol>
-<li><p>下载 .dmg 格式的安装包，一般我们使用社区版本，例如  <code>mysql-5.7.22-macos10.13-x86_64.dmg</code>，下载地址为 <a href="https://dev.mysql.com/downloads/mysql/5.7.html#downloads" target="_blank" rel="noopener">mysql5.7下载</a></p>
-</li>
-<li><p>下载完成后双击执行安装，如下</p>
-<p><img src="/images/image-20180627110750323.png" alt="image-20180627110750323"></p>
-</li>
-<li><p>安装过程中，会为 root 账户生成一个随机的密码，注意记住该密码，后面会用到。</p>
-</li>
-<li><p>安装完成后，我们需要为 root 修改密码，这是因为之前安装时生成的密码自动过期，只能用来登录，而不能进行操作，因此需要使用者再手动修改密码，这样就保障了安全性。</p>
-</li>
-</ol>
-<h2 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h2><p>修改密码之前，先手动启动 mysql 服务</p>
-<p>mysql 被安装在/usr/local/mysql 目录，我们将 bin 目录添加到 PATH 环境变量以方便执行 mysql 命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH=/usr/local/mysql/bin:$PATH'</span> &gt; ~/.bash_profile</span><br><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
-<p>然后就可以使用mysqld_safe 命令手动启动 mysql 进程了</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mysqld_safe --user=mysql &amp;</span><br></pre></td></tr></table></figure>
-<p>使用生成的随机密码登录到 mysql</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<p>为 root 账户设置新的密码</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; ALTER USER <span class="string">'root'</span>@<span class="string">'localhost'</span> IDENTIFIED BY <span class="string">'new_password'</span>;</span><br></pre></td></tr></table></figure>
-<p>退出后重新使用新密码登录</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<p>这样我们就能执行 mysql 的操作了</p>
-<p>另外，我们还要将刚才手动启动的 mysql 关闭，然后使用正式方式启动mysql 服务</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mysqladmin -u root -p shutdown</span><br></pre></td></tr></table></figure>
-<p>我们使用 macOS 下的服务面板来启动 mysql，依次点击系统左上角的 <strong>苹果</strong> 图标 -&gt;系统偏好设置-&gt;MySQL-&gt;Start MySQL Server</p>
-<p><img src="/images/image-20180627141058962.png" alt="image-20180627141058962"></p>
-<h2 id="新建-user"><a href="#新建-user" class="headerlink" title="新建 user"></a>新建 user</h2><p>先使用修改后的 root 密码登录</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<p>为 root 赋予所有权限</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT all ON *.* to root@localhost IDENTIFIED BY <span class="string">'root_passwd'</span>;</span><br></pre></td></tr></table></figure>
-<p>新建 philip 用户并赋予 以 db_ 开头命名的库的查询修改等权限</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT LOCK TABLES,select,insert,update,delete,create,drop,index,alter ON `db\_%`.* to philip@<span class="string">"10.%.%.%"</span> IDENTIFIED BY <span class="string">'tmpP001'</span>;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
-<p>新建 query 用户并赋予以 db_oss_开头命名的库的只读权限</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; GRANT select ON `db\_oss\_%`.* to query@<span class="string">"localhost"</span> IDENTIFIED BY <span class="string">'123'</span>;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
-<h2 id="编码配置"><a href="#编码配置" class="headerlink" title="编码配置"></a>编码配置</h2><h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>在 windows 平台，如果使用安装程序安装，则安装程序会在 mysql 安装目录自动创建一个名为 my.ini 的文件作为mysql 服务的配置文件；如果是使用 zip 压缩包安装，则需要拷贝my-default.ini为 my.ini 作为配置文件（注意，MySQL 5.7.18版本之后的 mysql 压缩包不包括 my-default.ini）</p>
-<p>在非 windows 平台，没有默认的配置文件，mysql 启动时会使用缺省的参数。因此我们需要手动创建 my.cnf 。</p>
-<p>以下命令可以查看 mysql 的参数列表以及server 启动时会读取哪些配置文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqld --verbose --<span class="built_in">help</span> | less</span><br></pre></td></tr></table></figure></p>
-<p>搜索 my.cnf 可以看到，配置文件读取顺序为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Default options are read from the following files in the given order:</span><br><span class="line">/etc/my.cnf /etc/mysql/my.cnf /usr/local/mysql/etc/my.cnf ~/.my.cnf</span><br></pre></td></tr></table></figure>
-<p>我们选择其中一个目录新建 my.cnf 即可。</p>
-<h3 id="存储编码"><a href="#存储编码" class="headerlink" title="存储编码"></a>存储编码</h3><p>字符集不仅影响 mysql 的数据存储，也影响 client 程序和 mysql server 的连接交互，因此在考虑设置编码的时候，这两方面都需要考虑。</p>
-<p>mysql 5.7 版本默认的存储字符集和字符比较规则为 <code>latin1</code>, <code>latin1_swedish_ci</code>，这与通用的 <code>utf8</code> 标准不兼容，因此我们需要修改 mysql 的默认 character set 和 collation。字符集设置按照层级分为四个：server, database, table, and column。</p>
-<p>首先查看现有的设置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show VARIABLES like &apos;%character%&apos;;</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">| Variable_name            | Value                                                     |</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">| character_set_client     | utf8                                                      |</span><br><span class="line">| character_set_connection | utf8                                                      |</span><br><span class="line">| character_set_database   | latin1                                                    |</span><br><span class="line">| character_set_filesystem | binary                                                    |</span><br><span class="line">| character_set_results    | utf8                                                      |</span><br><span class="line">| character_set_server     | latin1                                                    |</span><br><span class="line">| character_set_system     | utf8                                                      |</span><br><span class="line">| character_sets_dir       | /usr/local/mysql-5.7.22-macos10.13-x86_64/share/charsets/ |</span><br><span class="line">+--------------------------+-----------------------------------------------------------+</span><br><span class="line">8 rows in set (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; show VARIABLES like &apos;%collation%&apos;;</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">| Variable_name        | Value             |</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">| collation_connection | utf8_general_ci   |</span><br><span class="line">| collation_database   | latin1_swedish_ci |</span><br><span class="line">| collation_server     | latin1_swedish_ci |</span><br><span class="line">+----------------------+-------------------+</span><br><span class="line">3 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p>可以看到 character_set_database、character_set_server、collation_database、 collation_server 几个选项的值都为 latin1，需要修改为 utf8。</p>
-<p>在 HOME 目录创建 my.cnf 文件作为配置文件，添加以下内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">character-set-server=utf8</span><br><span class="line">collation-server=utf8_general_ci</span><br></pre></td></tr></table></figure>
-<p>完成后使用 mac 偏好设置里 的 mysql launch daemon panel来重新启动 mysql 即可。 </p>
-<p><img src="/images/image-20180704104726142.png" alt="image-20180704104726142"></p>
-<p><strong>注意</strong> 这里在配置 my.cnf 的时候需要特别注意两点</p>
-<ul>
-<li><p>假如新建 /etc/my.cnf 作为配置文件，需要将文件 mode 设置为644，否则启动会不成功或者配置被忽略</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo chmod 644 /etc/my.cnf</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>只需要设置 character-set-server 和 collation-server 两个选项，并不存在 character_set_database 和 collation_database 选项。原因是 server 级别的选项已经涵盖了 database 级别的设置。如果你需要单独设置某个 database 的编码，在输入 create table SQL语句时单独指定即可，详见 <a href="https://dev.mysql.com/doc/refman/5.7/en/charset-applications.html" target="_blank" rel="noopener">这里</a></p>
-</li>
-</ul>
-<h3 id="连接编码"><a href="#连接编码" class="headerlink" title="连接编码"></a>连接编码</h3><p>除了存储编码，我们每次通过 client 连接到 MySQL server（如 mysql client 或者PHP 脚本等）时，还需要设置该连接的交互字符集为 utf8，执行以下语句</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET NAMES &apos;utf8&apos;;</span><br></pre></td></tr></table></figure>
-<p>参考文档</p>
-<p><a href="https://dev.mysql.com/doc/refman/8.0/en/" target="_blank" rel="noopener">MySQL 官网</a></p>
-<p><a href="https://dev.mysql.com/doc/refman/5.7/en/charset-applications.html" target="_blank" rel="noopener">Configuring Application Character Set and Collation</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1988,7 +1949,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2001,7 +1962,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>

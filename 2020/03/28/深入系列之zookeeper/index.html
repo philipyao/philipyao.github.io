@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="zookeeper 原理," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="zookeeper有什么用zk是一个分布式领域的知名中间件，可以在其中存储 key-value形式的数据，每个key-value数据我们可以称为一个znode，znode之间又可以通过树形的方式来组织，从而产生父节点和子节点的联系。除了数据存储之外，zk还有很多特性，比如watch机制、临时节点机制，这使得zk可以用来实现很多其他需求，比如命名注册、分布式锁、pubsub机制、数据同步等 zook">
+<meta name="keywords" content="zookeeper 原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入系列之zookeeper">
+<meta property="og:url" content="http://yoursite.com/2020/03/28/深入系列之zookeeper/index.html">
+<meta property="og:site_name" content="PHILIP x BLOG">
+<meta property="og:description" content="zookeeper有什么用zk是一个分布式领域的知名中间件，可以在其中存储 key-value形式的数据，每个key-value数据我们可以称为一个znode，znode之间又可以通过树形的方式来组织，从而产生父节点和子节点的联系。除了数据存储之外，zk还有很多特性，比如watch机制、临时节点机制，这使得zk可以用来实现很多其他需求，比如命名注册、分布式锁、pubsub机制、数据同步等 zook">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2020/03/28/images/zk16.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/03/28/images/%20zk11.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/28/images/zk12.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/28/images/zk13.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/28/images/zk14.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/28/images/zk15.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/28/images/zk1.png">
+<meta property="og:updated_time" content="2020-04-06T11:40:11.800Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入系列之zookeeper">
+<meta name="twitter:description" content="zookeeper有什么用zk是一个分布式领域的知名中间件，可以在其中存储 key-value形式的数据，每个key-value数据我们可以称为一个znode，znode之间又可以通过树形的方式来组织，从而产生父节点和子节点的联系。除了数据存储之外，zk还有很多特性，比如watch机制、临时节点机制，这使得zk可以用来实现很多其他需求，比如命名注册、分布式锁、pubsub机制、数据同步等 zook">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/28/images/zk16.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/28/深入系列之zookeeper/"/>
+
+
+
+
+
+  <title>深入系列之zookeeper | PHILIP x BLOG</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">PHILIP x BLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">心有猛虎，细嗅蔷薇</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/28/深入系列之zookeeper/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入系列之zookeeper</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-28T16:18:54+08:00">
+                2020-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2020/03/28/深入系列之zookeeper/#SOHUCS" itemprop="discussionUrl">
+                  <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2020/03/28/深入系列之zookeeper/" itemprop="commentsCount"></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="zookeeper有什么用"><a href="#zookeeper有什么用" class="headerlink" title="zookeeper有什么用"></a>zookeeper有什么用</h3><p>zk是一个分布式领域的知名中间件，可以在其中存储 key-value形式的数据，每个key-value数据我们可以称为一个znode，znode之间又可以通过树形的方式来组织，从而产生父节点和子节点的联系。除了数据存储之外，zk还有很多特性，比如watch机制、临时节点机制，这使得zk可以用来实现很多其他需求，比如命名注册、分布式锁、pubsub机制、数据同步等</p>
+<h3 id="zookeeper-集群架构"><a href="#zookeeper-集群架构" class="headerlink" title="zookeeper 集群架构"></a>zookeeper 集群架构</h3><p><img src="../images/zk16.jpg" alt="zk16.png"></p>
+<h3 id="zookeeper的特点"><a href="#zookeeper的特点" class="headerlink" title="zookeeper的特点"></a>zookeeper的特点</h3><h5 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a>高可用</h5><p>zk的高可用是通过冗余节点来保证的，如果其中有一个节点挂掉，还是能提供服务的。如果要保证所有节点都可以用来处理读请求，则需要所有节点数据做replication复制，而zk有专门的机制来保证这一点。</p>
+<h5 id="可扩展性"><a href="#可扩展性" class="headerlink" title="可扩展性"></a>可扩展性</h5><p>zk可以在线添加节点，新的节点会被很快纳入集群并提供服务，很方便的进行扩容。</p>
+<h5 id="读写操作"><a href="#读写操作" class="headerlink" title="读写操作"></a>读写操作</h5><p>由于zk集群内的数据是一致的，因此读操作可以由任一节点来完成；而写操作由唯一的leader节点来统一控制，并同步到所有节点。实际应用中，client连接到集群中时，是通过tcp长连接连到任一可用的节点上的，如果是读，直接通过当前连接的节点来完成，如果是写操作，则会统一转发到leader节点来完成，等所有的节点数据都同步后，写操作才算完成，并通知对应的client。</p>
+<p>所有的写操作都通过唯一的leader节点完成，也保证了客户端的操作的顺序性，这样在处理并发时就不会出问题。</p>
+<h5 id="数据同步"><a href="#数据同步" class="headerlink" title="数据同步"></a>数据同步</h5><p>除了正常写操作时，所有节点的数据需要同步之外，如果有节点新加入集群（可能是新增或者宕机之后恢复），也会通过同步指令来保证新增的节点数据和其他节点的一致性。</p>
+<h5 id="watch机制"><a href="#watch机制" class="headerlink" title="watch机制"></a>watch机制</h5><p>由于client与集群节点之间是通过 tcp 长连接来进行通信的，且会通过心跳来做健康检查，因此任何节点的变化都可以通过tcp实时通知到所有的client。</p>
+<h3 id="zookeeper的数据模型"><a href="#zookeeper的数据模型" class="headerlink" title="zookeeper的数据模型"></a>zookeeper的数据模型</h3><p>zk的数据是存在磁盘上的，以目录树的形式存储，是由很多个 dataNode节点组成的一个树形结构，这个树形结构除了存储在磁盘中，在每个zk节点的内存中也维护着，叫做 DataTree，包括了zk集群中所有dataNode的数据。</p>
+<p>除了实际数据，zk还有一份事务日志，类似于 mysql 的 binlog，这其实可以理解成增量修改。</p>
+<p>zk在内存中构造了个DataTree的数据结构，维护着 path 到 dataNode 的映射以及 dataNode 间的树状层级关系。为了提高读取性能，集群中每个服务节点都是将数据全量存储在内存中。可见，zk最适于读多写少且轻量级数据（默认设置下单个 dataNode 限制为1MB大小）的应用场景。数据仅存储在内存是很不安全的，zk采用事务日志文件及快照文件的方案来落盘数据，保障数据在不丢失的情况下能快速恢复。</p>
+<p>zk在集群中实际写数据的时候，为了保证一致性，使用了两阶段提交，其中第一阶段就是写这个事务日志，第二阶段才是实际更新内存中的 DataTree，也即当前数据。</p>
+<p>数据快照位于磁盘的 version-2/snapshot.xxx 文件，日志文件为 version-2/log.xxxxx，所有写事务操作都是需要记录到日志文件中的，可通过 dataLogDir配置文件目录，文件是以写入的第一条事务zxid为后缀，方便后续的定位查找。默认设置下，每次事务日志写入操作都会实时刷入磁盘。</p>
+<p><img src="../images/ zk11.png" alt="unknown.png"></p>
+<p>这些数据都是二进制格式，如果要查看，需要用lib目录的一些工具jar包：</p>
+<p><img src="../images/zk12.png" alt="92D3EB69-8C64-4EEC-82F1-6566171BBF4C"></p>
+<p>查看实际的数据快照:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> lib</span><br><span class="line">$ java -cp zookeeper-3.5.6.jar:zookeeper-jute-3.5.6.jar:slf4j-log4j12-1.7.25.jar:log4j-1.2.17.jar:slf4j-api-1.7.25.jar org.apache.zookeeper.server.SnapshotFormatter /data/zookeeper1/version-2/snapshot.100012c92</span><br></pre></td></tr></table></figure>
+<p><img src="../images/zk13.png" alt="unknown.png"></p>
+<p><img src="../images/zk14.png" alt="unknown.png"></p>
+<p>查看事务日志：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> lib</span><br><span class="line">$ java -cp zookeeper-3.5.6.jar:zookeeper-jute-3.5.6.jar:slf4j-log4j12-1.7.25.jar:log4j-1.2.17.jar:slf4j-api-1.7.25.jar org.apache.zookeeper.server.LogFormatter /data/zookeeper1/version-2/log.100012c94 &gt; tlogs</span><br></pre></td></tr></table></figure>
+<p><img src="../images/zk15.png" alt="unknown.png"></p>
+<p>zk存储的数据是保证的最终一致性，也就是说数据最终会一致。对于zk这种分布式系统来说，最好的情况当然是所有节点数据一致，但也可能出现数据不一致的情况（比如两阶段提交时，有个别节点没有回应 ACK），这时一般是leader节点的数据比其他节点数据新，可以通过不停的同步来将所有节点的数据最终和leader节点保持一致。</p>
+<p>根据CAP定理，P必然无法保障，因此A和C需要做权衡。zk是优先考虑高可用(A)，牺牲了完全一致性，但他是最终一致性的。也就是说，由于多个节点的数据不会时刻保证一致性，因此在读取时是可能读取不到最新数据的。</p>
+<h3 id="zookeeper的ZAB协议"><a href="#zookeeper的ZAB协议" class="headerlink" title="zookeeper的ZAB协议"></a>zookeeper的ZAB协议</h3><p>ZAB全称 Zookeeper Atomic Broadcast Protocol，意思就是 zk 的原子广播协议，这是zk的核心机制。它实际是 multi-paxos 的一种实现，类似的multi-paxos 实现的还有 raft 算法（ETCD采用）。</p>
+<p>ZAB 简单来说是定义了一套规则，用来在各个节点之间复制数据。此外，它还定义了如何选举leader，并定义了如何处理节点恢复。其实就是分别实现了 multi-paxos 专门拆分的几个子问题。</p>
+<h5 id="数据复制"><a href="#数据复制" class="headerlink" title="数据复制"></a>数据复制</h5><p>ZAB使用两阶段提交来同步数据。当然这个两阶段提交并不是传统意义上的两阶段提交，而是稍微改造过的，第一阶段只需要超过半数节点有 ACK 响应就实施第二阶段，即 COMMIT 数据修改。而且，在第一阶段，propose 不会被拒绝，因为这个过程就是简单的写日志，所以不存在拒绝导致回滚的处理。总之，是一个简化版本的二阶段提交。</p>
+<p><img src="../images/zk1.png" alt="zk1"></p>
+<p>另外需要注意的是，leader和follower之间的数据传输都是按照 FIFO 规则来控制的，所有的 propose 按照顺序依次处理，这样就能保证所有的修改操作都是顺序执行的；此外，server之间通信是采用 TCP 的，TCP的顺序性也保证了传输的顺序性。最终，我们解决了因为分布式环境下并发带来的数据不一致问题。</p>
+<h5 id="leader选举"><a href="#leader选举" class="headerlink" title="leader选举"></a>leader选举</h5><p>数据同步的二阶段提交是需要一个协调者来发起和统筹整个过程的，在 zk 集群中就由 leader 来充当这个角色。所以如何选举 leader 也是个很重要的事情。</p>
+<p>zk集群一启动，就需要选举一个leader，完成后进入对外服务状态；如果服务过程中，leader节点宕机，也需要在剩余节点中重新选举 leader，完成后再继续提供服务；</p>
+<p>那什么样的人可以称为leader呢？</p>
+<ul>
+<li>首先，leader 节点的数据必须要是最新的</li>
+<li>其次，leader 被过半数的节点推举</li>
+</ul>
+<p>选举的过程有点类似于现实生活中的投票，只要一个候选节点获得的票数超过半数，就成为 leader。稍微有点不同的是，每个投票者是可以多次修改投给哪个候选人的，只要任一时刻一个候选人获得的票数超过一半，leader 随机产生，选举过程也就结束了。</p>
+<p>具体来讲，就是每个节点可以投票给集群中的任一节点，并将自己的投票结果通过广播 (broadcast) 通知其他节点。每个节点都会实时统计所有节点的得票情况，如果发现有节点得票过半，就完成选举。</p>
+<p>需要说明的是，投票的标准是什么？其实就是各个节点的数据版本号，版本号约高的可以认为数据越新，在投票过程中，数据新的节点胜出，因为数据新的可以同步给数据老的，从而集群整体的数据更新；如果数据版本号一致，就比较节点的序号，约定序号大的节点胜出。</p>
+<p>集群启动一开始，由于没有广播通信，各个节点都不知道其他节点的数据版本号，无从比较，因此都默认投给自己，并将投给自己的信息广播给其他节点。每个节点在收到广播后，将别人的数据版本号和自己的版本号比较，如果一样就比较节点序号，通过比较如果发现别人胜出，就修改自己的投票，再次广播给其他节点。通过这样一个不停广播加不停修改选票的过程，最终肯定会有一个节点的得票超过半数，并成为 leader 节点。</p>
+<p>注意，只要有一个节点超过半数，就立即停止选举过程，后续收到的其他投票信息也不再处理了。例如有3个节点，只要有一个节点的票数大于等于2，则选举结束。有没有可能出现一种情况，就是有节点得票过半后，有一个节点的数据版本比 leader 的数据还要新，它又广播过来一个消息投票给自己？这时候是否要重新选举？</p>
+<p>答案是否，不会重新选举。我们可以这样来理解，这个后来的节点，它的数据虽然比较新，但是他的数据并没有同步到其他过半节点（否则别人就会投票给它，而不是投给我们已经选出的数据版本更老一些的leader了），这是什么情况下才出现的？很可能是集群宕机，leader的数据没有及时同步给其他节点。这相当于一个没有完成的写操作（只修改了leader的数据，而没有来得及修改其他节点的数据），未完成的操作，其数据是可以丢弃的。实际遇到这种情况时，这个后来的节点会把自己的数据回滚到和 leader一致。</p>
+<h3 id="zookeeper如何防止脑裂"><a href="#zookeeper如何防止脑裂" class="headerlink" title="zookeeper如何防止脑裂"></a>zookeeper如何防止脑裂</h3><p>说人话，脑裂意思是集群中有多个leader，类似leader也就是大脑裂开一样。秘诀就是任何leader的选举都需要得票过半数。</p>
+<p>参考</p>
+<p><a href="[https://www.ixiacom.com/company/blog/apache-zab%E2%80%94zookeeper-atomic-broadcast-protocol](https://www.ixiacom.com/company/blog/apache-zab—zookeeper-atomic-broadcast-protocol">Apache ZAB—Zookeeper Atomic Broadcast Protocol</a>)</p>
+<p><a href="https://distributedalgorithm.wordpress.com/2015/06/20/architecture-of-zab-zookeeper-atomic-broadcast-protocol/" target="_blank" rel="noopener">Architecture of ZAB – ZooKeeper Atomic Broadcast protocol</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/25594630" target="_blank" rel="noopener">浅析Zookeeper的一致性原理</a></p>
+<p><a href="https://zookeeper.apache.org/doc/r3.5.5/zookeeperInternals.html" target="_blank" rel="noopener">ZooKeeper Internals</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/zookeeper-原理/" rel="tag"># zookeeper 原理</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/08/认识std::function及lambda表达式/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">philipyao</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/philipyao" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:sjtutrume@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#zookeeper有什么用"><span class="nav-number">1.</span> <span class="nav-text">zookeeper有什么用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zookeeper-集群架构"><span class="nav-number">2.</span> <span class="nav-text">zookeeper 集群架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zookeeper的特点"><span class="nav-number">3.</span> <span class="nav-text">zookeeper的特点</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#高可用"><span class="nav-number">3.0.1.</span> <span class="nav-text">高可用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#可扩展性"><span class="nav-number">3.0.2.</span> <span class="nav-text">可扩展性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#读写操作"><span class="nav-number">3.0.3.</span> <span class="nav-text">读写操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#数据同步"><span class="nav-number">3.0.4.</span> <span class="nav-text">数据同步</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#watch机制"><span class="nav-number">3.0.5.</span> <span class="nav-text">watch机制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zookeeper的数据模型"><span class="nav-number">4.</span> <span class="nav-text">zookeeper的数据模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zookeeper的ZAB协议"><span class="nav-number">5.</span> <span class="nav-text">zookeeper的ZAB协议</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#数据复制"><span class="nav-number">5.0.1.</span> <span class="nav-text">数据复制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#leader选举"><span class="nav-number">5.0.2.</span> <span class="nav-text">leader选举</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zookeeper如何防止脑裂"><span class="nav-number">6.</span> <span class="nav-text">zookeeper如何防止脑裂</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">philipyao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+<div style="text-align:center;width:100%;height:50">
+   备案号：沪ICP备17048801号
+<div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+    <script type="text/javascript">
+    (function(){
+      var appid = 'cytDLaiT8';
+      var conf = 'b538eee17c601ce84536734d50d0b035';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){
+        window.changyan.api.config({appid:appid,conf:conf})});
+      }
+    })();
+    </script>
+    <script type="text/javascript" src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

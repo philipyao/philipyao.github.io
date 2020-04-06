@@ -229,6 +229,178 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/15/Go研究之Interface/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="philipyao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PHILIP x BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/15/Go研究之Interface/" itemprop="url">Go研究之Interface</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-15T20:53:03+08:00">
+                2018-11-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2018/11/15/Go研究之Interface/#SOHUCS" itemprop="discussionUrl">
+                  <span id="url::http://yoursite.com/2018/11/15/Go研究之Interface/" class="cy_cmt_count" data-xid="2018/11/15/Go研究之Interface/" itemprop="commentsCount" ></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="空接口interface"><a href="#空接口interface" class="headerlink" title="空接口interface{}"></a>空接口interface{}</h2><h5 id="interface-赋值"><a href="#interface-赋值" class="headerlink" title="interface{} 赋值"></a>interface{} 赋值</h5><p><code>interface{}</code> 有点类似于 <code>C/C++</code> 里的 <code>void*</code>，<code>interface{}</code> ，在 Golang 中可以存储任何数据类型：int、string、struct、function、nil、map等等所有：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">interface</span>&#123;&#125; = <span class="number">1</span>     <span class="comment">//字面1为int类型</span></span><br><span class="line"><span class="keyword">var</span> v <span class="keyword">interface</span>&#123;&#125; = <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+<p>由于Go中所有的变量有类型信息，因此存储到 <code>interface{}</code> 里也会带上类型信息，这样才可以在运行时支持反射等特性（这也是不同于void*的地方）。而且<code>interface{}</code> 还可以通过类型assert反转换到具体类型：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">interface</span>&#123;&#125; = <span class="number">1</span></span><br><span class="line">b := a.(<span class="keyword">int</span>)</span><br></pre></td></tr></table></figure>
+<p>空接口<code>interface{}</code> 底层是通过<code>eface</code>结构来实现的，意思是<code>empty interface</code>。<code>eface</code> 本质上类似一个 <code>pair&lt;type, data&gt;</code> ，其中<code>type</code> 存储了变量的实际类型，而<code>data</code> 指向变量的值。具体如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> eface <span class="keyword">struct</span> &#123;</span><br><span class="line">    _type *_type</span><br><span class="line">    data  unsafe.Pointer</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> _type <span class="keyword">struct</span> &#123;</span><br><span class="line">    size       <span class="keyword">uintptr</span> <span class="comment">// type size 描述类型的大小</span></span><br><span class="line">    ptrdata    <span class="keyword">uintptr</span> <span class="comment">// size of memory prefix holding all pointers</span></span><br><span class="line">    hash       <span class="keyword">uint32</span>  <span class="comment">// hash of type; avoids computation in hash tables</span></span><br><span class="line">    tflag      tflag   <span class="comment">// extra type information flags</span></span><br><span class="line">    align      <span class="keyword">uint8</span>   <span class="comment">// 变量对齐</span></span><br><span class="line">    fieldalign <span class="keyword">uint8</span>   <span class="comment">// 结构体对齐</span></span><br><span class="line">    kind       <span class="keyword">uint8</span>   <span class="comment">// 和反射里的kind一致，数据的大类</span></span><br><span class="line">    alg        *typeAlg  <span class="comment">//算法函数指针，存储了hash/equal/print/copy四个函数操作</span></span><br><span class="line">    gcdata    *<span class="keyword">byte</span>    <span class="comment">// garbage collection data</span></span><br><span class="line">    str       nameOff  <span class="comment">// string form</span></span><br><span class="line">    ptrToThis typeOff  <span class="comment">// type for pointer to this type, may be zero</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Go1.7 源码中将变量赋值给 <code>interface{}</code>是通过<code>convT2E</code> 实现的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">convT2E</span><span class="params">(t *_type, elem unsafe.Pointer, x unsafe.Pointer)</span> <span class="params">(e eface)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> raceenabled &#123;</span><br><span class="line">        raceReadObjectPC(t, elem, getcallerpc(unsafe.Pointer(&amp;t)), funcPC(convT2E))</span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="keyword">if</span> msanenabled &#123;</span><br><span class="line">        msanread(elem, t.size)</span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="keyword">if</span> isDirectIface(t) &#123;</span><br><span class="line">        throw(<span class="string">"direct convT2E"</span>)</span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="keyword">if</span> x == <span class="literal">nil</span> &#123;</span><br><span class="line">        x = newobject(t)</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> We allocate a zeroed object only to overwrite it with</span></span><br><span class="line">        <span class="comment">// actual data. Figure out how to avoid zeroing. Also below in convT2I.</span></span><br><span class="line">    &#125;   </span><br><span class="line">    typedmemmove(t, x, elem)</span><br><span class="line">    e._type = t </span><br><span class="line">    e.data = x </span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到在运行时，通过 <code>typedmemmove</code> 进行了内存拷贝，<code>data</code> 不是简单的指向原数据区。而反射里修改数据时，如果不是指针类型，修改会失败，应该也是基于这个原因：修改的只是拷贝的数据。</p>
+<p>我们可以用以下实验试一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">type User struct &#123;</span><br><span class="line">    id int</span><br><span class="line">    name string </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">    u := User&#123;1, &quot;Tom&quot;&#125;</span><br><span class="line">    var i interface&#123;&#125; = u</span><br><span class="line">    u.id = 2</span><br><span class="line">    u.name = &quot;Jack&quot;</span><br><span class="line">    fmt.Printf(&quot;u: %#v\n&quot;, u);</span><br><span class="line">    fmt.Printf(&quot;i: %#v\n&quot;, i);</span><br><span class="line">    </span><br><span class="line">    u2 := &amp;User&#123;2, &quot;Tom2&quot;&#125;</span><br><span class="line">    var i2 interface&#123;&#125; = u2</span><br><span class="line">    u2.id = 2</span><br><span class="line">    u2.name = &quot;Jack2&quot;</span><br><span class="line">    fmt.Printf(&quot;u2: %#v\n&quot;, u2);</span><br><span class="line">    fmt.Printf(&quot;i2: %#v\n&quot;, i2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">u: main.User&#123;id:2, name:&quot;Jack&quot;&#125;</span><br><span class="line">i: main.User&#123;id:1, name:&quot;Tom&quot;&#125;</span><br><span class="line">u2: &amp;main.User&#123;id:2, name:&quot;Jack2&quot;&#125;</span><br><span class="line">i2: &amp;main.User&#123;id:2, name:&quot;Jack2&quot;&#125;</span><br></pre></td></tr></table></figure>
+<p>证明了代码里的拷贝实现。</p>
+<h5 id="interface-与-nil"><a href="#interface-与-nil" class="headerlink" title="interface{} 与 nil"></a>interface{} 与 nil</h5><p>当将 nil 赋值给 interface{} 变量时，<code>type</code> 和 <code>data</code> 域都将被赋值为 <code>nil</code>, 因此其本质上是一个<code>nil</code></p>
+<p>而如果是一个其他类型的 nil 值，被赋值给 <code>interface{}</code>，则其 <code>type</code>是有具体类型的，只不过<code>data</code> 是nil，因而组合而成的 <code>eface</code>结构就不是一个<code>nil</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line">  </span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">type User struct &#123;</span><br><span class="line">    id int</span><br><span class="line">    name string </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">    var i1 interface&#123;&#125; = nil   // type 和 data 都是 nil</span><br><span class="line">    fmt.Printf(&quot;%v\n&quot;, i1 == nil);</span><br><span class="line"></span><br><span class="line">    var u2 *User</span><br><span class="line">    var i2 interface&#123;&#125; = u2   // type 是 *User，data是 nil</span><br><span class="line">    fmt.Printf(&quot;%v\n&quot;, i2 == nil);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">true</span><br><span class="line">false</span><br></pre></td></tr></table></figure>
+<p>不仅是空接口<code>interface{}</code> 是这样，其他有方法的<code>interface</code> 如果被赋值为一个具体类型的<code>nil</code> 值，本质上是不等于<code>nil</code>，而只有被直接赋值为<code>nil</code>，才是真正上的<code>nil</code>。可以认为直接赋值字面上的<code>nil</code> 是类型<code>type</code>和<code>data</code> 都为<code>nil</code> 的<code>nil</code>。</p>
+<h2 id="非空-interface"><a href="#非空-interface" class="headerlink" title="非空 interface"></a>非空 interface</h2><h5 id="非空interface赋值"><a href="#非空interface赋值" class="headerlink" title="非空interface赋值"></a>非空interface赋值</h5><p>非空 interface 一般用来实现类似C++的运行时的多态特性。将一个<code>struct</code> 变量赋值给非空interface时编译器会先做一次校验：看该<code>struct</code>类型是否实现了接口所需的所有方法，如果没有，则会报错。例如</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> I <span class="keyword">interface</span> &#123;</span><br><span class="line">    String()</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">5</span></span><br><span class="line"><span class="keyword">var</span> b I = a</span><br></pre></td></tr></table></figure>
+<p>编译器会给出提示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cannot use a (type int) as type I in assignment:</span><br><span class="line">    int does not implement I (missing String method)</span><br></pre></td></tr></table></figure>
+<p>运行时赋值底层借助接口 <code>iface</code> 来实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> iface <span class="keyword">struct</span> &#123;</span><br><span class="line">    tab  *itab</span><br><span class="line">    data unsafe.Pointer</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// layout of Itab known to compilers</span></span><br><span class="line"><span class="comment">// allocated in non-garbage-collected memory</span></span><br><span class="line"><span class="comment">// Needs to be in sync with</span></span><br><span class="line"><span class="comment">// ../cmd/compile/internal/gc/reflect.go:/^func.dumptypestructs.</span></span><br><span class="line"><span class="keyword">type</span> itab <span class="keyword">struct</span> &#123;</span><br><span class="line">    inter  *interfacetype</span><br><span class="line">    _type  *_type</span><br><span class="line">    link   *itab</span><br><span class="line">    bad    <span class="keyword">int32</span></span><br><span class="line">    unused <span class="keyword">int32</span></span><br><span class="line">    fun    [<span class="number">1</span>]<span class="keyword">uintptr</span> <span class="comment">// variable sized</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> interfacetype <span class="keyword">struct</span> &#123;</span><br><span class="line">	typ     _type</span><br><span class="line">	pkgpath name</span><br><span class="line">	mhdr    []imethod</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>itab</code> 结构包含了两个类型：1)该 <code>interface</code>自己的类型<code>*interfacetype</code>； 2) 其<code>data</code>所指向的具体接口实现的实际类型<code>*_type</code>。<code>interfacetype</code> 是对<code>_type</code>的封装，加上了一些<code>interface</code>才有的数据，专门来表示<code>interface</code>的具体类型。我们可以看到其<code>mhdr</code>成员表示该<code>interface</code>的方法集，但是注意这里只是函数原型<code>metadata</code>，不是具体的函数定义，具体的函数定义是由实现接口的<code>struct</code>来定义的。</p>
+<p>相比于 <code>empty interface</code>，<code>non-empty interface</code> 要包含实现该 <code>interface</code>的<code>method</code> 具体定义，定义会被存放在 <code>itab.fun</code> 变量里。虽然 <code>fun</code> 数组只有一个元素，但实际赋值的时候会在内存上依次连续的存储各函数指针。</p>
+<p>一个法国的bloger <a href="https://github.com/teh-cmc" target="_blank" rel="noopener">teh-cmc</a> 的 <a href="https://github.com/teh-cmc/go-internals/blob/master/chapter2_interfaces/README.md" target="_blank" rel="noopener">go-internals</a> 里通过汇编代码，详细说明了如何在运行时一个个填充<code>itab</code>结构的各个成员的，有兴趣的同学可以自行查看。</p>
+<p>当<code>itab</code>结构被填充好了之后，运行时就可以通过调用<code>convT2I</code> 来将变量赋值给非空 <code>interface</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">convT2I</span><span class="params">(tab *itab, elem unsafe.Pointer)</span> <span class="params">(i iface)</span></span> &#123;</span><br><span class="line">	t := tab._type</span><br><span class="line">	<span class="keyword">if</span> raceenabled &#123;</span><br><span class="line">		raceReadObjectPC(t, elem, getcallerpc(unsafe.Pointer(&amp;tab)), funcPC(convT2I))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> msanenabled &#123;</span><br><span class="line">		msanread(elem, t.size)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> isDirectIface(t) &#123;</span><br><span class="line">		<span class="comment">// This case is implemented directly by the compiler.</span></span><br><span class="line">		throw(<span class="string">"direct convT2I"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	x := newobject(t)</span><br><span class="line">	typedmemmove(t, x, elem)</span><br><span class="line">	i.tab = tab</span><br><span class="line">	i.data = x</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中<code>x := newobject(t)</code> 会在堆上分配一个 t 类型的对象。由此可见，不管赋值给非空<code>interface</code>的变量存放在哪里，赋值操作都会在堆上重新生成一个对象，然后将对象的类型和指针存储在非空<code>interface</code>里，必要时可能会引发变量逃逸。因此该转换是比较消耗性能的，看下一个<code>benchmark</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Addifier <span class="keyword">interface</span>&#123; Add(a, b <span class="keyword">int32</span>) <span class="keyword">int32</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Adder <span class="keyword">struct</span>&#123; id <span class="keyword">int32</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//go:noinline</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(adder Adder)</span> <span class="title">Add</span><span class="params">(a, b <span class="keyword">int32</span>)</span> <span class="title">int32</span></span> &#123; <span class="keyword">return</span> a + b &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkDirect</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">    adder := Adder&#123;id: <span class="number">6754</span>&#125;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</span><br><span class="line">        adder.Add(<span class="number">10</span>, <span class="number">32</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkInterface</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">    adder := Adder&#123;id: <span class="number">6754</span>&#125;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</span><br><span class="line">        Addifier(adder).Add(<span class="number">10</span>, <span class="number">32</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直接调用和通过<code>interface</code>来调用的差别很大，测试结果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BenchmarkDirect-4      	2000000000	         1.77 ns/op</span><br><span class="line">BenchmarkInterface-4   	100000000	        22.5 ns/op</span><br></pre></td></tr></table></figure>
+<h5 id="非空interface动态dispatch"><a href="#非空interface动态dispatch" class="headerlink" title="非空interface动态dispatch"></a>非空interface动态dispatch</h5><p>动态dispatch实际上就类似于C++里的多态实现，C++通过虚函数表存储了各个具体实现类的函数指针，这是编译时完成的。而运行时通过构造函数来生成指向虚函数表的虚表指针，调用的时候通过指针来查找具体应该调用虚函数表里的哪个函数。</p>
+<p>而Go的实现方式也有些许类似，上文提到的<code>itab.fun</code> 结构就类似于<code>虚表</code>概念，所不同的是，虚表是在运行时通过<code>go</code>的<code>runtime</code>来赋值的。一旦虚表被填充好，函数调用就简单的在虚表中查找了，主要的开销应该还是在<code>interface</code> 赋值的时候。</p>
+<p>参考资料</p>
+<p><a href="https://tiancaiamao.gitbooks.io/go-internals/content/zh/07.2.html" target="_blank" rel="noopener">深入解析Go</a></p>
+<p><a href="https://juejin.im/post/5a6873fd518825734501b3c5" target="_blank" rel="noopener">Golang interface接口深入理解</a></p>
+<p><a href="https://ninokop.github.io/2017/10/30/Go-%E5%8F%8D%E5%B0%84%E4%B8%8Einterface%E6%8B%BE%E9%81%97/" target="_blank" rel="noopener">Go 反射与interface拾遗</a></p>
+<p><a href="https://github.com/teh-cmc/go-internals/blob/master/chapter2_interfaces/README.md" target="_blank" rel="noopener">go-internals</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/12/随机数生成/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1987,172 +2159,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/20/GCC分支预测/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="philipyao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PHILIP x BLOG">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/20/GCC分支预测/" itemprop="url">分支预测</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-20T18:01:28+08:00">
-                2018-08-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-comment-o"></i>
-              </span>
-              
-                <a href="/2018/08/20/GCC分支预测/#SOHUCS" itemprop="discussionUrl">
-                  <span id="url::http://yoursite.com/2018/08/20/GCC分支预测/" class="cy_cmt_count" data-xid="2018/08/20/GCC分支预测/" itemprop="commentsCount" ></span>
-                </a>
-              
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="GCC-扩展-builtin-expect"><a href="#GCC-扩展-builtin-expect" class="headerlink" title="GCC 扩展 __builtin_expect"></a>GCC 扩展 __builtin_expect</h2><p>C 语言的标准从最开始的 K&amp;R C演变到目前的 ANSI C，在各操作系统平台已经有很多编译器支持了，如 MSVC、GCC、CLANG 等。而 linux 平台的 GCC 除了支持ANSI C 标准之外，还有自己的编译器扩展特性。</p>
-<p>其中一个特性就是GCC 支持的编译器分支预测 __builtin_expect 宏，作为编译分支时候的暗示。这个特性在 linux 的内核代码中很常用，用来提升代码执行速度。</p>
-<p>具体的，是有 likely 和 unlikely 这两个宏定义</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> likely(x) __builtin_expect(!!(x), 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlikely(x) __builtin_expect(!!(x), 0)</span></span><br></pre></td></tr></table></figure>
-<p>实际使用时，我们可以在很大可能执行的分支前面加上 likely。例如下例中</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> likely(x) __builtin_expect(!!(x), 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlikely(x) __builtin_expect(!!(x), 0)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;a);</span><br><span class="line">    <span class="keyword">if</span> (likely(a))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"Hula!\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"Woo~\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样，如果 likely 所在的分支如果有非常大可能执行，则程序运行效率要比普通的分支判断高。具体原因是什么呢？这就涉及到 CPU 流水线作业的相关知识。</p>
-<h2 id="CPU-流水线"><a href="#CPU-流水线" class="headerlink" title="CPU 流水线"></a>CPU 流水线</h2><p>这里我们以 Intel 发明的 X86结构的 CPU 为例来大致讲述下 CPU 流水线技术的演进。</p>
-<p>CPU 在执行程序的时候依赖于很多寄存器，例如通用寄存器、段寄存器、索引寄存器等。此外还有一个很重要的寄存器：指令指针(IP)。指令指针寄存器是一个拥有特殊功能的指针。指令指针的功能是指向将要运行的下一条指令。</p>
-<p>所有的X86处理器都按照相同的模式运行。首先，根据指令指针指向的地址取得下一条即将运行的指令并解析该指令（译码）。在译码完成后，会有一个指令的执行阶段。有些指令用来从内存读取数据或者向内存写数据，有些指令用来执行计算或者比较等工作。当指令执行完成后，这条指令会通过退出(retire)阶段并将指令指针修改为下一条指令。</p>
-<p>译码，执行和退出的分阶段模式组成了X86处理器指令执行的基本模式。从最初的8086处理器到新的酷睿i7处理器都基本遵循了这样的过程。</p>
-<p>1989年 i486引入了五级流水线模式，分别是：取指(Fetch)，译码(D1, main decode)，转址(D2, translate)，执行(EX, execute)，写回(WB)。之前的三级模式，并不是流水线，每一条指令必须等待前一条指令执行完退出之后才能继续执行。而这种新引入的五级流水线模式，可以同时运行多条指令，每一级流水线在同一时刻都运行着不同的指令。这个设计使得i486比同频率的386处理器性能提升了不止一倍。五级流水线中的取指阶段(F)将指令从指令缓存中取出；第二级为译码阶段(D1)，将取出的指令翻译为具体的功能操作；第三级为转址阶段(D2)，用来将内存地址和偏移进行转换；第四级为执行阶段(EX)，指令在该阶段真正执行运算；第五级为退出阶段(WB)，运算的结果被写回寄存器或者内存。由于处理器同时运行了多条指令，大大提升了程序运行的性能。 </p>
-<p><img src="/images/image-20180820190943347.png" alt="image-20180820190943347"></p>
-<p>流水线化通过同时执行一系列操作增加了吞吐量(throughput)，但是她并没有减少延迟，即并没有减少一条指令从执行开始到执行结束的时间，仍要等到这一系列指令完成。实际上,流水线化由于将一条指令拆分成了几个步骤从而可能会增加延迟。</p>
-<h2 id="CPU-分支猜测"><a href="#CPU-分支猜测" class="headerlink" title="CPU 分支猜测"></a>CPU 分支猜测</h2><p>流水线技术的主要目的就是通过重叠连续指令的步骤来提高吞吐量从而获得性能，要做到这一点，就必须能够实现确定要执行指令的序列和先后顺序，这样才能使流水线中充满了待执行的指令。当处理器遇到分支条件跳转时，通常不能确定执行那个分支，因此处理器采用分支预测器来猜测每条跳转指令是否会执行。如果猜测比较可靠，那么流水线中就会充满指令。但是，如果对跳转的指令猜测错误，那么就要要求处理器丢掉它这个跳转指令后的所有已做的操作，然后再开始用从正确位置处起始的指令去填充流水线，可以看到这种预测错误会导致很严重的性能惩罚，会导致大约20-40个时钟周期的浪费，从而导致性能的严重下降。</p>
-<p>一个很直观的说明 CPU 的分支预测器的例子是 stackoverflow 上的提问： <a href="http://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-an-unsorted-array" target="_blank" rel="noopener">Why is processing a sorted array faster than an unsorted array?</a> </p>
-<p>一段排序和未排序过的代码执行速度差别很大，具体代码如下</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// generate data</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">unsigned</span> arraySize = <span class="number">32768</span>;</span><br><span class="line">    <span class="keyword">int</span> data[arraySize];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> c = <span class="number">0</span>; c &lt; arraySize; ++c)</span><br><span class="line">        data[c] = <span class="built_in">std</span>::rand() % <span class="number">256</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//排序这行不注释掉下面的for循环会快得多</span></span><br><span class="line">    <span class="built_in">std</span>::sort(data, data + arraySize); </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// test</span></span><br><span class="line">    <span class="keyword">clock_t</span> start = clock();</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; ++i) &#123;</span><br><span class="line">        <span class="comment">// primary loop</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">unsigned</span> c = <span class="number">0</span>; c &lt; arraySize; ++c) &#123;</span><br><span class="line">            <span class="keyword">if</span> (data[c] &gt;= <span class="number">128</span>)</span><br><span class="line">                sum += data[c];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">double</span> elapsedTime = <span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt;(clock() - start) / CLOCKS_PER_SEC;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; elapsedTime &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"sum = "</span> &lt;&lt; sum &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我在我的 Mac 上运行的结果分别是</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 未排序</span><br><span class="line">21.3109</span><br><span class="line">sum = 312426300000</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 排序后</span><br><span class="line">6.30532</span><br><span class="line">sum = 312426300000</span><br></pre></td></tr></table></figure>
-<p>这里影响代码执行的主要片段是</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (data[c] &gt;= <span class="number">128</span>)</span><br><span class="line">    sum += data[c];</span><br></pre></td></tr></table></figure>
-<p>对于这段分支代码的执行，CPU 会启用分支预测(branch prediction)，排序和未排序的不同正是分支预测是否有大概率命中。对于命中的情况，CPU 指令可以一路顺畅的执行；而对于预测失败的情况，处理器要flush掉pipelines，回滚到之前的分支，然后重新热启动，选择另一条路径，这里的性能损失非常大。</p>
-<p>那么一般怎么做分支预测呢？答案就是根据历史结果来做决定。对于排序的情况，很容易根据历史结果做出决策:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">T = branch taken</span><br><span class="line">N = branch not taken</span><br><span class="line"></span><br><span class="line">data[] = 0, 1, 2, 3, 4, ... 126, 127, 128, 129, 130, ... 250, 251, 252, ...</span><br><span class="line">branch = N  N  N  N  N  ...   N    N    T    T    T  ...   T    T    T  ...</span><br><span class="line"></span><br><span class="line">       = NNNNNNNNNNNN ... NNNNNNNTTTTTTTTT ... TTTTTTTTTT  (easy to predict)</span><br></pre></td></tr></table></figure>
-<p>而如果未排序的数组，则其取到的结果完全随机，分支预测基本无效</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">data[] = 226, 185, 125, 158, 198, 144, 217, 79, 202, 118,  14, 150, 177, 182, 133, ...</span><br><span class="line">branch =   T,   T,   N,   T,   T,   T,   T,  N,   T,   N,   N,   T,   T,   T,   N  ...</span><br><span class="line"></span><br><span class="line">       = TTNTTTTNTNNTTTN ...   (completely random - hard to predict)</span><br></pre></td></tr></table></figure>
-<h2 id="代码优化"><a href="#代码优化" class="headerlink" title="代码优化"></a>代码优化</h2><p>上面说的 CPU 分支预测是属于硬件层面，其实从上层的软件或者程序员角度也是可以协助做好分支预测的。还是回到我们最开始提到的__builtin_expect 宏，示例代码反汇编得到的代码如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">.LC1:</span><br><span class="line">    .string &quot;Hula!&quot;</span><br><span class="line">.LC2:</span><br><span class="line">    .string &quot;Woo~&quot;</span><br><span class="line"> </span><br><span class="line">    call    __isoc99_scanf</span><br><span class="line">    movl    28(%esp), %eax</span><br><span class="line">    testl   %eax, %eax</span><br><span class="line">    je  .L2</span><br><span class="line">    movl    $.LC1, (%esp)</span><br><span class="line">    call    puts</span><br><span class="line">.L3:</span><br><span class="line">    xorl    %eax, %eax</span><br><span class="line">    leave</span><br><span class="line">    ret</span><br><span class="line">.L2:</span><br><span class="line">    movl    $.LC2, (%esp)</span><br><span class="line">    call    puts</span><br><span class="line">    jmp .L3</span><br></pre></td></tr></table></figure>
-<p>对于使用了 likely 的分支，其指令将更靠近 <code>testl</code> 分支判断，CPU 在执行分支判断指令的同时，将预先取出后续指令进行执行，而另一个分支指令则需要进行跳转(<code>je .L2</code>)。其本质是优化 CPU 的指令顺序，提高流水线的执行效率。</p>
-<p>此外，编写代码时，我们也要注意分支的先后顺序，尽量将概率大的分支放在前面，尽量合并分支，尽量使用排序后的数据来判断，适当使用 goto 和 do while 来优化代码组织等。</p>
-<p>参考资料</p>
-<p><a href="http://blog.jobbole.com/40844/" target="_blank" rel="noopener">CPU流水线的探秘之旅</a></p>
-<p><a href="https://zhuanlan.zhihu.com/p/22469702" target="_blank" rel="noopener">深入理解CPU的分支预测(Branch Prediction)模型</a></p>
-<p><a href="https://www.zhihu.com/question/27650017" target="_blank" rel="noopener">如何在 C++ 代码中提示编译器某个分支的执行概率高？</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2203,7 +2209,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2216,7 +2222,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
